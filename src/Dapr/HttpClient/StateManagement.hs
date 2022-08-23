@@ -4,26 +4,33 @@
 module Dapr.HttpClient.StateManagement where
 
 import Dapr.HttpClient.Core
-import Data.Aeson (FromJSON, KeyValue ((.=)), ToJSON (toJSON), object, eitherDecode)
+import Data.Aeson (FromJSON, KeyValue ((.=)), ToJSON (toJSON), object, eitherDecode, Value (..))
 import Network.HTTP.Req
 import RIO
 import RIO.Map (foldlWithKey)
 import qualified Data.Text as T
 
-data ConsistencyLevel = Strong | Eventual
-  deriving (Eq)
+data ConcurrencyMode = FirstWrite | LastWrite deriving (Eq)
 
-instance ToJSON ConsistencyLevel where
-  toJSON Strong = "strong"
-  toJSON Eventual = "eventual"
+instance Show ConcurrencyMode where
+  show FirstWrite = "first-write"
+  show LastWrite = "last-write"
 
-instance Show ConsistencyLevel where
+instance ToJSON ConcurrencyMode where
+  toJSON = Data.Aeson.String . T.pack . show
+
+data ConsistencyMode = Strong | Eventual deriving (Eq)
+
+instance Show ConsistencyMode where
   show Strong = "strong"
   show Eventual = "eventual"
 
+instance ToJSON ConsistencyMode where
+  toJSON = Data.Aeson.String . T.pack . show
+
 data SaveStateOptions = SaveStateOptions
   { ssoConcurrency :: Text,
-    ssoConsistency :: ConsistencyLevel
+    ssoConsistency :: ConsistencyMode
   }
   deriving (Eq, Show)
 
@@ -70,7 +77,7 @@ saveState config store body = do
 saveSingleState :: (MonadIO m, ToJSON a) => DaprClientConfig -> Text -> SaveStateReqBody a -> m (Either Text ())
 saveSingleState config store body = saveState config store [body]
 
-getState :: (MonadIO m, FromJSON a) => DaprClientConfig -> Text -> Text -> Maybe ConsistencyLevel -> Maybe (Map Text Text) -> m (Either Text a)
+getState :: (MonadIO m, FromJSON a) => DaprClientConfig -> Text -> Text -> Maybe ConsistencyMode -> Maybe (Map Text Text) -> m (Either Text a)
 getState config store key consistency metadata = do
   let url = "state" <> "/" <> store <> "/" <> key
       metadataQuery = maybe mempty (foldlWithKey (\query key' value -> query <> key' =: Just value) mempty) metadata
