@@ -1,7 +1,7 @@
 module Dapr.HttpClient.Metadata where
 
 import Dapr.HttpClient.Core (DaprClientConfig, makeRequest)
-import Dapr.HttpClient.Internal (customParseJSON, isSucceedResponse)
+import Dapr.HttpClient.Internal (customParseJSON, isSucceededResponse)
 import Data.Aeson
 import Network.HTTP.Req
 import RIO
@@ -41,6 +41,6 @@ getMetadata :: MonadIO m => DaprClientConfig -> m (Either Text DaprMetadata)
 getMetadata config = do
   response <- makeRequest config GET ("metadata" :: Text) NoReqBody jsonResponse mempty
   return $
-    if isSucceedResponse response
+    if isSucceededResponse response
       then Right $ responseBody response
       else Left "Dapr could not return the metadata information"

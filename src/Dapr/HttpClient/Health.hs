@@ -7,9 +7,9 @@ import RIO
 
 data DaprHealthStatus = Healthy | Unhealthy deriving (Eq, Show)
 
-checkHealth :: (MonadHttp m) => DaprClientConfig -> m DaprHealthStatus
+checkHealth :: (MonadIO m) => DaprClientConfig -> m DaprHealthStatus
 checkHealth config = do
   response <- makeRequest config GET ("healthz" :: Text) NoReqBody ignoreResponse mempty
-  return $ if isSucceedResponse response
+  return $ if isSucceededResponse response
     then Healthy
     else Unhealthy

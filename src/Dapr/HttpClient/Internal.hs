@@ -34,7 +34,7 @@ customToJSON n =
       { fieldLabelModifier = dropFirstNChars n
       }
 
-isSucceedResponse :: HttpResponse a => a -> Bool
-isSucceedResponse response =
+isSucceededResponse :: HttpResponse a => a -> Bool
+isSucceededResponse response =
   let status = responseStatusCode response
   in status >= 200 && status < 300
