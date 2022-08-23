@@ -4,10 +4,11 @@
 module Dapr.HttpClient.StateManagement where
 
 import Dapr.HttpClient.Core
-import Data.Aeson (FromJSON, KeyValue ((.=)), ToJSON (toJSON), decode, object)
+import Data.Aeson (FromJSON, KeyValue ((.=)), ToJSON (toJSON), object, eitherDecode)
 import Network.HTTP.Req
 import RIO
 import RIO.Map (foldlWithKey)
+import qualified Data.Text as T
 
 data ConsistencyLevel = Strong | Eventual
   deriving (Eq)
@@ -76,9 +77,7 @@ getState config store key consistency metadata = do
       options = metadataQuery <> "consistency" =: (show <$> consistency)
   response <- makeRequest config GET url NoReqBody lbsResponse options
   case responseStatusCode response of
-    200 -> return $ case decode $ responseBody response of
-      Just x -> Right x
-      Nothing -> Left "Failed to decode response body"
+    200 -> return $ mapLeft T.pack $ eitherDecode (responseBody response)
     204 -> return $ Left "Key is not found"
     400 -> return $ Left "State store is missing or misconfigured"
     500 -> return $ Left "Get state failed"
