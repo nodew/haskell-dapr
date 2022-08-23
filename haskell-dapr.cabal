@@ -48,6 +48,7 @@ library
       aeson
     , base >=4.11 && <10
     , bytestring
+    , hashmap
     , http-api-data
     , http-client
     , http-client-tls
@@ -76,6 +77,7 @@ test-suite haskell-dapr-test
     , aeson
     , base >=4.11 && <10
     , bytestring
+    , hashmap
     , haskell-dapr
     , hspec
     , hspec-core

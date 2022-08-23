@@ -23,6 +23,7 @@ dependencies:
   - base >= 4.11 && < 10
   - aeson
   - bytestring
+  - hashmap
   - http-api-data
   - http-client
   - http-client-tls
