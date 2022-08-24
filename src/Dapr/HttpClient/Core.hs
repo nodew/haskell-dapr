@@ -13,6 +13,15 @@ data DaprClientConfig = DaprClientConfig
   }
   deriving (Show)
 
+data DaprClientErrorType = HttpException Int | AesonDecodeError | UnknownError
+  deriving (Show, Eq)
+
+data DaprClientError = DaprClientError
+  { daprClientErrorType :: DaprClientErrorType,
+    daprClientErrorMessage :: Text
+  }
+  deriving (Show, Eq)
+
 defaultDaprClientConfig :: DaprClientConfig
 defaultDaprClientConfig =
   DaprClientConfig

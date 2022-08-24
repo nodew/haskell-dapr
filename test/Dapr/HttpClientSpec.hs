@@ -4,6 +4,7 @@ import Dapr.HttpClient
 import Data.List (head)
 import RIO
 import Test.Hspec
+import Prelude (putStrLn)
 
 spec :: Spec
 spec = do
@@ -31,7 +32,17 @@ spec = do
       d `shouldBe` ("value" :: Text)
 
     it "Get state with false key" $ do
-      r <- getState defaultDaprClientConfig "statestore" "key1" Nothing Nothing :: IO (Either Text Text)
-      isRight r `shouldBe` False
-      let d = head $ lefts [r]
-      d `shouldBe` "Key is not found"
+      r <- getState defaultDaprClientConfig "statestore" "key1" Nothing Nothing :: IO (Either DaprClientError Text)
+      isLeft r `shouldBe` True
+      let (DaprClientError errType _) = fromLeft (DaprClientError UnknownError "") r
+      errType `shouldBe` HttpException 204
+
+    it "Get bulk states" $ do
+      r <- getBulkState defaultDaprClientConfig "statestore" ["key", "key1"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])
+      putStrLn $ show r
+      isRight r `shouldBe` True
+      let items = fromRight [] r
+      length items `shouldBe` 2
+      let (BulkStateItem key val _) = head items
+      key `shouldBe` "key"
+      val `shouldBe` (Just "value")
