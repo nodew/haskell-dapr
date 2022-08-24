@@ -12,14 +12,12 @@ data DaprClientConfig = DaprClientConfig
   }
   deriving (Show)
 
-data DaprClientErrorType = HttpException Int | AesonDecodeError | UnknownError
-  deriving (Show, Eq)
-
-data DaprClientError = DaprClientError
-  { daprClientErrorType :: DaprClientErrorType,
-    daprClientErrorMessage :: Text
-  }
-  deriving (Show, Eq)
+data DaprClientError
+  = DaprHttpException HttpException
+  | AesonDecodeError Text
+  | NotFound
+  | UnknownError
+  deriving (Show)
 
 defaultDaprClientConfig :: DaprClientConfig
 defaultDaprClientConfig =
@@ -30,28 +28,27 @@ defaultDaprClientConfig =
     }
 
 makeRequest ::
-  ( HttpBodyAllowed (AllowsBody method) (ProvidesBody reqBody),
+  ( HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
     MonadIO m,
     HttpMethod method,
-    HttpBody reqBody,
-    HttpResponse response
+    HttpBody body,
+    HttpResponse a
   ) =>
   DaprClientConfig ->
   method ->
   [Text] ->
-  reqBody ->
-  Proxy response ->
+  body ->
+  Proxy a ->
   Option 'Http ->
-  m response
+  m (Either HttpException a)
 makeRequest config method subUrl reqBody responseHandler options = runReq defaultHttpConfig $ do
   let host = daprHost config
       apiVersion = daprApiVersion config
       defaultOptions = port $ daprPort config
       updatedOptions = defaultOptions <> options
       completeUrl = appendUrl (http host /: apiVersion) subUrl
-  req method completeUrl reqBody responseHandler updatedOptions
-
+  try $ req method completeUrl reqBody responseHandler updatedOptions
   where
     appendUrl :: Url scheme -> [Text] -> Url scheme
     appendUrl prefix [] = prefix
-    appendUrl prefix (x:xs) = appendUrl (prefix /: x) xs
+    appendUrl prefix (x : xs) = appendUrl (prefix /: x) xs

@@ -34,8 +34,6 @@ spec = do
     it "Get state with non-existed key" $ do
       r <- getState defaultDaprClientConfig "statestore" "key1" Nothing Nothing :: IO (Either DaprClientError Text)
       isLeft r `shouldBe` True
-      let (DaprClientError errType _) = fromLeft (DaprClientError UnknownError "") r
-      errType `shouldBe` HttpException 204
 
     it "Get bulk states" $ do
       r <- getBulkState defaultDaprClientConfig "statestore" ["key", "key1"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])

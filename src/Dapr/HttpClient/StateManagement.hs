@@ -82,11 +82,7 @@ saveState config store body = do
   let url = ["state", store]
       options = header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyJson body) ignoreResponse options
-  return $ case responseStatusCode response of
-    204 -> Right ()
-    400 -> Left $ DaprClientError (HttpException 400) "State store is missing or misconfigured or malformed request"
-    500 -> Left $ DaprClientError (HttpException 500) "Failed to save state"
-    _ -> Left $ DaprClientError UnknownError "Unknown response status code"
+  return $ bimap DaprHttpException (const ()) response
 
 saveSingleState :: (MonadIO m, ToJSON a) => DaprClientConfig -> Text -> SaveStateReqBody a -> m (Either DaprClientError ())
 saveSingleState config store body = saveState config store [body]
@@ -97,12 +93,12 @@ getState config store key consistency metadata = do
       metadataQueryParam = maybe mempty (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty) metadata
       options = metadataQueryParam <> queryParam "consistency" (show <$> consistency)
   response <- makeRequest config GET url NoReqBody lbsResponse options
-  return $ case responseStatusCode response of
-    200 -> mapLeft (DaprClientError AesonDecodeError . T.pack) $ eitherDecode (responseBody response)
-    204 -> Left $ DaprClientError (HttpException 204) "Key is not found"
-    400 -> Left $ DaprClientError (HttpException 400) "State store is missing or misconfigured"
-    500 -> Left $ DaprClientError (HttpException 500) "Get state failed"
-    _ -> Left $ DaprClientError UnknownError "Unknown response status code"
+  return $ case response of
+    Right response' -> case responseStatusCode response' of
+      200 -> mapLeft (AesonDecodeError . T.pack) $ eitherDecode (responseBody response')
+      204 -> Left NotFound
+      _ -> Left UnknownError
+    Left e -> Left $ DaprHttpException e
 
 getStateSimple :: (MonadIO m, FromJSON a) => DaprClientConfig -> Text -> Text -> m (Either DaprClientError a)
 getStateSimple config store key = getState config store key Nothing Nothing
@@ -113,11 +109,7 @@ getBulkState config store keys parallelism metadata = do
       metadataQueryParam = maybe mempty (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty) metadata
       options = metadataQueryParam <> header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyJson (BulkStateReqBody keys parallelism)) jsonResponse options
-  return $ case responseStatusCode response of
-    200 -> Right (responseBody response)
-    400 -> Left $ DaprClientError (HttpException 400) "State store is missing or misconfigured"
-    500 -> Left $ DaprClientError (HttpException 500) "Get state failed"
-    _ -> Left $ DaprClientError UnknownError "Unknown response status code"
+  return $ bimap DaprHttpException responseBody response
 
 getBulkStateSimple :: (MonadIO m, FromJSON a) => DaprClientConfig -> Text -> [Text] -> m (Either DaprClientError [BulkStateItem a])
 getBulkStateSimple config store keys = getBulkState config store keys Nothing Nothing
@@ -129,11 +121,7 @@ deleteState config store key eTag concurrency consistency metadata = do
       params = metadataQueryParam <> queryParam "concurrency" (show <$> concurrency) <> queryParam "consistency" (show <$> consistency)
       options = maybe mempty (header "If-Match" . T.encodeUtf8) eTag <> params
   response <- makeRequest config DELETE url NoReqBody ignoreResponse options
-  return $ case responseStatusCode response of
-    204 -> Right ()
-    400 -> Left $ DaprClientError (HttpException 400) "State store is missing or misconfigured"
-    500 -> Left $ DaprClientError (HttpException 500) "Delete state failed"
-    _ -> Left $ DaprClientError UnknownError "Unknown response status code"
+  return $ bimap DaprHttpException (const ()) response
 
 deleteStateSimple :: MonadIO m => DaprClientConfig -> Text -> Text -> m (Either DaprClientError ())
 deleteStateSimple config store key = deleteState config store key Nothing Nothing Nothing Nothing
