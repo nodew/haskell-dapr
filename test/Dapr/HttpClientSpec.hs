@@ -31,7 +31,7 @@ spec = do
       let d = head $ rights [r]
       d `shouldBe` ("value" :: Text)
 
-    it "Get state with false key" $ do
+    it "Get state with non-existed key" $ do
       r <- getState defaultDaprClientConfig "statestore" "key1" Nothing Nothing :: IO (Either DaprClientError Text)
       isLeft r `shouldBe` True
       let (DaprClientError errType _) = fromLeft (DaprClientError UnknownError "") r
@@ -46,3 +46,11 @@ spec = do
       let (BulkStateItem key val _) = head items
       key `shouldBe` "key"
       val `shouldBe` (Just "value")
+
+    it "Delete state" $ do
+      r <- deleteState defaultDaprClientConfig "statestore" "key" Nothing Nothing Nothing Nothing
+      isRight r `shouldBe` True
+
+    it "Delete state with non-existed key" $ do
+      r <- deleteState defaultDaprClientConfig "statestore" "key1" Nothing Nothing Nothing Nothing :: IO (Either DaprClientError ())
+      isRight r `shouldBe` True

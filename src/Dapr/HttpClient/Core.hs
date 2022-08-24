@@ -4,7 +4,6 @@ module Dapr.HttpClient.Core where
 
 import Network.HTTP.Req
 import RIO
-import Web.HttpApiData
 
 data DaprClientConfig = DaprClientConfig
   { daprHost :: Text,
@@ -35,20 +34,24 @@ makeRequest ::
     MonadIO m,
     HttpMethod method,
     HttpBody reqBody,
-    HttpResponse response,
-    ToHttpApiData url
+    HttpResponse response
   ) =>
   DaprClientConfig ->
   method ->
-  url ->
+  [Text] ->
   reqBody ->
   Proxy response ->
   Option 'Http ->
   m response
-makeRequest config method url reqBody responseHandler options = runReq defaultHttpConfig $ do
+makeRequest config method subUrl reqBody responseHandler options = runReq defaultHttpConfig $ do
   let host = daprHost config
       apiVersion = daprApiVersion config
       defaultOptions = port $ daprPort config
       updatedOptions = defaultOptions <> options
-      completeUrl = http host /: apiVersion /~ url
+      completeUrl = appendUrl (http host /: apiVersion) subUrl
   req method completeUrl reqBody responseHandler updatedOptions
+
+  where
+    appendUrl :: Url scheme -> [Text] -> Url scheme
+    appendUrl prefix [] = prefix
+    appendUrl prefix (x:xs) = appendUrl (prefix /: x) xs

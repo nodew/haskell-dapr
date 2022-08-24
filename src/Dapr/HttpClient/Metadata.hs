@@ -39,7 +39,7 @@ instance FromJSON DaprMetadataComponent where
 
 getMetadata :: MonadIO m => DaprClientConfig -> m (Either DaprClientError DaprMetadata)
 getMetadata config = do
-  response <- makeRequest config GET ("metadata" :: Text) NoReqBody jsonResponse mempty
+  response <- makeRequest config GET ["metadata"] NoReqBody jsonResponse mempty
   return $ case responseStatusCode response of
     200 -> Right $ responseBody response
     500 -> Left $ DaprClientError (HttpException 500) "Dapr could not return the metadata information"
