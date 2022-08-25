@@ -7,35 +7,35 @@ import Network.HTTP.Req
 import RIO
 
 data DaprMetadata = DaprMetadata
-  { dmId :: Text,
-    dmActors :: [DaprMetadataActor],
-    dmComponents :: [DaprMetadataComponent],
-    dmExtended :: Map Text Text
+  { metadataId :: Text,
+    metadataActors :: [DaprMetadataActor],
+    metadataComponents :: [DaprMetadataComponent],
+    metadataExtended :: Map Text Text
   }
   deriving (Eq, Show, Generic)
 
 instance FromJSON DaprMetadata where
-  parseJSON = customParseJSON 2
+  parseJSON = customParseJSON 8
 
 data DaprMetadataActor = DaprMetadataActor
-  { dmaType :: Text,
-    dmaCount :: Int
+  { metadataActorType :: Text,
+    metadataActorCount :: Int
   }
   deriving (Eq, Show, Generic)
 
 instance FromJSON DaprMetadataActor where
-  parseJSON = customParseJSON 3
+  parseJSON = customParseJSON 13
 
 data DaprMetadataComponent = DaprMetadataComponent
-  { dmcName :: Text,
-    dmcType :: Text,
-    dmcVersion :: Text,
-    dmcCapabilities :: [Text]
+  { componentName :: Text,
+    componentType :: Text,
+    componentVersion :: Text,
+    componentCapabilities :: [Text]
   }
   deriving (Eq, Show, Generic)
 
 instance FromJSON DaprMetadataComponent where
-  parseJSON = customParseJSON 3
+  parseJSON = customParseJSON 9
 
 getMetadata :: MonadIO m => DaprClientConfig -> m (Either DaprClientError DaprMetadata)
 getMetadata config = do

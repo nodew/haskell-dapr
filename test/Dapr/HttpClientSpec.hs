@@ -18,7 +18,7 @@ spec = do
       r <- getMetadata defaultDaprClientConfig
       isRight r `shouldBe` True
       let d = head $ rights [r]
-      dmId d `shouldBe` "haskell-dapr"
+      metadataId d `shouldBe` "haskell-dapr"
 
   describe "State management" $ do
     it "Save state" $ do

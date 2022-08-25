@@ -43,6 +43,8 @@ library
       NoImplicitPrelude
       OverloadedStrings
       DeriveGeneric
+      DeriveAnyClass
+      DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
@@ -71,6 +73,8 @@ test-suite haskell-dapr-test
       NoImplicitPrelude
       OverloadedStrings
       DeriveGeneric
+      DeriveAnyClass
+      DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck

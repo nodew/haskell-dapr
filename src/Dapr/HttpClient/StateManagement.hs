@@ -1,5 +1,5 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE RecordWildCards #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 
 module Dapr.HttpClient.StateManagement where
 
@@ -31,51 +31,41 @@ instance ToJSON ConsistencyMode where
   toJSON = Data.Aeson.String . T.pack . show
 
 data SaveStateOptions = SaveStateOptions
-  { ssoConcurrency :: Text,
-    ssoConsistency :: ConsistencyMode
+  { concurrency :: ConcurrencyMode,
+    consistency :: ConsistencyMode
   }
-  deriving (Eq, Show, Generic)
-
-instance ToJSON SaveStateOptions where
-  toJSON = customToJSON 3
+  deriving (Eq, Show, Generic, ToJSON)
 
 data SaveStateReqBody a = SaveStateReqBody
-  { ssrKey :: Text,
-    ssrValue :: a,
-    ssrEtag :: Maybe Text,
-    ssrOptions :: Maybe SaveStateOptions,
-    ssrMetadata :: Maybe (Map Text Text)
+  { stateKey :: Text,
+    stateValue :: a,
+    stateEtag :: Maybe Text,
+    stateOptions :: Maybe SaveStateOptions,
+    stateMetadata :: Maybe (Map Text Text)
   }
   deriving (Eq, Show, Generic)
 
 instance ToJSON a => ToJSON (SaveStateReqBody a) where
-  toJSON = customToJSON 3
+  toJSON = customToJSON 5
 
 mkSimleSaveStateReqBody :: Text -> a -> SaveStateReqBody a
 mkSimleSaveStateReqBody key value = SaveStateReqBody key value Nothing Nothing Nothing
 
 data BulkStateReqBody = BulkStateReqBody
-  { bsrKeys :: [Text],
-    bsrParallelism :: Maybe Int
+  { keys :: [Text],
+    parallelism :: Maybe Int
   }
-  deriving (Eq, Show, Generic)
-
-instance ToJSON BulkStateReqBody where
-  toJSON (BulkStateReqBody keys parallelism) =
-    object
-      [ "keys" .= keys,
-        "parallelism" .= parallelism
-      ]
+  deriving (Eq, Show, Generic, ToJSON)
 
 data BulkStateItem a = BulkStateItem
-  { bulkStateItemKey :: Text,
-    bulkStateItemData :: Maybe a,
-    bulkStateItemEtag :: Maybe Text
+  { itemKey :: Text,
+    itemData :: Maybe a,
+    itemEtag :: Maybe Text
   }
   deriving (Eq, Show, Generic)
 
 instance FromJSON a => FromJSON (BulkStateItem a) where
-  parseJSON = customParseJSON 13
+  parseJSON = customParseJSON 4
 
 saveState :: (MonadIO m, ToJSON a) => DaprClientConfig -> Text -> [SaveStateReqBody a] -> m (Either DaprClientError ())
 saveState config store body = do
@@ -115,11 +105,11 @@ getBulkStateSimple :: (MonadIO m, FromJSON a) => DaprClientConfig -> Text -> [Te
 getBulkStateSimple config store keys = getBulkState config store keys Nothing Nothing
 
 deleteState :: (MonadIO m) => DaprClientConfig -> Text -> Text -> Maybe Text -> Maybe ConcurrencyMode -> Maybe ConsistencyMode -> Maybe (Map Text Text) -> m (Either DaprClientError ())
-deleteState config store key eTag concurrency consistency metadata = do
+deleteState config store key etag concurrency consistency metadata = do
   let url = ["state", store, key]
       metadataQueryParam = maybe mempty (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty) metadata
       params = metadataQueryParam <> queryParam "concurrency" (show <$> concurrency) <> queryParam "consistency" (show <$> consistency)
-      options = maybe mempty (header "If-Match" . T.encodeUtf8) eTag <> params
+      options = maybe mempty (header "If-Match" . T.encodeUtf8) etag <> params
   response <- makeRequest config DELETE url NoReqBody ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 

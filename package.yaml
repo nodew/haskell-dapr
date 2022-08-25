@@ -46,6 +46,8 @@ default-extensions:
   - NoImplicitPrelude
   - OverloadedStrings
   - DeriveGeneric
+  - DeriveAnyClass
+  - DuplicateRecordFields
 
 library:
   source-dirs: src
