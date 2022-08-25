@@ -32,7 +32,7 @@ spec = do
       d `shouldBe` ("value" :: Text)
 
     it "Get state with non-existed key" $ do
-      r <- getState defaultDaprClientConfig "statestore" "key1" Nothing Nothing :: IO (Either DaprClientError Text)
+      r <- getState defaultDaprClientConfig "statestore" "key-not-exist" Nothing Nothing :: IO (Either DaprClientError Text)
       isLeft r `shouldBe` True
 
     it "Get bulk states" $ do
@@ -51,4 +51,17 @@ spec = do
 
     it "Delete state with non-existed key" $ do
       r <- deleteState defaultDaprClientConfig "statestore" "key1" Nothing Nothing Nothing Nothing :: IO (Either DaprClientError ())
+      isRight r `shouldBe` True
+
+    it "Execute transaction" $ do
+      r <-
+        excuteStateTransaction
+          defaultDaprClientConfig
+          "statestore"
+          ( StateTransaction
+              [ StateOperation Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
+                StateOperation Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
+              ]
+              Nothing
+          )
       isRight r `shouldBe` True
