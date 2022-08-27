@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-
 module Dapr.HttpClient.Core where
 
 import Network.HTTP.Req

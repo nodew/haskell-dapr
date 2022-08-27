@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
 module Dapr.HttpClient.Publisher where

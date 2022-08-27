@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-
 module Dapr.HttpClient.ServiceInvocation where
 
 import Dapr.HttpClient.Core

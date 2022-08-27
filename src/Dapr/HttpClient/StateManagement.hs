@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
 module Dapr.HttpClient.StateManagement where
@@ -66,13 +65,13 @@ data BulkStateItem a = BulkStateItem
 instance FromJSON a => FromJSON (BulkStateItem a) where
   parseJSON = customParseJSON 4
 
-data Operation = Upsert | Delete deriving (Eq)
+data StateOperation = Upsert | Delete deriving (Eq)
 
-instance Show Operation where
+instance Show StateOperation where
   show Upsert = "upsert"
   show Delete = "delete"
 
-instance ToJSON Operation where
+instance ToJSON StateOperation where
   toJSON = Data.Aeson.String . T.pack . show
 
 data StateOperationRequest a = StateOperationRequest
@@ -87,14 +86,14 @@ data StateOperationRequest a = StateOperationRequest
 instance ToJSON a => ToJSON (StateOperationRequest a) where
   toJSON = customToJSON 5
 
-data StateOperation a = StateOperation
-  { operation :: Operation,
+data StateTransaction a = StateTransaction
+  { operation :: StateOperation,
     request :: StateOperationRequest a
   }
   deriving (Eq, Show, Generic, ToJSON)
 
-data StateTransaction a = StateTransaction
-  { operations :: [StateOperation a],
+data StateTransactionRequest a = StateTransactionRequest
+  { operations :: [StateTransaction a],
     metadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic, ToJSON)
@@ -203,7 +202,7 @@ excuteStateTransaction ::
   (MonadIO m, ToJSON a) =>
   DaprClientConfig ->
   Text ->
-  StateTransaction a ->
+  StateTransactionRequest a ->
   m (Either DaprClientError ())
 excuteStateTransaction config store transaction = do
   let url = ["state", store, "transaction"]

@@ -42,6 +42,7 @@ library
   default-extensions:
       NoImplicitPrelude
       OverloadedStrings
+      DataKinds
       DeriveGeneric
       DeriveAnyClass
       DuplicateRecordFields
@@ -72,6 +73,7 @@ test-suite haskell-dapr-test
   default-extensions:
       NoImplicitPrelude
       OverloadedStrings
+      DataKinds
       DeriveGeneric
       DeriveAnyClass
       DuplicateRecordFields

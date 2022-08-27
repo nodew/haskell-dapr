@@ -43,7 +43,7 @@ spec = do
       length items `shouldBe` 2
       let (BulkStateItem key val _) = head items
       key `shouldBe` "key"
-      val `shouldBe` (Just "value")
+      val `shouldBe` Just "value"
 
     it "Delete state" $ do
       r <- deleteState defaultDaprClientConfig "statestore" "key" Nothing Nothing Nothing Nothing
@@ -58,9 +58,9 @@ spec = do
         excuteStateTransaction
           defaultDaprClientConfig
           "statestore"
-          ( StateTransaction
-              [ StateOperation Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
-                StateOperation Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
+          ( StateTransactionRequest
+              [ StateTransaction Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
+                StateTransaction Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
               ]
               Nothing
           )
