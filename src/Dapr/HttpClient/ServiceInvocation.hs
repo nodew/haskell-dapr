@@ -26,29 +26,7 @@ invokeMethod config appId httpMethod path payload options = do
   response <- makeRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
-invokeMethodWithJsonPayload ::
-  ( HttpBodyAllowed (AllowsBody method) 'CanHaveBody,
-    MonadIO m,
-    HttpMethod method,
-    ToJSON a
-  ) =>
-  DaprClientConfig ->
-  Text ->
-  method ->
-  [Text] ->
-  a ->
-  Option 'Http ->
-  m (Either DaprClientError LbsResponse)
-invokeMethodWithJsonPayload config appId httpMethod path payload options =
-  invokeMethod
-    config
-    appId
-    httpMethod
-    path
-    (ReqBodyJson payload)
-    (options <> header "Content-Type" "application/json")
-
-invokeMethodWithJsonPayload' ::
+invokeMethod' ::
   ( HttpBodyAllowed (AllowsBody method) 'CanHaveBody,
     MonadIO m,
     HttpMethod method,
@@ -62,14 +40,14 @@ invokeMethodWithJsonPayload' ::
   a ->
   Option 'Http ->
   m (Either DaprClientError b)
-invokeMethodWithJsonPayload' config appId httpMethod path payload options = do
-  response <- invokeMethodWithJsonPayload
+invokeMethod' config appId httpMethod path payload options = do
+  response <- invokeMethod
     config
     appId
     httpMethod
     path
-    payload
-    (options <> header "Accept" "application/json")
+    (ReqBodyJson payload)
+    (options <> header "Accept" "application/json" <> header "Content-Type" "application/json")
   case response of
     Left err -> return $ Left err
     Right body -> do

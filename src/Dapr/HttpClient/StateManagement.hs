@@ -10,9 +10,6 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 import RIO
-import RIO.Map (foldlWithKey)
-
-type StateMetadata = Map Text Text
 
 data ConcurrencyMode = FirstWrite | LastWrite deriving (Eq)
 
@@ -43,7 +40,7 @@ data SaveStateReqBody a = SaveStateReqBody
     stateValue :: a,
     stateEtag :: Maybe Text,
     stateOptions :: Maybe SaveStateOptions,
-    stateMetadata :: Maybe StateMetadata
+    stateMetadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic)
 
@@ -83,7 +80,7 @@ data StateOperationRequest a = StateOperationRequest
     stateValue :: Maybe a,
     stateEtag :: Maybe Text,
     stateOptions :: Maybe SaveStateOptions,
-    stateMetadata :: Maybe StateMetadata
+    stateMetadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic)
 
@@ -98,7 +95,7 @@ data StateOperation a = StateOperation
 
 data StateTransaction a = StateTransaction
   { operations :: [StateOperation a],
-    metadata :: Maybe StateMetadata
+    metadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic, ToJSON)
 
@@ -116,7 +113,7 @@ instance FromJSON a => FromJSON (StateQueryItem a) where
 data StateQueryResponse a = StateQueryResponse
   { results :: [StateQueryItem a],
     token :: Text,
-    metadata :: Maybe StateMetadata
+    metadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic, FromJSON)
 
@@ -138,15 +135,11 @@ getState ::
   Text ->
   Text ->
   Maybe ConsistencyMode ->
-  Maybe StateMetadata ->
+  Maybe Metadata ->
   m (Either DaprClientError a)
 getState config store key consistency metadata = do
   let url = ["state", store, key]
-      metadataQueryParam =
-        maybe
-          mempty
-          (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)
-          metadata
+      metadataQueryParam = mapMetadataToQueryParam metadata
       options = metadataQueryParam <> queryParam "consistency" (show <$> consistency)
   response <- makeRequest config GET url NoReqBody lbsResponse options
   return $ case response of
@@ -165,15 +158,11 @@ getBulkState ::
   Text ->
   [Text] ->
   Maybe Int ->
-  Maybe StateMetadata ->
+  Maybe Metadata ->
   m (Either DaprClientError [BulkStateItem a])
 getBulkState config store keys parallelism metadata = do
   let url = ["state", store, "bulk"]
-      metadataQueryParam =
-        maybe
-          mempty
-          (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)
-          metadata
+      metadataQueryParam = mapMetadataToQueryParam metadata
       options = metadataQueryParam <> header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyJson (BulkStateReqBody keys parallelism)) jsonResponse options
   return $ bimap DaprHttpException responseBody response
@@ -194,15 +183,11 @@ deleteState ::
   Maybe Text ->
   Maybe ConcurrencyMode ->
   Maybe ConsistencyMode ->
-  Maybe StateMetadata ->
+  Maybe Metadata ->
   m (Either DaprClientError ())
 deleteState config store key etag concurrency consistency metadata = do
   let url = ["state", store, key]
-      metadataQueryParam =
-        maybe
-          mempty
-          (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)
-          metadata
+      metadataQueryParam = mapMetadataToQueryParam metadata
       params =
         metadataQueryParam
           <> queryParam "concurrency" (show <$> concurrency)
@@ -231,15 +216,11 @@ queryState ::
   DaprClientConfig ->
   Text ->
   Text ->
-  Maybe StateMetadata ->
+  Maybe Metadata ->
   m (Either DaprClientError (StateQueryResponse a))
 queryState config store jsonQuery metadata = do
   let url = ["state", store, "query"]
-      metadataQueryParam =
-        maybe
-          mempty
-          (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)
-          metadata
+      metadataQueryParam = mapMetadataToQueryParam metadata
       options = metadataQueryParam <> header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyBs $ T.encodeUtf8 jsonQuery) jsonResponse options
   return $ bimap DaprHttpException responseBody response

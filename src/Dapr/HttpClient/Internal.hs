@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DataKinds #-}
 
 module Dapr.HttpClient.Internal where
 
@@ -8,6 +9,8 @@ import Data.Char (toLower)
 import GHC.Generics
 import RIO
 import Network.HTTP.Req
+import RIO.Map hiding(drop)
+import Dapr.HttpClient.Core
 
 lowerFirstLetter :: String -> String
 lowerFirstLetter [] = []
@@ -34,7 +37,8 @@ customToJSON n =
       { fieldLabelModifier = dropFirstNChars n
       }
 
-isSucceededResponse :: HttpResponse a => a -> Bool
-isSucceededResponse response =
-  let status = responseStatusCode response
-  in status >= 200 && status < 300
+mapMetadataToQueryParam :: Maybe Metadata -> Option 'Http
+mapMetadataToQueryParam =
+  maybe
+    mempty
+    (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)

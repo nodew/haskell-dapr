@@ -19,6 +19,8 @@ data DaprClientError
   | UnknownError
   deriving (Show)
 
+type Metadata = Map Text Text
+
 defaultDaprClientConfig :: DaprClientConfig
 defaultDaprClientConfig =
   DaprClientConfig
