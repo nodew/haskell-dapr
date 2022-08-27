@@ -11,11 +11,12 @@ import Network.HTTP.Req
 import RIO
 
 data Subscrption = Subscrption
-  { pubsubname :: Text
-  , topic :: Text
-  , route :: Text
-  , metadata :: Metadata
-  } deriving (Eq, Show, Generic)
+  { pubsubname :: Text,
+    topic :: Text,
+    route :: Text,
+    metadata :: Metadata
+  }
+  deriving (Eq, Show, Generic)
 
 instance ToJSON Subscrption
 

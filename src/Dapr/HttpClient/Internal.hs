@@ -1,16 +1,16 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Dapr.HttpClient.Internal where
 
+import Dapr.HttpClient.Core
 import Data.Aeson
 import Data.Aeson.Types
 import Data.Char (toLower)
 import GHC.Generics
-import RIO
 import Network.HTTP.Req
-import RIO.Map hiding(drop)
-import Dapr.HttpClient.Core
+import RIO
+import RIO.Map hiding (drop)
 
 lowerFirstLetter :: String -> String
 lowerFirstLetter [] = []
