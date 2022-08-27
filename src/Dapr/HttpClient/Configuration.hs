@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
+
 module Dapr.HttpClient.Configuration where
 
 import Dapr.HttpClient.Core
@@ -12,6 +13,7 @@ data Configuration = Configuration
     configValue :: Text
   }
   deriving (Eq, Show, Generic)
+
 instance FromJSON Configuration where
   parseJSON = customParseJSON 5
 
@@ -45,6 +47,6 @@ subscribeConfiguration config store keys = do
 
 unsubscribeConfiguration :: MonadIO m => DaprClientConfig -> Text -> m (Either DaprClientError ())
 unsubscribeConfiguration config subscriptionId = do
-  let url = ["configuration", subscriptionId, "unsubscribe" ]
+  let url = ["configuration", subscriptionId, "unsubscribe"]
   response <- makeRequest config GET url NoReqBody ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
