@@ -36,7 +36,7 @@ customToJSON n =
       { fieldLabelModifier = dropFirstNChars n
       }
 
-mapMetadataToQueryParam :: Maybe Metadata -> Option 'Http
+mapMetadataToQueryParam :: Maybe RequestMetadata -> Option 'Http
 mapMetadataToQueryParam =
   maybe
     mempty

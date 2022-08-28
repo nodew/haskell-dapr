@@ -13,7 +13,7 @@ data Subscrption = Subscrption
   { pubsubname :: Text,
     topic :: Text,
     route :: Text,
-    metadata :: Metadata
+    metadata :: RequestMetadata
   }
   deriving (Eq, Show, Generic)
 
@@ -26,7 +26,7 @@ publishMessage ::
   Text ->
   body ->
   Option 'Http ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishMessage config pubsubname topic message optionalHeader metadata = do
   let url = ["pubsubname", pubsubname, topic]
@@ -41,7 +41,7 @@ publishJsonMessage ::
   Text ->
   Text ->
   a ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishJsonMessage config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/json")
@@ -52,7 +52,7 @@ publishTextMessage ::
   Text ->
   Text ->
   Text ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishTextMessage config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyBs (T.encodeUtf8 message)) (header "Content-Type" "text/plain")
@@ -63,7 +63,7 @@ publishCloudEvent ::
   Text ->
   Text ->
   a ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishCloudEvent config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")

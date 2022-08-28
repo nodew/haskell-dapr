@@ -83,14 +83,14 @@ invokeActor config actorType actorId method reqMethod reqBody handler options = 
   response <- makeRequest config reqMethod url reqBody handler options
   return $ first DaprHttpException response
 
-excuteActorStateTransaction ::
+executeActorStateTransaction ::
   (MonadIO m, ToJSON a) =>
   DaprClientConfig ->
   Text ->
   Text ->
   [ActorStateTransactionItem a] ->
   m (Either DaprClientError ())
-excuteActorStateTransaction config actorType actorId transactions = do
+executeActorStateTransaction config actorType actorId transactions = do
   let url = ["actors", actorType, actorId, "state"]
       options = header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyJson transactions) ignoreResponse options

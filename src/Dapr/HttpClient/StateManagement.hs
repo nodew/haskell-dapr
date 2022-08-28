@@ -39,7 +39,7 @@ data SaveStateReqBody a = SaveStateReqBody
     stateValue :: a,
     stateEtag :: Maybe Text,
     stateOptions :: Maybe SaveStateOptions,
-    stateMetadata :: Maybe Metadata
+    stateMetadata :: Maybe RequestMetadata
   }
   deriving (Eq, Show, Generic)
 
@@ -79,7 +79,7 @@ data StateOperationRequest a = StateOperationRequest
     stateValue :: Maybe a,
     stateEtag :: Maybe Text,
     stateOptions :: Maybe SaveStateOptions,
-    stateMetadata :: Maybe Metadata
+    stateMetadata :: Maybe RequestMetadata
   }
   deriving (Eq, Show, Generic)
 
@@ -94,7 +94,7 @@ data StateTransactionItem a = StateTransactionItem
 
 data StateTransaction a = StateTransaction
   { operations :: [StateTransactionItem a],
-    metadata :: Maybe Metadata
+    metadata :: Maybe RequestMetadata
   }
   deriving (Eq, Show, Generic, ToJSON)
 
@@ -112,7 +112,7 @@ instance FromJSON a => FromJSON (StateQueryItem a) where
 data StateQueryResponse a = StateQueryResponse
   { results :: [StateQueryItem a],
     token :: Text,
-    metadata :: Maybe Metadata
+    metadata :: Maybe RequestMetadata
   }
   deriving (Eq, Show, Generic, FromJSON)
 
@@ -134,7 +134,7 @@ getState ::
   Text ->
   Text ->
   Maybe ConsistencyMode ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError a)
 getState config store key consistency metadata = do
   let url = ["state", store, key]
@@ -157,7 +157,7 @@ getBulkState ::
   Text ->
   [Text] ->
   Maybe Int ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError [BulkStateItem a])
 getBulkState config store keys parallelism metadata = do
   let url = ["state", store, "bulk"]
@@ -182,7 +182,7 @@ deleteState ::
   Maybe Text ->
   Maybe ConcurrencyMode ->
   Maybe ConsistencyMode ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError ())
 deleteState config store key etag concurrency consistency metadata = do
   let url = ["state", store, key]
@@ -198,13 +198,13 @@ deleteState config store key etag concurrency consistency metadata = do
 deleteStateSimple :: MonadIO m => DaprClientConfig -> Text -> Text -> m (Either DaprClientError ())
 deleteStateSimple config store key = deleteState config store key Nothing Nothing Nothing Nothing
 
-excuteStateTransaction ::
+executeStateTransaction ::
   (MonadIO m, ToJSON a) =>
   DaprClientConfig ->
   Text ->
   StateTransaction a ->
   m (Either DaprClientError ())
-excuteStateTransaction config store transaction = do
+executeStateTransaction config store transaction = do
   let url = ["state", store, "transaction"]
       options = header "Content-Type" "application/json"
   response <- makeRequest config POST url (ReqBodyJson transaction) ignoreResponse options
@@ -215,7 +215,7 @@ queryState ::
   DaprClientConfig ->
   Text ->
   Text ->
-  Maybe Metadata ->
+  Maybe RequestMetadata ->
   m (Either DaprClientError (StateQueryResponse a))
 queryState config store jsonQuery metadata = do
   let url = ["state", store, "query"]
