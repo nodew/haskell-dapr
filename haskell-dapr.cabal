@@ -32,7 +32,8 @@ library
       Dapr.HttpClient.DistributedLock
       Dapr.HttpClient.Health
       Dapr.HttpClient.Metadata
-      Dapr.HttpClient.Publisher
+      Dapr.HttpClient.PubSub
+      Dapr.HttpClient.Secrets
       Dapr.HttpClient.ServiceInvocation
       Dapr.HttpClient.StateManagement
   other-modules:

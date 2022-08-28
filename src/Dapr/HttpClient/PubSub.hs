@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-module Dapr.HttpClient.Publisher where
+module Dapr.HttpClient.PubSub where
 
 import Dapr.HttpClient.Core
 import Dapr.HttpClient.Internal
