@@ -86,14 +86,14 @@ data StateOperationRequest a = StateOperationRequest
 instance ToJSON a => ToJSON (StateOperationRequest a) where
   toJSON = customToJSON 5
 
-data StateTransaction a = StateTransaction
+data StateTransactionItem a = StateTransactionItem
   { operation :: StateOperation,
     request :: StateOperationRequest a
   }
   deriving (Eq, Show, Generic, ToJSON)
 
-data StateTransactionRequest a = StateTransactionRequest
-  { operations :: [StateTransaction a],
+data StateTransaction a = StateTransaction
+  { operations :: [StateTransactionItem a],
     metadata :: Maybe Metadata
   }
   deriving (Eq, Show, Generic, ToJSON)
@@ -202,7 +202,7 @@ excuteStateTransaction ::
   (MonadIO m, ToJSON a) =>
   DaprClientConfig ->
   Text ->
-  StateTransactionRequest a ->
+  StateTransaction a ->
   m (Either DaprClientError ())
 excuteStateTransaction config store transaction = do
   let url = ["state", store, "transaction"]

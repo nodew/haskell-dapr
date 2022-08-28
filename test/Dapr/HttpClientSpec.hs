@@ -58,9 +58,9 @@ spec = do
         excuteStateTransaction
           defaultDaprClientConfig
           "statestore"
-          ( StateTransactionRequest
-              [ StateTransaction Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
-                StateTransaction Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
+          ( StateTransaction
+              [ StateTransactionItem Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
+                StateTransactionItem Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
               ]
               Nothing
           )
