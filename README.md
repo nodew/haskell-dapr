@@ -1,10 +1,9 @@
 # haskell-dapr
 
-## Execute
+Bring [dapr](https://dapr.io/) to Haskell world.
 
-* Run `stack exec -- haskell-dapr-exe` to see "We're inside the application!"
-* With `stack exec -- haskell-dapr-exe --verbose` you will see the same message, with more logging.
+## TODO
 
-## Run tests
-
-`stack test`
+- [] Add more tests
+- [] Create a sample app
+- [] GRPC integration
