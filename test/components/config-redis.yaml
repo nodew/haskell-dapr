@@ -1,9 +1,10 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: statestore
+  name: config-redis
+  namespace: default
 spec:
-  type: state.redis
+  type: configuration.redis
   version: v1
   metadata:
   - name: redisHost
