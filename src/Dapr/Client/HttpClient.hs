@@ -1,5 +1,5 @@
 module Dapr.Client.HttpClient
-  ( module Core,
+  ( module Req,
     module Configuration,
     module DistributedLock,
     module Health,
@@ -12,7 +12,7 @@ module Dapr.Client.HttpClient
 where
 
 import Dapr.Client.HttpClient.Configuration as Configuration
-import Dapr.Client.HttpClient.Core as Core
+import Dapr.Client.HttpClient.Req as Req
 import Dapr.Client.HttpClient.DistributedLock as DistributedLock
 import Dapr.Client.HttpClient.Health as Health
 import Dapr.Client.HttpClient.Metadata as Metadata

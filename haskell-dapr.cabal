@@ -28,14 +28,23 @@ library
       Dapr.Client.HttpClient
       Dapr.Client.HttpClient.Actor
       Dapr.Client.HttpClient.Configuration
-      Dapr.Client.HttpClient.Core
       Dapr.Client.HttpClient.DistributedLock
       Dapr.Client.HttpClient.Health
       Dapr.Client.HttpClient.Metadata
       Dapr.Client.HttpClient.PubSub
+      Dapr.Client.HttpClient.Req
       Dapr.Client.HttpClient.Secrets
       Dapr.Client.HttpClient.ServiceInvocation
       Dapr.Client.HttpClient.StateManagement
+      Dapr.Common
+      Dapr.Common.Configuration
+      Dapr.Common.Core
+      Dapr.Common.DistributedLock
+      Dapr.Common.Internal
+      Dapr.Common.Metadata
+      Dapr.Common.PubSub
+      Dapr.Common.Secrets
+      Dapr.Common.State
   other-modules:
       Dapr.Client.HttpClient.Internal
   hs-source-dirs:

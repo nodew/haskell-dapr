@@ -2,26 +2,17 @@
 
 module Dapr.Client.HttpClient.PubSub where
 
-import Dapr.Client.HttpClient.Core
 import Dapr.Client.HttpClient.Internal
+import Dapr.Client.HttpClient.Req
+import Dapr.Common
 import Data.Aeson
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 import RIO
 
-data Subscrption = Subscrption
-  { pubsubname :: Text,
-    topic :: Text,
-    route :: Text,
-    metadata :: RequestMetadata
-  }
-  deriving (Eq, Show, Generic)
-
-instance ToJSON Subscrption
-
 publishMessage ::
   (MonadIO m, HttpBody body) =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   Text ->
   body ->
@@ -32,12 +23,12 @@ publishMessage config pubsubname topic message optionalHeader metadata = do
   let url = ["pubsubname", pubsubname, topic]
       metadataParam = mapMetadataToQueryParam metadata
       options = metadataParam <> optionalHeader
-  response <- makeRequest config POST url message ignoreResponse options
+  response <- makeHttpRequest config POST url message ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
 publishJsonMessage ::
   (MonadIO m, ToJSON a) =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   Text ->
   a ->
@@ -48,7 +39,7 @@ publishJsonMessage config pubsubname topic message =
 
 publishTextMessage ::
   MonadIO m =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   Text ->
   Text ->
@@ -59,7 +50,7 @@ publishTextMessage config pubsubname topic message =
 
 publishCloudEvent ::
   (MonadIO m, ToJSON a) =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   Text ->
   a ->
@@ -68,9 +59,9 @@ publishCloudEvent ::
 publishCloudEvent config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")
 
-subscribeMessage :: MonadIO m => DaprClientConfig -> [Subscrption] -> m (Either DaprClientError ())
-subscribeMessage config subscrptions = do
-  let url = ["darp", "subscribe"]
+subscribeMessage :: MonadIO m => DaprConfig -> [SubscriptionInfo] -> m (Either DaprClientError ())
+subscribeMessage config subscriptions = do
+  let url = ["dapr", "subscribe"]
       options = header "Content-Type" "application/json"
-  response <- makeRequest config POST url (ReqBodyJson subscrptions) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson subscriptions) ignoreResponse options
   return $ bimap DaprHttpException (const ()) response

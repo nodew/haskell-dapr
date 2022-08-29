@@ -1,6 +1,7 @@
 module Dapr.Client.HttpClient.ServiceInvocation where
 
-import Dapr.Client.HttpClient.Core
+import Dapr.Common
+import Dapr.Client.HttpClient.Req
 import Data.Aeson
 import Network.HTTP.Req
 import RIO
@@ -12,7 +13,7 @@ invokeMethod ::
     HttpMethod method,
     HttpBody payload
   ) =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   method ->
   [Text] ->
@@ -21,7 +22,7 @@ invokeMethod ::
   m (Either DaprClientError LbsResponse)
 invokeMethod config appId httpMethod path payload options = do
   let url = ["invoke", appId, "method"] <> path
-  response <- makeRequest config httpMethod url payload lbsResponse options
+  response <- makeHttpRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
 invokeMethod' ::
@@ -31,7 +32,7 @@ invokeMethod' ::
     ToJSON a,
     FromJSON b
   ) =>
-  DaprClientConfig ->
+  DaprConfig ->
   Text ->
   method ->
   [Text] ->
@@ -50,5 +51,5 @@ invokeMethod' config appId httpMethod path payload options = do
     Left err -> return $ Left err
     Right body -> do
       case eitherDecode (responseBody body) of
-        Left err -> return $ Left $ AesonDecodeError (T.pack err)
+        Left err -> return $ Left $ JsonDecodeError (T.pack err)
         Right result -> return $ Right result

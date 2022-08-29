@@ -1,47 +1,31 @@
-module Dapr.Client.HttpClient.Core where
+module Dapr.Client.HttpClient.Req where
 
+import Dapr.Common
 import Network.HTTP.Req
 import RIO
 
-data DaprClientConfig = DaprClientConfig
-  { daprHost :: Text,
-    daprPort :: Int,
-    daprApiVersion :: Text
-  }
-  deriving (Show)
-
 data DaprClientError
   = DaprHttpException HttpException
-  | AesonDecodeError Text
+  | JsonDecodeError Text
   | NotFound
   | UnknownError
   deriving (Show)
 
-type RequestMetadata = Map Text Text
-
-defaultDaprClientConfig :: DaprClientConfig
-defaultDaprClientConfig =
-  DaprClientConfig
-    { daprHost = "localhost",
-      daprPort = 3500,
-      daprApiVersion = "v1.0"
-    }
-
-makeRequest ::
+makeHttpRequest ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
     MonadIO m,
     HttpMethod method,
     HttpBody body,
-    HttpResponse a
+    HttpResponse response
   ) =>
-  DaprClientConfig ->
+  DaprConfig ->
   method ->
   [Text] ->
   body ->
-  Proxy a ->
+  Proxy response ->
   Option 'Http ->
-  m (Either HttpException a)
-makeRequest config method subUrl reqBody responseHandler options = runReq defaultHttpConfig $ do
+  m (Either HttpException response)
+makeHttpRequest config method subUrl reqBody responseHandler options = runReq defaultHttpConfig $ do
   let host = daprHost config
       apiVersion = daprApiVersion config
       defaultOptions = port $ daprPort config
