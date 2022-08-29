@@ -1,6 +1,6 @@
-module Dapr.HttpClient.DistributedLock where
+module Dapr.Client.HttpClient.DistributedLock where
 
-import Dapr.HttpClient.Core (DaprClientConfig, DaprClientError (DaprHttpException), makeRequest)
+import Dapr.Client.HttpClient.Core (DaprClientConfig, DaprClientError (DaprHttpException), makeRequest)
 import Data.Aeson
 import Network.HTTP.Req
 import RIO

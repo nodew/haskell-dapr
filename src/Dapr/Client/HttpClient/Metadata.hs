@@ -1,7 +1,7 @@
-module Dapr.HttpClient.Metadata where
+module Dapr.Client.HttpClient.Metadata where
 
-import Dapr.HttpClient.Core
-import Dapr.HttpClient.Internal
+import Dapr.Client.HttpClient.Core
+import Dapr.Client.HttpClient.Internal
 import Data.Aeson
 import Network.HTTP.Req
 import RIO

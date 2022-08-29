@@ -1,7 +1,7 @@
-module Dapr.HttpClient.Secrets where
+module Dapr.Client.HttpClient.Secrets where
 
-import Dapr.HttpClient.Core
-import Dapr.HttpClient.Internal
+import Dapr.Client.HttpClient.Core
+import Dapr.Client.HttpClient.Internal
 import Network.HTTP.Req
 import RIO
 

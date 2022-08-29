@@ -3,4 +3,4 @@ cradle:
     - path: "./src"
       component: "haskell-dapr:lib"
     - path: "./test"
-      component: "haskell-dapr:test:haskell-dapr-test"
+      component: "haskell-dapr:test:haskell-dapr-test-e2e"

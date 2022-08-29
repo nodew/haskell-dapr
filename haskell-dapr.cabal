@@ -25,19 +25,19 @@ source-repository head
 
 library
   exposed-modules:
-      Dapr.HttpClient
-      Dapr.HttpClient.Actor
-      Dapr.HttpClient.Configuration
-      Dapr.HttpClient.Core
-      Dapr.HttpClient.DistributedLock
-      Dapr.HttpClient.Health
-      Dapr.HttpClient.Metadata
-      Dapr.HttpClient.PubSub
-      Dapr.HttpClient.Secrets
-      Dapr.HttpClient.ServiceInvocation
-      Dapr.HttpClient.StateManagement
+      Dapr.Client.HttpClient
+      Dapr.Client.HttpClient.Actor
+      Dapr.Client.HttpClient.Configuration
+      Dapr.Client.HttpClient.Core
+      Dapr.Client.HttpClient.DistributedLock
+      Dapr.Client.HttpClient.Health
+      Dapr.Client.HttpClient.Metadata
+      Dapr.Client.HttpClient.PubSub
+      Dapr.Client.HttpClient.Secrets
+      Dapr.Client.HttpClient.ServiceInvocation
+      Dapr.Client.HttpClient.StateManagement
   other-modules:
-      Dapr.HttpClient.Internal
+      Dapr.Client.HttpClient.Internal
   hs-source-dirs:
       src
   default-extensions:
@@ -63,14 +63,14 @@ library
     , text
   default-language: Haskell2010
 
-test-suite haskell-dapr-test
+test-suite haskell-dapr-test-e2e
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Dapr.HttpClientSpec
+      Dapr.Client.HttpClientSpec
       Paths_haskell_dapr
   hs-source-dirs:
-      test
+      test/e2e
   default-extensions:
       NoImplicitPrelude
       OverloadedStrings

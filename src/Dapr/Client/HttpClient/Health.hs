@@ -1,6 +1,6 @@
-module Dapr.HttpClient.Health where
+module Dapr.Client.HttpClient.Health where
 
-import Dapr.HttpClient.Core
+import Dapr.Client.HttpClient.Core
 import Network.HTTP.Req
 import RIO
 

@@ -1,14 +1,13 @@
-module Dapr.HttpClientSpec where
+module Dapr.Client.HttpClientSpec where
 
-import Dapr.HttpClient
+import Dapr.Client.HttpClient
 import Data.List (head)
 import RIO
 import Test.Hspec
-import Prelude (putStrLn)
 
 spec :: Spec
 spec = do
-  describe "Health" $ do
+  describe "Health check" $ do
     it "Dapr service is Health" $ do
       r <- checkHealth defaultDaprClientConfig
       r `shouldBe` Healthy
@@ -37,7 +36,6 @@ spec = do
 
     it "Get bulk states" $ do
       r <- getBulkState defaultDaprClientConfig "statestore" ["key", "key1"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])
-      putStrLn $ show r
       isRight r `shouldBe` True
       let items = fromRight [] r
       length items `shouldBe` 2
@@ -55,7 +53,7 @@ spec = do
 
     it "Execute transaction" $ do
       r <-
-        excuteStateTransaction
+        executeStateTransaction
           defaultDaprClientConfig
           "statestore"
           ( StateTransaction

@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-module Dapr.HttpClient.Actor where
+module Dapr.Client.HttpClient.Actor where
 
-import Dapr.HttpClient.Core
-import Dapr.HttpClient.Internal
+import Dapr.Client.HttpClient.Core
+import Dapr.Client.HttpClient.Internal
 import Data.Aeson
 import qualified Data.Text as T
 import Network.HTTP.Req

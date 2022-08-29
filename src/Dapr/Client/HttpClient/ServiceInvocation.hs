@@ -1,6 +1,6 @@
-module Dapr.HttpClient.ServiceInvocation where
+module Dapr.Client.HttpClient.ServiceInvocation where
 
-import Dapr.HttpClient.Core
+import Dapr.Client.HttpClient.Core
 import Data.Aeson
 import Network.HTTP.Req
 import RIO

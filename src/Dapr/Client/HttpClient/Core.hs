@@ -1,4 +1,4 @@
-module Dapr.HttpClient.Core where
+module Dapr.Client.HttpClient.Core where
 
 import Network.HTTP.Req
 import RIO

@@ -53,12 +53,12 @@ default-extensions:
 library:
   source-dirs: src
   other-modules:
-  - Dapr.HttpClient.Internal
+  - Dapr.Client.HttpClient.Internal
 
 tests:
-  haskell-dapr-test:
+  haskell-dapr-test-e2e:
     main: Spec.hs
-    source-dirs: test
+    source-dirs: test/e2e
     dependencies:
       - haskell-dapr
       - hspec

@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-module Dapr.HttpClient.StateManagement where
+module Dapr.Client.HttpClient.StateManagement where
 
-import Dapr.HttpClient.Core
-import Dapr.HttpClient.Internal
+import Dapr.Client.HttpClient.Core
+import Dapr.Client.HttpClient.Internal
 import Data.Aeson
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T

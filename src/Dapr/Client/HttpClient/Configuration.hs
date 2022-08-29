@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-module Dapr.HttpClient.Configuration where
+module Dapr.Client.HttpClient.Configuration where
 
-import Dapr.HttpClient.Core
-import Dapr.HttpClient.Internal
+import Dapr.Client.HttpClient.Core
+import Dapr.Client.HttpClient.Internal
 import Data.Aeson
 import Network.HTTP.Req
 import RIO
