@@ -2,8 +2,8 @@ module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
 import Dapr.Common
-import Data.List (head)
-import RIO
+import Data.Either
+import Data.Text (Text)
 import Test.Hspec
 
 spec :: Spec

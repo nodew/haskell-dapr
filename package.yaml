@@ -23,13 +23,10 @@ dependencies:
   - base >= 4.11 && < 10
   - aeson
   - bytestring
-  - hashmap
-  - http-api-data
-  - http-client
-  - http-client-tls
-  - http-types
+  - containers
+  - exceptions
+  - extra
   - req
-  - rio
   - reflection
   - text
 
@@ -43,7 +40,6 @@ ghc-options:
   - -Wredundant-constraints
 
 default-extensions:
-  - NoImplicitPrelude
   - OverloadedStrings
   - DataKinds
   - DeriveGeneric
@@ -54,6 +50,7 @@ library:
   source-dirs: src
   other-modules:
   - Dapr.Client.HttpClient.Internal
+  - Dapr.Common.Internal
 
 tests:
   haskell-dapr-test-e2e:

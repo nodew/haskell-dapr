@@ -1,6 +1,7 @@
 module Dapr.Common.Secrets where
 
-import RIO
+import Data.Map (Map)
+import Data.Text (Text)
 
 type Secrets = Map Text Text
 

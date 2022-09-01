@@ -1,10 +1,12 @@
 module Dapr.Client.HttpClient.Secrets where
 
-import Dapr.Common
-import Dapr.Client.HttpClient.Req
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
+import Dapr.Client.HttpClient.Req
+import Dapr.Common
+import Data.Bifunctor (bimap)
+import Data.Text (Text)
 import Network.HTTP.Req
-import RIO
 
 getSecrets :: MonadIO m => DaprConfig -> Text -> Text -> Maybe RequestMetadata -> m (Either DaprClientError Secrets)
 getSecrets config store name metadata = do

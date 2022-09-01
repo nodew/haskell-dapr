@@ -1,8 +1,11 @@
 module Dapr.Client.HttpClient.Req where
 
+import Control.Monad.Catch
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Common
+import Data.Data (Proxy)
+import Data.Text (Text)
 import Network.HTTP.Req
-import RIO
 
 data DaprClientError
   = DaprHttpException HttpException

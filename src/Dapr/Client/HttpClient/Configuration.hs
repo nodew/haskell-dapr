@@ -2,10 +2,12 @@
 
 module Dapr.Client.HttpClient.Configuration where
 
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Common
+import Data.Bifunctor (bimap)
+import Data.Text (Text)
 import Network.HTTP.Req
-import RIO
 
 getConfiguration :: MonadIO m => DaprConfig -> Text -> [Text] -> m (Either DaprClientError [Configuration])
 getConfiguration config store keys = do

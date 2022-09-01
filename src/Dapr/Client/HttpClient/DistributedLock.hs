@@ -1,9 +1,11 @@
 module Dapr.Client.HttpClient.DistributedLock where
 
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Common
+import Data.Bifunctor (bimap)
+import Data.Text (Text)
 import Network.HTTP.Req
-import RIO
 
 lock :: MonadIO m => DaprConfig -> Text -> LockRequest -> m (Either DaprClientError LockResponseBody)
 lock config store body = do

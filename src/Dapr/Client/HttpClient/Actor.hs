@@ -2,12 +2,16 @@
 
 module Dapr.Client.HttpClient.Actor where
 
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Common
 import Dapr.Common.Internal
 import Data.Aeson
+import Data.Bifunctor (Bifunctor (bimap), first)
+import Data.Data (Proxy)
+import Data.Text (Text)
+import GHC.Generics (Generic)
 import Network.HTTP.Req
-import RIO
 
 data ActorOperationRequest a = ActorOperationRequest
   { key :: Text,

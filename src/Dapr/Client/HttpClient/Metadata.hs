@@ -1,9 +1,10 @@
 module Dapr.Client.HttpClient.Metadata where
 
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Common
+import Data.Bifunctor (bimap)
 import Network.HTTP.Req
-import RIO
 
 getMetadata :: MonadIO m => DaprConfig -> m (Either DaprClientError DaprMetadata)
 getMetadata config = do

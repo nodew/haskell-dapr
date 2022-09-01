@@ -2,7 +2,9 @@ module Dapr.Common.Metadata where
 
 import Dapr.Common.Internal
 import Data.Aeson
-import RIO
+import Data.Map (Map)
+import Data.Text (Text)
+import GHC.Generics (Generic)
 
 data DaprMetadata = DaprMetadata
   { metadataId :: Text,

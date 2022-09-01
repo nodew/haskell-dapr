@@ -1,7 +1,8 @@
 module Dapr.Common.DistributedLock where
 
-import RIO
 import Data.Aeson
+import Data.Text (Text)
+import GHC.Generics (Generic)
 
 data LockRequest = LockRequest
   { resourceId :: Text,

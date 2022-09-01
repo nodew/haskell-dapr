@@ -1,11 +1,13 @@
 module Dapr.Client.HttpClient.ServiceInvocation where
 
-import Dapr.Common
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
+import Dapr.Common
 import Data.Aeson
-import Network.HTTP.Req
-import RIO
+import Data.Bifunctor (first)
+import Data.Text (Text)
 import qualified Data.Text as T
+import Network.HTTP.Req
 
 invokeMethod ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody payload),
@@ -40,13 +42,14 @@ invokeMethod' ::
   Option 'Http ->
   m (Either DaprClientError b)
 invokeMethod' config appId httpMethod path payload options = do
-  response <- invokeMethod
-    config
-    appId
-    httpMethod
-    path
-    (ReqBodyJson payload)
-    (options <> header "Accept" "application/json" <> header "Content-Type" "application/json")
+  response <-
+    invokeMethod
+      config
+      appId
+      httpMethod
+      path
+      (ReqBodyJson payload)
+      (options <> header "Accept" "application/json" <> header "Content-Type" "application/json")
   case response of
     Left err -> return $ Left err
     Right body -> do

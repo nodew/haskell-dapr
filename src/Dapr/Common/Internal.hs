@@ -5,7 +5,6 @@ import Data.Aeson
 import Data.Aeson.Types
 import Data.Char (toLower)
 import GHC.Generics
-import RIO
 
 lowerFirstLetter :: String -> String
 lowerFirstLetter [] = []

@@ -4,8 +4,7 @@ module Dapr.Client.HttpClient.Internal where
 
 import Dapr.Common
 import Network.HTTP.Req
-import RIO
-import RIO.Map hiding (drop)
+import Data.Map.Strict (foldlWithKey)
 
 mapMetadataToQueryParam :: Maybe RequestMetadata -> Option 'Http
 mapMetadataToQueryParam =

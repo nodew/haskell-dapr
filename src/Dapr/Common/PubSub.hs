@@ -1,8 +1,9 @@
 module Dapr.Common.PubSub where
 
-import RIO
 import Data.Aeson
 import Dapr.Common.Core
+import Data.Text (Text)
+import GHC.Generics (Generic)
 
 data SubscriptionInfo = SubscriptionInfo
   { pubsubname :: Text,

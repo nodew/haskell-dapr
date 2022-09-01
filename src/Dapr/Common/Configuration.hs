@@ -2,7 +2,8 @@ module Dapr.Common.Configuration where
 
 import Dapr.Common.Internal
 import Data.Aeson
-import RIO
+import Data.Text (Text)
+import GHC.Generics (Generic)
 
 data Configuration = Configuration
   { configKey :: Text,

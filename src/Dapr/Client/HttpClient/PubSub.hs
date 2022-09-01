@@ -2,13 +2,15 @@
 
 module Dapr.Client.HttpClient.PubSub where
 
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Common
 import Data.Aeson
+import Data.Bifunctor (bimap)
+import Data.Text (Text)
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
-import RIO
 
 publishMessage ::
   (MonadIO m, HttpBody body) =>

@@ -3,8 +3,10 @@ module Dapr.Common.State where
 import Dapr.Common.Core
 import Dapr.Common.Internal
 import Data.Aeson
+import Data.Map (Map)
+import Data.Text (Text)
 import qualified Data.Text as T
-import RIO
+import GHC.Generics (Generic)
 
 data SaveStateOptions = SaveStateOptions
   { concurrency :: ConcurrencyMode,

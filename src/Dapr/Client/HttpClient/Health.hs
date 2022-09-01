@@ -1,9 +1,9 @@
 module Dapr.Client.HttpClient.Health where
 
-import Dapr.Common
+import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
+import Dapr.Common
 import Network.HTTP.Req
-import RIO
 
 checkHealth :: (MonadIO m) => DaprConfig -> m DaprHealthStatus
 checkHealth config = do
