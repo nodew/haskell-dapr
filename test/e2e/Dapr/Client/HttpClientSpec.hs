@@ -22,21 +22,21 @@ spec = do
 
   describe "State management" $ do
     it "Save state" $ do
-      r <- saveState defaultDaprConfig "statestore" [makeSimpleSaveStateRequest "key" ("value" :: Text)]
+      r <- saveState defaultDaprConfig "state-redis" [makeSimpleSaveStateRequest "key" ("value" :: Text)]
       isRight r `shouldBe` True
 
     it "Get state" $ do
-      r <- getState defaultDaprConfig "statestore" "key" Nothing Nothing
+      r <- getState defaultDaprConfig "state-redis" "key" Nothing Nothing
       isRight r `shouldBe` True
       let d = head $ rights [r]
       d `shouldBe` ("value" :: Text)
 
     it "Get state with non-existed key" $ do
-      r <- getState defaultDaprConfig "statestore" "key-not-exist" Nothing Nothing :: IO (Either DaprClientError Text)
+      r <- getState defaultDaprConfig "state-redis" "key-not-exist" Nothing Nothing :: IO (Either DaprClientError Text)
       isLeft r `shouldBe` True
 
     it "Get bulk states" $ do
-      r <- getBulkState defaultDaprConfig "statestore" ["key", "key1"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])
+      r <- getBulkState defaultDaprConfig "state-redis" ["key", "key1"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])
       isRight r `shouldBe` True
       let items = fromRight [] r
       length items `shouldBe` 2
@@ -45,18 +45,18 @@ spec = do
       val `shouldBe` Just "value"
 
     it "Delete state" $ do
-      r <- deleteState defaultDaprConfig "statestore" "key" Nothing Nothing Nothing Nothing
+      r <- deleteState defaultDaprConfig "state-redis" "key" Nothing Nothing Nothing Nothing
       isRight r `shouldBe` True
 
     it "Delete state with non-existed key" $ do
-      r <- deleteState defaultDaprConfig "statestore" "key1" Nothing Nothing Nothing Nothing :: IO (Either DaprClientError ())
+      r <- deleteState defaultDaprConfig "state-redis" "key1" Nothing Nothing Nothing Nothing :: IO (Either DaprClientError ())
       isRight r `shouldBe` True
 
     it "Execute transaction" $ do
       r <-
         executeStateTransaction
           defaultDaprConfig
-          "statestore"
+          "state-redis"
           ( StateTransaction
               [ StateOperation Upsert (StateOperationRequest "key" (Just ("value" :: Text)) Nothing Nothing Nothing),
                 StateOperation Delete (StateOperationRequest "key1" Nothing Nothing Nothing Nothing)
