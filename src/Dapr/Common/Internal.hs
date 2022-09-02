@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+
 module Dapr.Common.Internal where
 
 import Data.Aeson
