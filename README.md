@@ -27,6 +27,8 @@ cd haskell-dapr
 #### Init dapr
 
 ```bash
+dapr init
+
 dapr run --app-id haskell-dapr --dapr-http-port 3500 --components-path ./test/components
 ```
 
