@@ -10,6 +10,7 @@ import qualified Data.Text.Lazy.Encoding as T
 import System.FilePath ((</>))
 import Test.Hspec
 import Test.Hspec.Golden
+
 goldenBaseDir :: FilePath
 goldenBaseDir = "test" </> "unit" </> ".golden"
 
