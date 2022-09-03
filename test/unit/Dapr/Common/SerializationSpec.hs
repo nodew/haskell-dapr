@@ -35,7 +35,7 @@ spec = do
               { stateQueryFilter =
                   OrFilter
                     [ EqFilter $ fromList [("person.org", "Dev Ops")],
-                      AndFilter $
+                      AndFilter
                         [ EqFilter $ fromList [("person.org", "Finance")],
                           InFilter $ fromList [("state", ["CA", "WA"])]
                         ]
