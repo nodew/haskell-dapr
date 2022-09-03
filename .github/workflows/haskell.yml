@@ -20,6 +20,20 @@ jobs:
       DAPR_INSTALL_URL: https://raw.githubusercontent.com/dapr/cli/3dacfb672d55f1436c249057aaebbe597e1066f3/install/install.sh
       DAPR_CLI_REF: ''
       DAPR_REF: ''
+    services:
+      emqx:
+        image: emqx/emqx
+        ports:
+          - 1883:1883
+          - 8081:8081
+          - 8083:8083
+          - 8883:8883
+          # - 8084:8084 // this port is already used?
+          - 18083:18083
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
     steps:
     # Workaround for add-path command. See: https://github.blog/changelog/2020-10-01-github-actions-deprecating-set-env-and-add-path-commands/
     - name: Allow Add to Path Command 
