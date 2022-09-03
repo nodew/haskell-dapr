@@ -1,0 +1,107 @@
+name: Haskell CI
+
+on:
+  push:
+    branches: [ "master", "release-*" ]
+  pull_request:
+    branches: [ "master", "release-*"]
+
+jobs:
+  build-test-e2e:
+    runs-on: ubuntu-latest
+    env:
+      NUPKG_OUTDIR: bin/Release/nugets
+      GOVER: 1.17
+      GOOS: linux
+      GOARCH: amd64
+      GOPROXY: https://proxy.golang.org
+      DAPR_CLI_VER: 1.8.0
+      DAPR_RUNTIME_VER: 1.8.0
+      DAPR_INSTALL_URL: https://raw.githubusercontent.com/dapr/cli/3dacfb672d55f1436c249057aaebbe597e1066f3/install/install.sh
+      DAPR_CLI_REF: ''
+      DAPR_REF: ''
+    services:
+      emqx:
+        image: emqx/emqx
+        ports:
+          - 1883:1883
+          - 8081:8081
+          - 8083:8083
+          - 8883:8883
+          # - 8084:8084 // this port is already used?
+          - 18083:18083
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+    steps:
+    # Workaround for add-path command. See: https://github.blog/changelog/2020-10-01-github-actions-deprecating-set-env-and-add-path-commands/
+    - name: Allow Add to Path Command 
+      run: 'echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV'
+      
+    - uses: actions/checkout@v3
+    - uses: mstksg/setup-stack@v2
+
+    - name: Install dependencies
+      run: |
+        stack install hpack
+    - name: Build
+      run: stack build
+      
+    # Dapr Setup
+    - name: Set up Dapr CLI
+      run: wget -q ${{ env.DAPR_INSTALL_URL }} -O - | /bin/bash -s ${{ env.DAPR_CLI_VER }}
+
+    - name: Set up Go ${{ env.GOVER }}
+      if: env.DAPR_REF != '' || env.DAPR_CLI_REF != ''
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ env.GOVER }}
+
+    - name: Checkout Dapr CLI repo to custom reference
+      uses: actions/checkout@v2
+      if: env.DAPR_CLI_REF != ''
+      with:
+        repository: dapr/cli
+        ref: ${{ env.DAPR_CLI_REF }}
+        path: cli
+
+    - name: Checkout Dapr runtime repo to custom reference
+      uses: actions/checkout@v2
+      if: env.DAPR_REF != ''
+      with:
+        repository: dapr/dapr
+        ref: ${{ env.DAPR_REF }}
+        path: dapr
+
+    - name: Build and override dapr cli with referenced commit
+      if: env.DAPR_CLI_REF != ''
+      run: |
+        cd cli
+        make
+        sudo cp dist/linux_amd64/release/dapr /usr/local/bin/dapr
+        cd ..
+    - name: Initialize Dapr runtime ${{ env.DAPR_RUNTIME_VER }}
+      run: |
+        dapr uninstall --all
+        dapr init --runtime-version ${{ env.DAPR_RUNTIME_VER }}
+    - name: Build and override daprd with referenced commit.
+      if: env.DAPR_REF != ''
+      run: |
+        cd dapr
+        make
+        mkdir -p $HOME/.dapr/bin/
+        cp dist/linux_amd64/release/daprd $HOME/.dapr/bin/daprd
+        cd ..
+    - name: Override placement service.
+      if: env.DAPR_REF != ''
+      run: |
+        docker stop dapr_placement
+        cd dapr
+        ./dist/linux_amd64/release/placement &   
+
+    - name: Run Dapr
+      run: dapr run --app-id haskell-dapr --dapr-http-port 3500 --components-path ./test/components &
+    
+    - name: Run e2e Tests
+      run: stack test
