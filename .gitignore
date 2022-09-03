@@ -3,3 +3,4 @@
 tarballs/
 .stack-work/
 .vscode
+**/.golden/**/*.actual

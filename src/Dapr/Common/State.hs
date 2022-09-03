@@ -99,11 +99,11 @@ data StateQueryResponse a = StateQueryResponse
   }
   deriving (Eq, Show, Generic, FromJSON)
 
-data StateQueryOrder = Asc | Desc deriving (Eq)
+data StateQueryOrder = StateQueryOrderAsc | StateQueryOrderDesc deriving (Eq)
 
 instance Show StateQueryOrder where
-  show Asc = "asc"
-  show Desc = "desc"
+  show StateQueryOrderAsc = "ASC"
+  show StateQueryOrderDesc = "DESC"
 
 instance ToJSON StateQueryOrder where
   toJSON = Data.Aeson.String . T.pack . show

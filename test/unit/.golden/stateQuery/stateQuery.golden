@@ -1,0 +1,42 @@
+{
+    "filter": {
+        "OR": [
+            {
+                "EQ": {
+                    "person.org": "Dev Ops"
+                }
+            },
+            {
+                "AND": [
+                    {
+                        "EQ": {
+                            "person.org": "Finance"
+                        }
+                    },
+                    {
+                        "IN": {
+                            "state": [
+                                "CA",
+                                "WA"
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "page": {
+        "limit": 10,
+        "token": null
+    },
+    "sort": [
+        {
+            "key": "state",
+            "order": "DESC"
+        },
+        {
+            "key": "person.id",
+            "order": null
+        }
+    ]
+}
