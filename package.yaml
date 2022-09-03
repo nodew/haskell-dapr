@@ -66,3 +66,20 @@ tests:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
+
+  haskell-dapr-test-unit:
+    main: Spec.hs
+    source-dirs: test/unit
+    dependencies:
+      - aeson-pretty
+      - haskell-dapr
+      - hspec
+      - hspec-core
+      - hspec-golden
+      - filepath
+      - QuickCheck
+
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
