@@ -3,8 +3,8 @@
 module Dapr.Client.HttpClient.Internal where
 
 import Dapr.Common
-import Network.HTTP.Req
 import Data.Map.Strict (foldlWithKey)
+import Network.HTTP.Req
 
 mapMetadataToQueryParam :: Maybe RequestMetadata -> Option 'Http
 mapMetadataToQueryParam =
