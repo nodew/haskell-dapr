@@ -84,15 +84,15 @@ jobs:
 
     # Dapr Setup
     - name: Set up Dapr CLI on Linux
-      if: matrix.os == "linux-latest"
+      if: matrix.os == 'linux-latest'
       run: wget -q ${{ env.DAPR_INSTALL_URL }} -O - | /bin/bash -s ${{ env.DAPR_CLI_VER }}
 
     - name: Set up Dapr CLI on Windows
-      if: matrix.os == "windows-latest"
+      if: matrix.os == 'windows-latest'
       run: powershell -Command "$script=iwr -useb ${{ env.DAPR_INSTALL_URL }}; $block=[ScriptBlock]::Create($script); invoke-command -ScriptBlock $block -ArgumentList ${{ env.DAPR_CLI_VER }}"
 
     - name: Set up Dapr CLI on MacOS
-      if: matrix.os == "macos-latest"
+      if: matrix.os == 'macos-latest'
       run: curl -fsSL ${{ env.DAPR_INSTALL_URL }} | /bin/bash -s ${{ env.DAPR_CLI_VER }}
 
     - name: Set up Go ${{ env.GOVER }}
