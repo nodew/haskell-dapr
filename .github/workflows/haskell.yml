@@ -11,7 +11,7 @@ jobs:
     name: Validate ${{ matrix.os }} ghc-${{ matrix.ghc }}
     strategy:
       matrix:
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
         ghc: ["9.4.2", "9.0.2", "8.10.7", "8.8.4", "8.6.5"]
         cabal: ["3.8.1.0"]
         exclude:
