@@ -56,7 +56,7 @@ library
   build-depends:
       aeson >=2.0.3 && <2.2
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.11
+    , bytestring >=0.10.12 && <0.12
     , containers >=0.6.4 && <0.7
     , exceptions >=0.10.4 && <0.11
     , extra >=1.7.10 && <1.8
@@ -83,7 +83,7 @@ test-suite dapr-http-client-test-e2e
       QuickCheck >=2.14.0 && <2.15
     , aeson >=2.0.3 && <2.2
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.11
+    , bytestring >=0.10.12 && <0.12
     , containers >=0.6.4 && <0.7
     , dapr-http-client
     , exceptions >=0.10.4 && <0.11
@@ -114,7 +114,7 @@ test-suite dapr-http-client-test-unit
     , aeson >=2.0.3 && <2.2
     , aeson-pretty >=0.8.9 && <0.9
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.11
+    , bytestring >=0.10.12 && <0.12
     , containers >=0.6.4 && <0.7
     , dapr-http-client
     , exceptions >=0.10.4 && <0.11
