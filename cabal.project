@@ -1,4 +1,2 @@
 packages:
   ./dapr-http-client
-
-tests: true
