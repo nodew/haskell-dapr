@@ -11,7 +11,7 @@ jobs:
     name: Validate ${{ matrix.os }} ghc-${{ matrix.ghc }}
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
         ghc: ["9.4.2", "9.0.2", "8.10.7", "8.8.4", "8.6.5"]
         cabal: ["3.8.1.0"]
         exclude:
@@ -91,10 +91,6 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: powershell -Command "$script=iwr -useb ${{ env.DAPR_INSTALL_URL }}; $block=[ScriptBlock]::Create($script); invoke-command -ScriptBlock $block -ArgumentList ${{ env.DAPR_CLI_VER }}"
 
-    - name: Set up Dapr CLI on MacOS
-      if: matrix.os == 'macos-latest'
-      run: curl -fsSL ${{ env.DAPR_INSTALL_URL }} | /bin/bash -s ${{ env.DAPR_CLI_VER }}
-
     - name: Set up Go ${{ env.GOVER }}
       if: env.DAPR_REF != '' || env.DAPR_CLI_REF != ''
       uses: actions/setup-go@v2
@@ -124,10 +120,12 @@ jobs:
         make
         sudo cp dist/linux_amd64/release/dapr /usr/local/bin/dapr
         cd ..
+
     - name: Initialize Dapr runtime ${{ env.DAPR_RUNTIME_VER }}
       run: |
         dapr uninstall --all
         dapr init --runtime-version ${{ env.DAPR_RUNTIME_VER }}
+
     - name: Build and override daprd with referenced commit.
       if: env.DAPR_REF != ''
       run: |
@@ -136,6 +134,7 @@ jobs:
         mkdir -p $HOME/.dapr/bin/
         cp dist/linux_amd64/release/daprd $HOME/.dapr/bin/daprd
         cd ..
+
     - name: Override placement service.
       if: env.DAPR_REF != ''
       run: |
