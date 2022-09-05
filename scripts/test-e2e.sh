@@ -11,8 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export TEST_SECRET_1=secret_val_1 TEST_SECRET_2=secret_val_2
-
 ./scripts/test-init.sh
 
 # Start HTTP tests
