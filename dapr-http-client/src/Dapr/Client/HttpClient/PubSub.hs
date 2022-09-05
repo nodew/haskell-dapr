@@ -60,4 +60,3 @@ publishCloudEvent ::
   m (Either DaprClientError ())
 publishCloudEvent config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")
-

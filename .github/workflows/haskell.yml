@@ -109,7 +109,7 @@ jobs:
         ./dist/linux_amd64/release/placement &
 
     - name: Run Dapr
-      run: dapr run --app-id haskell-dapr --dapr-http-port 3500 --components-path ./test/components &
+      run: dapr run --app-id haskell-dapr --dapr-http-port 3500 --components-path ./components &
 
     - name: Run tests
       run: cabal v2-test all
