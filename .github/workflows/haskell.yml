@@ -24,7 +24,7 @@ jobs:
           # it often randomly does "C:\Users\RUNNER~1\AppData\Local\Temp\ghcFEDE.c: DeleteFile "\\\\?\\C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\ghcFEDE.c": permission denied (Access is denied.)"
           - os: "windows-latest"
             ghc: "8.6.5"
-    runs-on: {{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     env:
       NUPKG_OUTDIR: bin/Release/nugets
       GOVER: 1.17
@@ -60,8 +60,8 @@ jobs:
     - uses: haskell/actions/setup@v1
       id: setup-haskell
       with:
-        ghc-version: {{ matrix.ghc }}
-        cabal-version: {{ matrix.cabal }}
+        ghc-version: ${{ matrix.ghc }}
+        cabal-version: ${{ matrix.cabal }}
         enable-stack: false
 
     - name: Install dependencies
@@ -89,7 +89,7 @@ jobs:
 
     - name: Set up Dapr CLI on Windows
       if: matrix.os == "windows-latest"
-      run: powershell -Command "$script=iwr -useb {{ env.DAPR_INSTALL_URL }}; $block=[ScriptBlock]::Create($script); invoke-command -ScriptBlock $block -ArgumentList ${{ env.DAPR_CLI_VER }}"
+      run: powershell -Command "$script=iwr -useb ${{ env.DAPR_INSTALL_URL }}; $block=[ScriptBlock]::Create($script); invoke-command -ScriptBlock $block -ArgumentList ${{ env.DAPR_CLI_VER }}"
 
     - name: Set up Dapr CLI on MacOS
       if: matrix.os == "macos-latest"
