@@ -2,16 +2,17 @@ module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
 import Dapr.Common
+import Data.Aeson (ToJSON)
 import Data.Either
 import Data.Map as Map
 import Data.Text (Text)
-import Test.Hspec
-import Data.Aeson (ToJSON)
 import GHC.Generics
+import Test.Hspec
 
 newtype TestHelloWorldMessage = TestHelloWorldMessage
   { message :: Text
-  } deriving (Show, Eq, Generic, ToJSON)
+  }
+  deriving (Show, Eq, Generic, ToJSON)
 
 cleanState :: IO ()
 cleanState = do
@@ -140,15 +141,15 @@ spec = do
       print r
       isRight r `shouldBe` True
 
-  -- describe "Secrets" $ do
-  --   it "Can get secret" $ do
-  --     r <- getSecrets defaultDaprConfig "secret-envvars" "TEST_SECRET_1" Nothing
-  --     isRight r `shouldBe` True
-  --     let d = fromRight Map.empty r
-  --     Map.lookup "TEST_SECRET_1" d `shouldBe` Just "secret_val_1"
+-- describe "Secrets" $ do
+--   it "Can get secret" $ do
+--     r <- getSecrets defaultDaprConfig "secret-envvars" "TEST_SECRET_1" Nothing
+--     isRight r `shouldBe` True
+--     let d = fromRight Map.empty r
+--     Map.lookup "TEST_SECRET_1" d `shouldBe` Just "secret_val_1"
 
-  --   it "Can get secrets in bulk" $ do
-  --     r <- getBulkSecrets defaultDaprConfig "secret-envvars" Nothing
-  --     isRight r `shouldBe` True
-  --     let d = fromRight Map.empty r
-  --     Map.size d >= 1 `shouldBe` True
+--   it "Can get secrets in bulk" $ do
+--     r <- getBulkSecrets defaultDaprConfig "secret-envvars" Nothing
+--     isRight r `shouldBe` True
+--     let d = fromRight Map.empty r
+--     Map.size d >= 1 `shouldBe` True
