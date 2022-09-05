@@ -22,7 +22,7 @@ publishMessage ::
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishMessage config pubsubname topic message optionalHeader metadata = do
-  let url = ["pubsubname", pubsubname, topic]
+  let url = ["publish", pubsubname, topic]
       metadataParam = mapMetadataToQueryParam metadata
       options = metadataParam <> optionalHeader
   response <- makeHttpRequest config POST url message ignoreResponse options
@@ -61,9 +61,3 @@ publishCloudEvent ::
 publishCloudEvent config pubsubname topic message =
   publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")
 
-subscribeMessage :: MonadIO m => DaprConfig -> [SubscriptionInfo] -> m (Either DaprClientError ())
-subscribeMessage config subscriptions = do
-  let url = ["dapr", "subscribe"]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson subscriptions) ignoreResponse options
-  return $ bimap DaprHttpException (const ()) response

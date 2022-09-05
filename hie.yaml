@@ -1,8 +1,0 @@
-cradle:
-  stack:
-    - path: "./src"
-      component: "haskell-dapr:lib"
-    - path: "./test/e2e"
-      component: "haskell-dapr:test:haskell-dapr-test-e2e"
-    - path: "./test/unit"
-      component: "haskell-dapr:test:haskell-dapr-test-unit"

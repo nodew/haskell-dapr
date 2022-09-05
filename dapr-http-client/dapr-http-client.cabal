@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           haskell-dapr
+name:           dapr-http-client
 version:        0.1.0.0
 description:    Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
 homepage:       https://github.com/nodew/haskell-dapr#readme
@@ -15,9 +15,6 @@ copyright:      2022 Qiao Wang
 license:        Apache-2.0
 license-file:   LICENSE
 build-type:     Simple
-extra-source-files:
-    README.md
-    ChangeLog.md
 
 source-repository head
   type: git
@@ -57,23 +54,22 @@ library
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
-      aeson
-    , base >=4.11 && <10
-    , bytestring
-    , containers
-    , exceptions
-    , extra
-    , reflection
-    , req
-    , text
+      aeson >=2.0.3 && <2.2
+    , base >=4.11 && <5
+    , bytestring >=0.10.12 && <0.11
+    , containers >=0.6.4 && <0.7
+    , exceptions >=0.10.4 && <0.11
+    , extra >=1.7.10 && <1.8
+    , req >=3.10.0 && <3.14
+    , text >=1.2.5 && <1.3
   default-language: Haskell2010
 
-test-suite haskell-dapr-test-e2e
+test-suite dapr-http-client-test-e2e
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       Dapr.Client.HttpClientSpec
-      Paths_haskell_dapr
+      Paths_dapr_http_client
   hs-source-dirs:
       test/e2e
   default-extensions:
@@ -84,27 +80,26 @@ test-suite haskell-dapr-test-e2e
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck
-    , aeson
-    , base >=4.11 && <10
-    , bytestring
-    , containers
-    , exceptions
-    , extra
-    , haskell-dapr
-    , hspec
-    , hspec-core
-    , reflection
-    , req
-    , text
+      QuickCheck >=2.14.0 && <2.15
+    , aeson >=2.0.3 && <2.2
+    , base >=4.11 && <5
+    , bytestring >=0.10.12 && <0.11
+    , containers >=0.6.4 && <0.7
+    , dapr-http-client
+    , exceptions >=0.10.4 && <0.11
+    , extra >=1.7.10 && <1.8
+    , hspec >=2.8.5 && <2.11
+    , hspec-core >=2.8.5 && <2.11
+    , req >=3.10.0 && <3.14
+    , text >=1.2.5 && <1.3
   default-language: Haskell2010
 
-test-suite haskell-dapr-test-unit
+test-suite dapr-http-client-test-unit
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       Dapr.Common.SerializationSpec
-      Paths_haskell_dapr
+      Paths_dapr_http_client
   hs-source-dirs:
       test/unit
   default-extensions:
@@ -115,20 +110,19 @@ test-suite haskell-dapr-test-unit
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck
-    , aeson
-    , aeson-pretty
-    , base >=4.11 && <10
-    , bytestring
-    , containers
-    , exceptions
-    , extra
-    , filepath
-    , haskell-dapr
-    , hspec
-    , hspec-core
-    , hspec-golden
-    , reflection
-    , req
-    , text
+      QuickCheck >=2.14.0 && <2.15
+    , aeson >=2.0.3 && <2.2
+    , aeson-pretty >=0.8.9 && <0.9
+    , base >=4.11 && <5
+    , bytestring >=0.10.12 && <0.11
+    , containers >=0.6.4 && <0.7
+    , dapr-http-client
+    , exceptions >=0.10.4 && <0.11
+    , extra >=1.7.10 && <1.8
+    , filepath >=1.4.2 && <1.5
+    , hspec >=2.8.5 && <2.11
+    , hspec-core >=2.8.5 && <2.11
+    , hspec-golden >=0.2.0 && <0.3
+    , req >=3.10.0 && <3.14
+    , text >=1.2.5 && <1.3
   default-language: Haskell2010
