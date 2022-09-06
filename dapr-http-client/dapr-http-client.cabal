@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
@@ -15,6 +15,7 @@ copyright:      2022 Qiao Wang
 license:        Apache-2.0
 license-file:   LICENSE
 build-type:     Simple
+tested-with: GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
 
 source-repository head
   type: git
@@ -54,14 +55,14 @@ library
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
-      aeson >=2.0.3 && <2.2
+      aeson ^>={ 2.0.3, 2.1.0 }
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.12
-    , containers >=0.6.4 && <0.7
-    , exceptions >=0.10.4 && <0.11
-    , extra >=1.7.10 && <1.8
+    , bytestring ^>={ 0.10.12, 0.11.3 }
+    , containers ^>=0.6.4
+    , exceptions ^>=0.10.4
+    , extra ^>=1.7.10
     , req >=3.10.0 && <3.14
-    , text >=1.2.5 && <2.1
+    , text ^>={ 1.2.5, 2.0.1 }
   default-language: Haskell2010
 
 test-suite dapr-http-client-test-e2e
@@ -80,18 +81,18 @@ test-suite dapr-http-client-test-e2e
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck >=2.14.0 && <2.15
-    , aeson >=2.0.3 && <2.2
+      QuickCheck ^>=2.14.0
+    , aeson ^>={ 2.0.3, 2.1.0 }
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.12
-    , containers >=0.6.4 && <0.7
+    , bytestring ^>={ 0.10.12, 0.11.3 }
+    , containers ^>=0.6.4
     , dapr-http-client
-    , exceptions >=0.10.4 && <0.11
-    , extra >=1.7.10 && <1.8
-    , hspec >=2.8.5 && <2.11
-    , hspec-core >=2.8.5 && <2.11
+    , exceptions ^>=0.10.4
+    , extra ^>=1.7.10
+    , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
+    , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
     , req >=3.10.0 && <3.14
-    , text >=1.2.5 && <2.1
+    , text ^>={ 1.2.5, 2.0.1 }
   default-language: Haskell2010
 
 test-suite dapr-http-client-test-unit
@@ -110,19 +111,19 @@ test-suite dapr-http-client-test-unit
       DuplicateRecordFields
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck >=2.14.0 && <2.15
-    , aeson >=2.0.3 && <2.2
-    , aeson-pretty >=0.8.9 && <0.9
+      QuickCheck ^>=2.14.0
+    , aeson ^>={ 2.0.3, 2.1.0 }
+    , aeson-pretty ^>=0.8.9
     , base >=4.11 && <5
-    , bytestring >=0.10.12 && <0.12
-    , containers >=0.6.4 && <0.7
+    , bytestring ^>={ 0.10.12, 0.11.3 }
+    , containers ^>=0.6.4
     , dapr-http-client
-    , exceptions >=0.10.4 && <0.11
-    , extra >=1.7.10 && <1.8
-    , filepath >=1.4.2 && <1.5
-    , hspec >=2.8.5 && <2.11
-    , hspec-core >=2.8.5 && <2.11
-    , hspec-golden >=0.2.0 && <0.3
+    , exceptions ^>=0.10.4
+    , extra ^>=1.7.10
+    , filepath ^>=1.4.2
+    , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
+    , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
+    , hspec-golden ^>=0.2.0
     , req >=3.10.0 && <3.14
-    , text >=1.2.5 && <2.1
+    , text ^>={ 1.2.5, 2.0.1 }
   default-language: Haskell2010
