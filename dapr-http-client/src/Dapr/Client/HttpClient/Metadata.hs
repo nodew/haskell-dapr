@@ -2,7 +2,7 @@ module Dapr.Client.HttpClient.Metadata where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Common
+import Dapr.Client.HttpClient.Types
 import Data.Bifunctor (bimap)
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)

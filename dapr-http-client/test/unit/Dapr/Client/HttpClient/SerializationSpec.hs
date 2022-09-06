@@ -1,6 +1,6 @@
-module Dapr.Common.SerializationSpec where
+module Dapr.Client.HttpClient.SerializationSpec where
 
-import Dapr.Common
+import Dapr.Client.HttpClient
 import Data.Aeson.Encode.Pretty as Aeson
 import Data.Map (fromList)
 import Data.Text (Text)

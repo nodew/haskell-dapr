@@ -1,4 +1,4 @@
-module Dapr.Common.DistributedLock where
+module Dapr.Client.HttpClient.Types.DistributedLock where
 
 import Data.Aeson
 import Data.Text (Text)

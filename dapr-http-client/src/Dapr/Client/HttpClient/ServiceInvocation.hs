@@ -2,7 +2,7 @@ module Dapr.Client.HttpClient.ServiceInvocation where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Common
+import Dapr.Client.HttpClient.Types
 import Data.Aeson
 import Data.Bifunctor (first)
 import Data.Text (Text)

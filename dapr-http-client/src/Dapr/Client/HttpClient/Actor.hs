@@ -4,8 +4,8 @@ module Dapr.Client.HttpClient.Actor where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Common
-import Dapr.Common.Internal
+import Dapr.Client.HttpClient.Types
+import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
 import Data.Bifunctor (Bifunctor (bimap), first)
 import Data.Data (Proxy)

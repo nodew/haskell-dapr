@@ -1,6 +1,6 @@
-module Dapr.Common.PubSub where
+module Dapr.Client.HttpClient.Types.PubSub where
 
-import Dapr.Common.Core
+import Dapr.Client.HttpClient.Types.Core
 import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
