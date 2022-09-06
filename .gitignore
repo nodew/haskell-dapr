@@ -2,5 +2,6 @@
 *.swp
 tarballs/
 .stack-work/
+dist-newstyle/
 .vscode
 **/.golden/**/*.actual
