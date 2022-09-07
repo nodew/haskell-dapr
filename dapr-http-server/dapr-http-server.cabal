@@ -1,0 +1,48 @@
+cabal-version:      3.0
+name:               dapr-http-server
+version:            0.1.0.0
+description:        Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
+homepage:           https://github.com/nodew/haskell-dapr#readme
+bug-reports:        https://github.com/nodew/haskell-dapr/issues
+license:            Apache-2.0
+license-file:       LICENSE
+author:             Qiao Wang
+maintainer:         wangqiao11@hotmail.com
+copyright:          2022 Qiao Wang
+category:           Web
+build-type:         Simple
+extra-source-files: ChangeLog.md
+tested-with: GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
+
+source-repository head
+    type: git
+    location: https://github.com/nodew/haskell-dapr
+
+common lib
+    build-depends:
+          base >=4.11 && <5
+        , dapr-http-client ^>= 0.1.0.0
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
+
+common test-deps
+    build-depends:
+          QuickCheck ^>=2.14.0
+        , dapr-http-server
+        , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
+        , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+
+library
+    import:           lib
+    exposed-modules:
+          Dapr.Server.Servant.Binding
+        , Dapr.Server.Servant.Subscription
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+test-suite dapr-http-server-test
+    import:           lib, test-deps
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    default-language: Haskell2010
