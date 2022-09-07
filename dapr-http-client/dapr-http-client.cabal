@@ -34,6 +34,7 @@ library
       Dapr.Client.HttpClient.Secrets
       Dapr.Client.HttpClient.ServiceInvocation
       Dapr.Client.HttpClient.StateManagement
+      Dapr.Client.HttpClient.OutputBinding
       Dapr.Client.HttpClient.Types
       Dapr.Client.HttpClient.Types.Configuration
       Dapr.Client.HttpClient.Types.Core
@@ -42,6 +43,7 @@ library
       Dapr.Client.HttpClient.Types.PubSub
       Dapr.Client.HttpClient.Types.Secrets
       Dapr.Client.HttpClient.Types.State
+      Dapr.Client.HttpClient.Types.Binding
   other-modules:
       Dapr.Client.HttpClient.Internal
       Dapr.Client.HttpClient.Types.Internal

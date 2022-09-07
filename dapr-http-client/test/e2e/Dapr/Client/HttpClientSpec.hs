@@ -1,12 +1,15 @@
 module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
-import Data.Aeson (ToJSON)
+import Data.Aeson (ToJSON, object, encode)
 import Data.Either
 import Data.Map as Map
 import Data.Text (Text)
 import GHC.Generics
 import Test.Hspec
+import Data.Text.Encoding (decodeUtf8)
+import qualified Data.ByteString.Lazy as LBS
+import Data.Text.IO as TIO
 
 newtype TestHelloWorldMessage = TestHelloWorldMessage
   { message :: Text
@@ -138,6 +141,14 @@ spec = do
   describe "Pubsub" $ do
     it "Can publish message" $ do
       r <- publishJsonMessage defaultDaprConfig "pubsub-redis" "test-topic" (TestHelloWorldMessage "Hello World") Nothing
+      isRight r `shouldBe` True
+
+  describe "OutputBinding" $ do
+    it "Invokes a dapr output binding" $ do
+      let dataObject = object [("k1", "v1"), ("k2", "v2")]
+      let requestBody = BindingRequest { bindingOperation = "create", bindingMetadata = Metadata (Map.fromList [("key", "123")]), bindingData = dataObject }
+      r <- invokeBinding defaultDaprConfig "binding-mqtt" requestBody
+      _ <- TIO.putStrLn $ decodeUtf8 (LBS.toStrict $ encode requestBody) -- TODO: remove this line 
       isRight r `shouldBe` True
 
 -- describe "Secrets" $ do

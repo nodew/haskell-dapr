@@ -49,7 +49,7 @@ invokeMethod' config appId httpMethod path payload options = do
       httpMethod
       path
       (ReqBodyJson payload)
-      (options <> header "Accept" "application/json" <> header "Content-Type" "application/json")
+      (options <> header "Accept" "application/json")
   case response of
     Left err -> return $ Left err
     Right body -> do

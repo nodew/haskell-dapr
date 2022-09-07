@@ -24,8 +24,9 @@ makeHttpRequest ::
 makeHttpRequest config method subUrl reqBody responseHandler options = runReq defaultHttpConfig $ do
   let host = daprHost config
       apiVersion = daprApiVersion config
+      defaultContentType = header "Content-Type" "application/json"
       defaultOptions = port $ daprPort config
-      updatedOptions = defaultOptions <> options
+      updatedOptions = defaultContentType <> defaultOptions <> options
       completeUrl = appendUrl (http host /: apiVersion) subUrl
   try $ req method completeUrl reqBody responseHandler updatedOptions
   where

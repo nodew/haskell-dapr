@@ -86,8 +86,7 @@ executeActorStateTransaction ::
   m (Either DaprClientError ())
 executeActorStateTransaction config actorType actorId transactions = do
   let url = ["actors", actorType, actorId, "state"]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson transactions) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson transactions) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 getActorState :: (MonadIO m, FromJSON a) => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError a)
@@ -99,8 +98,7 @@ getActorState config actorType actorId key = do
 createActorReminder :: MonadIO m => DaprConfig -> Text -> Text -> Text -> ActorReminderRequest -> m (Either DaprClientError ())
 createActorReminder config actorType actorId name reminder = do
   let url = ["actors", actorType, actorId, "reminders", name]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson reminder) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson reminder) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 getActorReminder :: MonadIO m => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError ActorReminderResponse)
@@ -118,8 +116,7 @@ deleteActorReminder config actorType actorId name = do
 createActorTimer :: MonadIO m => DaprConfig -> Text -> Text -> Text -> ActorTimerRequest -> m (Either DaprClientError ())
 createActorTimer config actorType actorId name timer = do
   let url = ["actors", actorType, actorId, "timers", name]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson timer) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson timer) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 deleteActorTimer :: MonadIO m => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError ())

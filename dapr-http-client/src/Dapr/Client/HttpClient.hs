@@ -8,6 +8,7 @@ module Dapr.Client.HttpClient
     module Secrets,
     module ServiceInvocation,
     module StateManagement,
+    module OutputBinding,
     module Types,
   )
 where
@@ -21,4 +22,5 @@ import Dapr.Client.HttpClient.Req as Req
 import Dapr.Client.HttpClient.Secrets as Secrets
 import Dapr.Client.HttpClient.ServiceInvocation as ServiceInvocation
 import Dapr.Client.HttpClient.StateManagement as StateManagement
+import Dapr.Client.HttpClient.OutputBinding as OutputBinding
 import Dapr.Client.HttpClient.Types as Types
