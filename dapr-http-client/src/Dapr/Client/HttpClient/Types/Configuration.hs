@@ -1,6 +1,6 @@
-module Dapr.Common.Configuration where
+module Dapr.Client.HttpClient.Types.Configuration where
 
-import Dapr.Common.Internal
+import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)

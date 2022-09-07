@@ -1,7 +1,6 @@
 module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
-import Dapr.Common
 import Data.Aeson (ToJSON)
 import Data.Either
 import Data.Map as Map
@@ -99,7 +98,8 @@ spec = do
         isRight r `shouldBe` True
         let items = fromRight [] r
         length items `shouldBe` 2
-        let [BulkStateItem key1 value1 _, BulkStateItem key2 value2 _] = items
+        let (BulkStateItem key1 value1 _) = head items
+        let (BulkStateItem key2 value2 _) = head $ tail items
         key1 `shouldBe` "key-2"
         value1 `shouldBe` Just "value-2"
         key2 `shouldBe` "key-3"
@@ -138,7 +138,6 @@ spec = do
   describe "Pubsub" $ do
     it "Can publish message" $ do
       r <- publishJsonMessage defaultDaprConfig "pubsub-redis" "test-topic" (TestHelloWorldMessage "Hello World") Nothing
-      print r
       isRight r `shouldBe` True
 
 -- describe "Secrets" $ do

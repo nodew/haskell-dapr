@@ -1,9 +1,10 @@
-module Dapr.Common.Core where
+module Dapr.Client.HttpClient.Types.Core where
 
 import Data.Aeson
 import Data.Map (Map)
 import Data.Text (Text)
 import qualified Data.Text as T
+import Network.HTTP.Req (HttpException)
 
 data DaprConfig = DaprConfig
   { daprHost :: Text,
@@ -19,6 +20,13 @@ defaultDaprConfig =
       daprPort = 3500,
       daprApiVersion = "v1.0"
     }
+
+data DaprClientError
+  = DaprHttpException HttpException
+  | JsonDecodeError Text
+  | NotFound
+  | UnknownError
+  deriving (Show)
 
 type RequestMetadata = Map Text Text
 

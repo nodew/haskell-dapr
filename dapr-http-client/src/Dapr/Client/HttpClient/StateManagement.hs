@@ -5,7 +5,7 @@ module Dapr.Client.HttpClient.StateManagement where
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
-import Dapr.Common
+import Dapr.Client.HttpClient.Types
 import Data.Aeson
 import Data.Bifunctor (bimap)
 import Data.Either.Extra (mapLeft)

@@ -1,6 +1,6 @@
-module Dapr.Common.Metadata where
+module Dapr.Client.HttpClient.Types.Metadata where
 
-import Dapr.Common.Internal
+import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
 import Data.Map (Map)
 import Data.Text (Text)

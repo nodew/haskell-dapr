@@ -1,7 +1,7 @@
-module Dapr.Common.State where
+module Dapr.Client.HttpClient.Types.State where
 
-import Dapr.Common.Core
-import Dapr.Common.Internal
+import Dapr.Client.HttpClient.Types.Core
+import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
 import Data.Map (Map)
 import Data.Text (Text)

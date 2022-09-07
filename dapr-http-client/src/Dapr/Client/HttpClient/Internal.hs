@@ -2,7 +2,7 @@
 
 module Dapr.Client.HttpClient.Internal where
 
-import Dapr.Common
+import Dapr.Client.HttpClient.Types
 import Data.Map.Strict (foldlWithKey)
 import Network.HTTP.Req
 
