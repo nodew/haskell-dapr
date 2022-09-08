@@ -143,7 +143,7 @@ spec = do
   describe "OutputBinding" $ do
     it "Invokes a dapr output binding" $ do
       let dataObject = object [("k1", "v1"), ("k2", "v2")]
-      let requestBody = BindingRequest { bindingOperation = "create", bindingMetadata = Metadata (Map.fromList [("key", "123")]), bindingData = dataObject }
+      let requestBody = BindingRequest {bindingOperation = "create", bindingMetadata = Metadata (Map.fromList [("key", "123")]), bindingData = dataObject}
       r <- invokeBinding defaultDaprConfig "binding-mqtt" requestBody
       isRight r `shouldBe` True
 

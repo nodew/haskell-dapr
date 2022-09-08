@@ -34,14 +34,17 @@ makeHttpRequestWithOptions config method subUrl reqBody responseHandler options 
     appendUrl prefix [] = prefix
     appendUrl prefix (x : xs) = appendUrl (prefix /: x) xs
 
-
-makeHttpRequest :: (HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
- MonadIO m, HttpMethod method, HttpBody body,
- HttpResponse response) =>
-  DaprConfig
-  -> method
-  -> [Text]
-  -> body
-  -> Proxy response
-  -> m (Either HttpException response)
+makeHttpRequest ::
+  ( HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
+    MonadIO m,
+    HttpMethod method,
+    HttpBody body,
+    HttpResponse response
+  ) =>
+  DaprConfig ->
+  method ->
+  [Text] ->
+  body ->
+  Proxy response ->
+  m (Either HttpException response)
 makeHttpRequest config method subUrl reqBody responseHandler = makeHttpRequestWithOptions config method subUrl reqBody responseHandler mempty
