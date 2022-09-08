@@ -5,6 +5,7 @@ import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
 import Data.Text
 import GHC.Generics (Generic)
+import Data.Text
 
 data BindingRequest a = BindingRequest
   { bindingMetadata :: RequestMetadata,
