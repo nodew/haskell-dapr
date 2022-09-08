@@ -3,12 +3,13 @@ module Dapr.Client.HttpClient.Types.Binding where
 import Dapr.Client.HttpClient.Types.Core
 import Dapr.Client.HttpClient.Types.Internal
 import Data.Aeson
+import Data.Text
 import GHC.Generics (Generic)
 
 data BindingRequest a = BindingRequest
   { bindingMetadata :: RequestMetadata,
     bindingData :: a,
-    bindingOperation :: String
+    bindingOperation :: Text
   }
   deriving (Eq, Show, Generic)
 
