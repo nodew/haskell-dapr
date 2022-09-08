@@ -25,7 +25,7 @@ publishMessage config pubsubname topic message optionalHeader metadata = do
   let url = ["publish", pubsubname, topic]
       metadataParam = mapMetadataToQueryParam metadata
       options = metadataParam <> optionalHeader
-  response <- makeHttpRequestWithOptions config POST url message ignoreResponse options
+  response <- makeHttpRequest config POST url message ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
 publishJsonMessage ::

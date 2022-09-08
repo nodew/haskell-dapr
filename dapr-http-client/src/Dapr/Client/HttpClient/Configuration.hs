@@ -13,7 +13,7 @@ getConfiguration :: MonadIO m => DaprConfig -> Text -> [Text] -> m (Either DaprC
 getConfiguration config store keys = do
   let url = ["configuration", store]
       params = keysToParams keys
-  response <- makeHttpRequestWithOptions config GET url NoReqBody jsonResponse params
+  response <- makeHttpRequest config GET url NoReqBody jsonResponse params
   return $ bimap DaprHttpException responseBody response
   where
     keysToParams [] = mempty
@@ -23,7 +23,7 @@ subscribeConfiguration :: MonadIO m => DaprConfig -> Text -> [Text] -> m (Either
 subscribeConfiguration config store keys = do
   let url = ["configuration", store, "subscribe"]
       params = keysToParams keys
-  response <- makeHttpRequestWithOptions config GET url NoReqBody jsonResponse params
+  response <- makeHttpRequest config GET url NoReqBody jsonResponse params
   return $ bimap DaprHttpException responseBody response
   where
     keysToParams [] = mempty
@@ -32,5 +32,5 @@ subscribeConfiguration config store keys = do
 unsubscribeConfiguration :: MonadIO m => DaprConfig -> Text -> m (Either DaprClientError ())
 unsubscribeConfiguration config subscriptionId = do
   let url = ["configuration", subscriptionId, "unsubscribe"]
-  response <- makeHttpRequest config GET url NoReqBody ignoreResponse
+  response <- makeHttpRequest config GET url NoReqBody ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response

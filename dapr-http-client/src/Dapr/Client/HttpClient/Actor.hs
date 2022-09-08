@@ -74,7 +74,7 @@ invokeActor ::
   m (Either DaprClientError c)
 invokeActor config actorType actorId method reqMethod reqBody handler options = do
   let url = ["actors", actorType, actorId, "method", method]
-  response <- makeHttpRequestWithOptions config reqMethod url reqBody handler options
+  response <- makeHttpRequest config reqMethod url reqBody handler options
   return $ first DaprHttpException response
 
 executeActorStateTransaction ::
@@ -86,41 +86,41 @@ executeActorStateTransaction ::
   m (Either DaprClientError ())
 executeActorStateTransaction config actorType actorId transactions = do
   let url = ["actors", actorType, actorId, "state"]
-  response <- makeHttpRequest config POST url (ReqBodyJson transactions) ignoreResponse
+  response <- makeHttpRequest config POST url (ReqBodyJson transactions) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 getActorState :: (MonadIO m, FromJSON a) => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError a)
 getActorState config actorType actorId key = do
   let url = ["actors", actorType, actorId, "state", key]
-  response <- makeHttpRequest config GET url NoReqBody jsonResponse
+  response <- makeHttpRequest config GET url NoReqBody jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
 createActorReminder :: MonadIO m => DaprConfig -> Text -> Text -> Text -> ActorReminderRequest -> m (Either DaprClientError ())
 createActorReminder config actorType actorId name reminder = do
   let url = ["actors", actorType, actorId, "reminders", name]
-  response <- makeHttpRequest config POST url (ReqBodyJson reminder) ignoreResponse
+  response <- makeHttpRequest config POST url (ReqBodyJson reminder) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 getActorReminder :: MonadIO m => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError ActorReminderResponse)
 getActorReminder config actorType actorId name = do
   let url = ["actors", actorType, actorId, "reminders", name]
-  response <- makeHttpRequest config GET url NoReqBody jsonResponse
+  response <- makeHttpRequest config GET url NoReqBody jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
 deleteActorReminder :: MonadIO m => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError ())
 deleteActorReminder config actorType actorId name = do
   let url = ["actors", actorType, actorId, "reminders", name]
-  response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse
+  response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 createActorTimer :: MonadIO m => DaprConfig -> Text -> Text -> Text -> ActorTimerRequest -> m (Either DaprClientError ())
 createActorTimer config actorType actorId name timer = do
   let url = ["actors", actorType, actorId, "timers", name]
-  response <- makeHttpRequest config POST url (ReqBodyJson timer) ignoreResponse
+  response <- makeHttpRequest config POST url (ReqBodyJson timer) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 deleteActorTimer :: MonadIO m => DaprConfig -> Text -> Text -> Text -> m (Either DaprClientError ())
 deleteActorTimer config actorType actorId name = do
   let url = ["actors", actorType, actorId, "timers", name]
-  response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse
+  response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response

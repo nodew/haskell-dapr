@@ -10,11 +10,11 @@ import Network.HTTP.Req
 
 getMetadata :: MonadIO m => DaprConfig -> m (Either DaprClientError DaprMetadata)
 getMetadata config = do
-  response <- makeHttpRequest config GET ["metadata"] NoReqBody jsonResponse
+  response <- makeHttpRequest config GET ["metadata"] NoReqBody jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
 addCustomLabel :: MonadIO m => DaprConfig -> Text -> Text -> m (Either DaprClientError ())
 addCustomLabel config attribute rawData = do
   let url = ["metadata", attribute]
-  response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 rawData) ignoreResponse
+  response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 rawData) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response

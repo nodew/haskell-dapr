@@ -24,7 +24,7 @@ invokeMethod ::
   m (Either DaprClientError LbsResponse)
 invokeMethod config appId httpMethod path payload options = do
   let url = ["invoke", appId, "method"] <> path
-  response <- makeHttpRequestWithOptions config httpMethod url payload lbsResponse options
+  response <- makeHttpRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
 invokeMethod' ::
