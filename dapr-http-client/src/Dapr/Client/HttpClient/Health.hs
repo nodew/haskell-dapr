@@ -7,7 +7,7 @@ import Network.HTTP.Req
 
 checkHealth :: (MonadIO m) => DaprConfig -> m DaprHealthStatus
 checkHealth config = do
-  response <- makeHttpRequest config GET ["healthz"] NoReqBody ignoreResponse mempty
+  response <- makeHttpRequest config GET ["healthz"] NoReqBody ignoreResponse
   return $ case response of
     Right _ -> Healthy
     Left _ -> Unhealthy

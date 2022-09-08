@@ -16,5 +16,5 @@ invokeBinding ::
   io (Either DaprClientError ())
 invokeBinding config bindingName requestBody  = do
   let url = ["bindings", bindingName]
-  response <- makeHttpRequest config POST url (ReqBodyJson requestBody) ignoreResponse mempty
+  response <- makeHttpRequest config POST url (ReqBodyJson requestBody) ignoreResponse
   return $ bimap DaprHttpException (const ()) response

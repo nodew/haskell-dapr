@@ -17,7 +17,7 @@ import Network.HTTP.Req
 saveState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> [SaveStateRequest a] -> m (Either DaprClientError ())
 saveState config store body = do
   let url = ["state", store]
-  response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse mempty
+  response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse
   return $ bimap DaprHttpException (const ()) response
 
 saveSingleState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> SaveStateRequest a -> m (Either DaprClientError ())
@@ -35,7 +35,7 @@ getState config store key consistency metadata = do
   let url = ["state", store, key]
       metadataQueryParam = mapMetadataToQueryParam metadata
       options = metadataQueryParam <> queryParam "consistency" (show <$> consistency)
-  response <- makeHttpRequest config GET url NoReqBody lbsResponse options
+  response <- makeHttpRequestWithOptions config GET url NoReqBody lbsResponse options
   return $ case response of
     Right response' -> case responseStatusCode response' of
       200 -> mapLeft (JsonDecodeError . T.pack) $ eitherDecode (responseBody response')
@@ -57,7 +57,7 @@ getBulkState ::
 getBulkState config store keys parallelism metadata = do
   let url = ["state", store, "bulk"]
       metadataQueryParam = mapMetadataToQueryParam metadata
-  response <- makeHttpRequest config POST url (ReqBodyJson (BulkStateRequest keys parallelism)) jsonResponse metadataQueryParam
+  response <- makeHttpRequestWithOptions config POST url (ReqBodyJson (BulkStateRequest keys parallelism)) jsonResponse metadataQueryParam
   return $ bimap DaprHttpException responseBody response
 
 getBulkStateSimple ::
@@ -86,7 +86,7 @@ deleteState config store key etag concurrency consistency metadata = do
           <> queryParam "concurrency" (show <$> concurrency)
           <> queryParam "consistency" (show <$> consistency)
       options = maybe mempty (header "If-Match" . T.encodeUtf8) etag <> params
-  response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse options
+  response <- makeHttpRequestWithOptions config DELETE url NoReqBody ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
 deleteStateSimple :: MonadIO m => DaprConfig -> Text -> Text -> m (Either DaprClientError ())
@@ -100,7 +100,7 @@ executeStateTransaction ::
   m (Either DaprClientError ())
 executeStateTransaction config store transaction = do
   let url = ["state", store, "transaction"]
-  response <- makeHttpRequest config POST url (ReqBodyJson transaction) ignoreResponse mempty
+  response <- makeHttpRequest config POST url (ReqBodyJson transaction) ignoreResponse
   return $ bimap DaprHttpException (const ()) response
 
 queryState ::
@@ -113,5 +113,5 @@ queryState ::
 queryState config store query metadata = do
   let url = ["state", store, "query"]
       metadataQueryParam = mapMetadataToQueryParam metadata
-  response <- makeHttpRequest config POST url (ReqBodyJson query) jsonResponse metadataQueryParam
+  response <- makeHttpRequestWithOptions config POST url (ReqBodyJson query) jsonResponse metadataQueryParam
   return $ bimap DaprHttpException responseBody response
