@@ -48,7 +48,7 @@ publishTextMessage ::
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishTextMessage config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyBs (T.encodeUtf8 message)) mempty
+  publishMessage config pubsubname topic (ReqBodyBs (T.encodeUtf8 message)) (header "Content-Type" "text/plain")
 
 publishCloudEvent ::
   (MonadIO m, ToJSON a) =>
@@ -59,4 +59,4 @@ publishCloudEvent ::
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishCloudEvent config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyJson message) mempty
+  publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")
