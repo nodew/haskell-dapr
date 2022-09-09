@@ -63,7 +63,6 @@ library
       Dapr.Client.HttpClient.Types.Core
       Dapr.Client.HttpClient.Types.DistributedLock
       Dapr.Client.HttpClient.Types.Metadata
-      Dapr.Client.HttpClient.Types.PubSub
       Dapr.Client.HttpClient.Types.Secrets
       Dapr.Client.HttpClient.Types.State
   other-modules:
