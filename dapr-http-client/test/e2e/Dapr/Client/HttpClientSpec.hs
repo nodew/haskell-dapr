@@ -1,7 +1,7 @@
 module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
-import Data.Aeson
+import Data.Aeson (ToJSON, object)
 import Data.Either
 import Data.Map as Map
 import Data.Text (Text)

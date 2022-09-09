@@ -15,7 +15,7 @@ getMetadata config = do
 
 addCustomLabel :: MonadIO m => DaprConfig -> Text -> Text -> m (Either DaprClientError ())
 addCustomLabel config attribute rawData = do
-  let url = ["metadata", attribute] 
+  let url = ["metadata", attribute]
       options = header "Content-Type" "text/plain"
   response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 rawData) ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
