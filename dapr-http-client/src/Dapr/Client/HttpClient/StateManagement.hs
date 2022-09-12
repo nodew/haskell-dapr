@@ -17,8 +17,7 @@ import Network.HTTP.Req
 saveState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> [SaveStateRequest a] -> m (Either DaprClientError ())
 saveState config store body = do
   let url = ["state", store]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 saveSingleState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> SaveStateRequest a -> m (Either DaprClientError ())
@@ -58,8 +57,7 @@ getBulkState ::
 getBulkState config store keys parallelism metadata = do
   let url = ["state", store, "bulk"]
       metadataQueryParam = mapMetadataToQueryParam metadata
-      options = metadataQueryParam <> header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson (BulkStateRequest keys parallelism)) jsonResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson (BulkStateRequest keys parallelism)) jsonResponse metadataQueryParam
   return $ bimap DaprHttpException responseBody response
 
 getBulkStateSimple ::
@@ -102,8 +100,7 @@ executeStateTransaction ::
   m (Either DaprClientError ())
 executeStateTransaction config store transaction = do
   let url = ["state", store, "transaction"]
-      options = header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson transaction) ignoreResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson transaction) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 queryState ::
@@ -116,6 +113,5 @@ queryState ::
 queryState config store query metadata = do
   let url = ["state", store, "query"]
       metadataQueryParam = mapMetadataToQueryParam metadata
-      options = metadataQueryParam <> header "Content-Type" "application/json"
-  response <- makeHttpRequest config POST url (ReqBodyJson query) jsonResponse options
+  response <- makeHttpRequest config POST url (ReqBodyJson query) jsonResponse metadataQueryParam
   return $ bimap DaprHttpException responseBody response

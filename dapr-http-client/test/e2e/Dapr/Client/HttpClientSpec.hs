@@ -1,7 +1,7 @@
 module Dapr.Client.HttpClientSpec where
 
 import Dapr.Client.HttpClient
-import Data.Aeson (ToJSON)
+import Data.Aeson (ToJSON, object)
 import Data.Either
 import Data.Map as Map
 import Data.Text (Text)
@@ -138,6 +138,13 @@ spec = do
   describe "Pubsub" $ do
     it "Can publish message" $ do
       r <- publishJsonMessage defaultDaprConfig "pubsub-redis" "test-topic" (TestHelloWorldMessage "Hello World") Nothing
+      isRight r `shouldBe` True
+
+  describe "OutputBinding" $ do
+    it "Invokes a dapr output binding" $ do
+      let dataObject = object [("k1", "v1"), ("k2", "v2")]
+      let requestBody = BindingRequest {bindingOperation = "create", bindingMetadata = Map.fromList [("key", "123")], bindingData = dataObject}
+      r <- invokeBinding defaultDaprConfig "binding-mqtt" requestBody
       isRight r `shouldBe` True
 
 -- describe "Secrets" $ do

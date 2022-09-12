@@ -37,7 +37,7 @@ publishJsonMessage ::
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
 publishJsonMessage config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/json")
+  publishMessage config pubsubname topic (ReqBodyJson message) mempty
 
 publishTextMessage ::
   MonadIO m =>

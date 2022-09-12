@@ -5,9 +5,11 @@ module Dapr.Client.HttpClient.Types
     module Metadata,
     module Secrets,
     module State,
+    module Binding,
   )
 where
 
+import Dapr.Client.HttpClient.Types.Binding as Binding
 import Dapr.Client.HttpClient.Types.Configuration as Configuration
 import Dapr.Client.HttpClient.Types.Core as Core
 import Dapr.Client.HttpClient.Types.DistributedLock as DistributedLock
