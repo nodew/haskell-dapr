@@ -9,25 +9,24 @@ import Dapr.Client.HttpClient.Types
 import Data.Aeson
 import Data.Bifunctor (bimap)
 import Data.Either.Extra (mapLeft)
-import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 
-saveState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> [SaveStateRequest a] -> m (Either DaprClientError ())
+saveState :: (MonadIO m, ToJSON a) => DaprConfig -> StateStore -> [SaveStateRequest a] -> m (Either DaprClientError ())
 saveState config store body = do
-  let url = ["state", store]
+  let url = ["state", getStoreName store]
   response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
-saveSingleState :: (MonadIO m, ToJSON a) => DaprConfig -> Text -> SaveStateRequest a -> m (Either DaprClientError ())
+saveSingleState :: (MonadIO m, ToJSON a) => DaprConfig -> StateStore -> SaveStateRequest a -> m (Either DaprClientError ())
 saveSingleState config store body = saveState config store [body]
 
 getState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
   StateStore ->
-  Text ->
+  StateKey ->
   Maybe ConsistencyMode ->
   Maybe RequestMetadata ->
   m (Either DaprClientError a)
@@ -43,14 +42,14 @@ getState config store key consistency metadata = do
       _ -> Left UnknownError
     Left e -> Left $ DaprHttpException e
 
-getStateSimple :: (MonadIO m, FromJSON a) => DaprConfig -> StateStore -> Text -> m (Either DaprClientError a)
+getStateSimple :: (MonadIO m, FromJSON a) => DaprConfig -> StateStore -> StateKey -> m (Either DaprClientError a)
 getStateSimple config store key = getState config store key Nothing Nothing
 
 getBulkState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
   StateStore ->
-  [Text] ->
+  [StateKey] ->
   Maybe Int ->
   Maybe RequestMetadata ->
   m (Either DaprClientError [BulkStateItem a])
@@ -64,7 +63,7 @@ getBulkStateSimple ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
   StateStore ->
-  [Text] ->
+  [StateKey] ->
   m (Either DaprClientError [BulkStateItem a])
 getBulkStateSimple config store keys = getBulkState config store keys Nothing Nothing
 
@@ -72,8 +71,8 @@ deleteState ::
   (MonadIO m) =>
   DaprConfig ->
   StateStore ->
-  Text ->
-  Maybe Text ->
+  StateKey ->
+  ETag ->
   Maybe ConcurrencyMode ->
   Maybe ConsistencyMode ->
   Maybe RequestMetadata ->
@@ -89,7 +88,7 @@ deleteState config store key etag concurrency consistency metadata = do
   response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
-deleteStateSimple :: MonadIO m => DaprConfig -> StateStore -> Text -> m (Either DaprClientError ())
+deleteStateSimple :: MonadIO m => DaprConfig -> StateStore -> StateKey -> m (Either DaprClientError ())
 deleteStateSimple config store key = deleteState config store key Nothing Nothing Nothing Nothing
 
 executeStateTransaction ::

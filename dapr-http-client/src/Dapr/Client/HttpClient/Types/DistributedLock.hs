@@ -4,6 +4,8 @@ import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
 
+newtype LockStore = LockStore {getLockStoreName :: Text}
+
 data LockRequest = LockRequest
   { resourceId :: Text,
     lockOwner :: Text,

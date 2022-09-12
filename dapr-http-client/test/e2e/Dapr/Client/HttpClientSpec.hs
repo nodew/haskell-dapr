@@ -16,6 +16,15 @@ newtype TestHelloWorldMessage = TestHelloWorldMessage
 redisStore :: StateStore
 redisStore = StateStore "state-redis"
 
+mqttBinding :: Binding
+mqttBinding = Binding "binding-mqtt"
+
+pubsubRedis :: PubSub
+pubsubRedis = PubSub "pubsub-redis"
+
+testTopic :: Topic
+testTopic = Topic "test-topic"
+
 cleanState :: IO ()
 cleanState = do
   _ <- deleteState defaultDaprConfig redisStore "key-1" Nothing Nothing Nothing Nothing
@@ -27,7 +36,7 @@ saveDefaultState :: IO (Either DaprClientError ())
 saveDefaultState =
   saveState
     defaultDaprConfig
-    "state-redis"
+    redisStore
     [ makeSimpleSaveStateRequest "key-1" ("value-1" :: Text),
       makeSimpleSaveStateRequest "key-2" ("value-2" :: Text),
       makeSimpleSaveStateRequest "key-3" ("value-3" :: Text)
@@ -68,7 +77,7 @@ spec = do
         r <-
           saveState
             defaultDaprConfig
-            "state-redis"
+            redisStore
             [ SaveStateRequest
                 { stateKey = "key-1",
                   stateValue = "value-1",
@@ -140,14 +149,14 @@ spec = do
 
   describe "Pubsub" $ do
     it "Can publish message" $ do
-      r <- publishJsonMessage defaultDaprConfig "pubsub-redis" "test-topic" (TestHelloWorldMessage "Hello World") Nothing
+      r <- publishJsonMessage defaultDaprConfig pubsubRedis testTopic (TestHelloWorldMessage "Hello World") Nothing
       isRight r `shouldBe` True
 
   describe "OutputBinding" $ do
     it "Invokes a dapr output binding" $ do
       let dataObject = object [("k1", "v1"), ("k2", "v2")]
       let requestBody = BindingRequest {bindingOperation = "create", bindingMetadata = Map.fromList [("key", "123")], bindingData = dataObject}
-      r <- invokeBinding defaultDaprConfig "binding-mqtt" requestBody
+      r <- invokeBinding defaultDaprConfig mqttBinding requestBody
       isRight r `shouldBe` True
 
 -- describe "Secrets" $ do

@@ -67,6 +67,7 @@ library
       Dapr.Client.HttpClient.Types.Secrets
       Dapr.Client.HttpClient.Types.State
       Dapr.Client.HttpClient.Types.Binding
+      Dapr.Client.HttpClient.Types.PublishSubscribe
   other-modules:
       Dapr.Client.HttpClient.Internal
       Dapr.Client.HttpClient.Types.Internal

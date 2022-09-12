@@ -5,6 +5,8 @@ import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
 
+newtype ConfigurationStore = ConfigurationStore {getConfigStoreName :: Text}
+
 data Configuration = Configuration
   { configKey :: Text,
     configValue :: Text

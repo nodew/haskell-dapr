@@ -6,6 +6,8 @@ import Data.Aeson
 import Data.Text
 import GHC.Generics (Generic)
 
+newtype Binding = Binding {getBindingName :: Text}
+
 data BindingRequest a = BindingRequest
   { bindingMetadata :: RequestMetadata,
     bindingData :: a,

@@ -8,21 +8,20 @@ import Dapr.Client.HttpClient.Req
 import Dapr.Client.HttpClient.Types
 import Data.Aeson
 import Data.Bifunctor (bimap)
-import Data.Text (Text)
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 
 publishMessage ::
   (MonadIO m, HttpBody body) =>
   DaprConfig ->
-  Text ->
-  Text ->
+  PubSub ->
+  Topic ->
   body ->
   Option 'Http ->
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
-publishMessage config pubsubname topic message optionalHeader metadata = do
-  let url = ["publish", pubsubname, topic]
+publishMessage config pubsub topic message optionalHeader metadata = do
+  let url = ["publish", getPubSubName pubsub, topicName topic]
       metadataParam = mapMetadataToQueryParam metadata
       options = metadataParam <> optionalHeader
   response <- makeHttpRequest config POST url message ignoreResponse options
@@ -31,32 +30,32 @@ publishMessage config pubsubname topic message optionalHeader metadata = do
 publishJsonMessage ::
   (MonadIO m, ToJSON a) =>
   DaprConfig ->
-  Text ->
-  Text ->
+  PubSub ->
+  Topic ->
   a ->
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
-publishJsonMessage config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyJson message) mempty
+publishJsonMessage config pubsub topic message =
+  publishMessage config pubsub topic (ReqBodyJson message) mempty
 
 publishTextMessage ::
   MonadIO m =>
   DaprConfig ->
-  Text ->
-  Text ->
-  Text ->
+  PubSub ->
+  Topic ->
+  TextMessage ->
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
-publishTextMessage config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyBs (T.encodeUtf8 message)) (header "Content-Type" "text/plain")
+publishTextMessage config pubsub topic message =
+  publishMessage config pubsub topic (ReqBodyBs (T.encodeUtf8 message)) (header "Content-Type" "text/plain")
 
 publishCloudEvent ::
   (MonadIO m, ToJSON a) =>
   DaprConfig ->
-  Text ->
-  Text ->
+  PubSub ->
+  Topic ->
   a ->
   Maybe RequestMetadata ->
   m (Either DaprClientError ())
-publishCloudEvent config pubsubname topic message =
-  publishMessage config pubsubname topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")
+publishCloudEvent config pubsub topic message =
+  publishMessage config pubsub topic (ReqBodyJson message) (header "Content-Type" "application/cloudevents+json")

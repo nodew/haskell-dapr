@@ -9,9 +9,9 @@ import Data.Bifunctor (bimap)
 import Data.Text (Text)
 import Network.HTTP.Req
 
-getConfiguration :: MonadIO m => DaprConfig -> Text -> [Text] -> m (Either DaprClientError [Configuration])
+getConfiguration :: MonadIO m => DaprConfig -> ConfigurationStore -> [Text] -> m (Either DaprClientError [Configuration])
 getConfiguration config store keys = do
-  let url = ["configuration", store]
+  let url = ["configuration", getConfigStoreName store]
       params = keysToParams keys
   response <- makeHttpRequest config GET url NoReqBody jsonResponse params
   return $ bimap DaprHttpException responseBody response
@@ -19,9 +19,9 @@ getConfiguration config store keys = do
     keysToParams [] = mempty
     keysToParams (x : xs) = queryParam "key" (Just x) <> keysToParams xs
 
-subscribeConfiguration :: MonadIO m => DaprConfig -> Text -> [Text] -> m (Either DaprClientError SubscribeConfigurationResponse)
+subscribeConfiguration :: MonadIO m => DaprConfig -> ConfigurationStore -> [Text] -> m (Either DaprClientError SubscribeConfigurationResponse)
 subscribeConfiguration config store keys = do
-  let url = ["configuration", store, "subscribe"]
+  let url = ["configuration", getConfigStoreName store, "subscribe"]
       params = keysToParams keys
   response <- makeHttpRequest config GET url NoReqBody jsonResponse params
   return $ bimap DaprHttpException responseBody response

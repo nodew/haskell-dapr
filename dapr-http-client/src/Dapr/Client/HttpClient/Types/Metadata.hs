@@ -17,6 +17,10 @@ data DaprMetadata = DaprMetadata
 instance FromJSON DaprMetadata where
   parseJSON = customParseJSON 8
 
+type MetadataAttribute = Text
+
+type RawData = Text
+
 data DaprMetadataActor = DaprMetadataActor
   { metadataActorType :: Text,
     metadataActorCount :: Int
