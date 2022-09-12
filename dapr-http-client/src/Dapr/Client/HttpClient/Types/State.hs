@@ -8,6 +8,8 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 
+newtype StateStore = StateStore { getStoreName :: Text }
+
 data SaveStateOptions = SaveStateOptions
   { concurrency :: ConcurrencyMode,
     consistency :: ConsistencyMode
