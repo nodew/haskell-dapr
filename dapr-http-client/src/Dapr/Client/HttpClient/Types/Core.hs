@@ -13,6 +13,8 @@ data DaprConfig = DaprConfig
   }
   deriving (Show)
 
+newtype DaprHostApp = DaprHostApp {getId :: Text}
+
 defaultDaprConfig :: DaprConfig
 defaultDaprConfig =
   DaprConfig

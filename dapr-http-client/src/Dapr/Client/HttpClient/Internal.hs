@@ -10,4 +10,4 @@ mapMetadataToQueryParam :: Maybe RequestMetadata -> Option 'Http
 mapMetadataToQueryParam =
   maybe
     mempty
-    (foldlWithKey (\query key' value -> query <> queryParam key' (Just value)) mempty)
+    (foldlWithKey (\query key' value' -> query <> queryParam key' (Just value')) mempty)

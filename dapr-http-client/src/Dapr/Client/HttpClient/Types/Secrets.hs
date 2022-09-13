@@ -3,6 +3,10 @@ module Dapr.Client.HttpClient.Types.Secrets where
 import Data.Map (Map)
 import Data.Text (Text)
 
-type Secrets = Map Text Text
+newtype SecretStore = SecretStore {getSecretStoreName :: Text}
+
+type SecretName = Text
+
+type Secrets = Map SecretName Text
 
 type BulkSecrets = Map Text Secrets

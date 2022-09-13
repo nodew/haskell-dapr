@@ -8,16 +8,22 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 
+newtype StateStore = StateStore {getStoreName :: Text}
+
 data SaveStateOptions = SaveStateOptions
   { concurrency :: ConcurrencyMode,
     consistency :: ConsistencyMode
   }
   deriving (Eq, Show, Generic, ToJSON)
 
+type StateKey = Text
+
+type ETag = Maybe Text
+
 data SaveStateRequest a = SaveStateRequest
-  { stateKey :: Text,
+  { stateKey :: StateKey,
     stateValue :: a,
-    stateEtag :: Maybe Text,
+    stateEtag :: ETag,
     stateOptions :: Maybe SaveStateOptions,
     stateMetadata :: Maybe RequestMetadata
   }
@@ -55,7 +61,7 @@ instance ToJSON StateOperationType where
   toJSON = Data.Aeson.String . T.pack . show
 
 data StateOperationRequest a = StateOperationRequest
-  { stateKey :: Text,
+  { stateKey :: StateKey,
     stateValue :: Maybe a,
     stateEtag :: Maybe Text,
     stateOptions :: Maybe SaveStateOptions,

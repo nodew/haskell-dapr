@@ -16,14 +16,14 @@ invokeMethod ::
     HttpBody payload
   ) =>
   DaprConfig ->
-  Text ->
+  DaprHostApp ->
   method ->
   [Text] ->
   payload ->
   Option 'Http ->
   m (Either DaprClientError LbsResponse)
-invokeMethod config appId httpMethod path payload options = do
-  let url = ["invoke", appId, "method"] <> path
+invokeMethod config app httpMethod path payload options = do
+  let url = ["invoke", getId app, "method"] <> path
   response <- makeHttpRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
@@ -35,17 +35,17 @@ invokeMethod' ::
     FromJSON b
   ) =>
   DaprConfig ->
-  Text ->
+  DaprHostApp ->
   method ->
   [Text] ->
   a ->
   Option 'Http ->
   m (Either DaprClientError b)
-invokeMethod' config appId httpMethod path payload options = do
+invokeMethod' config app httpMethod path payload options = do
   response <-
     invokeMethod
       config
-      appId
+      app
       httpMethod
       path
       (ReqBodyJson payload)

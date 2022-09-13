@@ -5,16 +5,15 @@ import Dapr.Client.HttpClient.Req
 import Dapr.Client.HttpClient.Types
 import Data.Aeson
 import Data.Bifunctor (bimap)
-import Data.Text (Text)
 import Network.HTTP.Req
 
 invokeBinding ::
   (MonadIO io, ToJSON a) =>
   DaprConfig ->
-  Text ->
+  Binding ->
   BindingRequest a ->
   io (Either DaprClientError ())
-invokeBinding config bindingName requestBody = do
-  let url = ["bindings", bindingName]
+invokeBinding config binding requestBody = do
+  let url = ["bindings", getBindingName binding]
   response <- makeHttpRequest config POST url (ReqBodyJson requestBody) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
