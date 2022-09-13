@@ -16,7 +16,7 @@ invokeMethod ::
     HttpBody payload
   ) =>
   DaprConfig ->
-  App ->
+  DaprHostApp ->
   method ->
   [Text] ->
   payload ->
@@ -35,7 +35,7 @@ invokeMethod' ::
     FromJSON b
   ) =>
   DaprConfig ->
-  App ->
+  DaprHostApp ->
   method ->
   [Text] ->
   a ->
