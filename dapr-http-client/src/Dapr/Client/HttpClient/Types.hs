@@ -7,9 +7,11 @@ module Dapr.Client.HttpClient.Types
     module State,
     module Binding,
     module PublishSubscribe,
+    module Actor,
   )
 where
 
+import Dapr.Client.HttpClient.Types.Actor as Actor
 import Dapr.Client.HttpClient.Types.Binding as Binding
 import Dapr.Client.HttpClient.Types.Configuration as Configuration
 import Dapr.Client.HttpClient.Types.Core as Core

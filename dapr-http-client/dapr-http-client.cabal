@@ -60,6 +60,7 @@ library
       Dapr.Client.HttpClient.StateManagement
       Dapr.Client.HttpClient.OutputBinding
       Dapr.Client.HttpClient.Types
+      Dapr.Client.HttpClient.Types.Actor
       Dapr.Client.HttpClient.Types.Configuration
       Dapr.Client.HttpClient.Types.Core
       Dapr.Client.HttpClient.Types.DistributedLock

@@ -10,9 +10,11 @@ module Dapr.Client.HttpClient
     module StateManagement,
     module OutputBinding,
     module Types,
+    module Actor,
   )
 where
 
+import Dapr.Client.HttpClient.Actor as Actor
 import Dapr.Client.HttpClient.Configuration as Configuration
 import Dapr.Client.HttpClient.DistributedLock as DistributedLock
 import Dapr.Client.HttpClient.Health as Health
