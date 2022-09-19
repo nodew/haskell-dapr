@@ -1,7 +1,9 @@
 packages:
+  -- libraries
   ./dapr-actor
   ./dapr-http-client
   ./dapr-http-server
   ./dapr-grpc-client
 
+  -- examples
   ./examples/http/pubsub
