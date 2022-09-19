@@ -3,3 +3,5 @@ packages:
   ./dapr-http-client
   ./dapr-http-server
   ./dapr-grpc-client
+
+  ./examples/http/pubsub
