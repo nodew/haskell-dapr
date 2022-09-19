@@ -17,20 +17,20 @@ import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.Handler.Warp (run)
 
-data HelloWorldMessage = HelloWorldMessage
+data TestMessage = TestMessage
   { message :: Text
   }
   deriving (Eq, Show, Generic, ToJSON, FromJSON)
 
-helloWorld = HelloWorldMessage "Hello World!"
+helloWorld = TestMessage "Hello World!"
 
 app :: Application
 app req respond = case pathInfo req of
   ["message"] -> do
     body <- strictRequestBody req
-    let message = decode body :: Maybe (SubscribedMessage HelloWorldMessage)
-    putStrLn $ "Get message: " <> (show $ msgData <$> message)
-    respond $ responseBuilder status200 [("Content-Type", "application/json")] (lazyByteString $ encode $ SubscriptionHandleStatus StatusSuccess)
+    let message = decode body :: Maybe (DaprSubMessage TestMessage)
+    putStrLn $ "Get message: " <> (show $ subMsgData <$> message)
+    respond $ responseBuilder status200 [("Content-Type", "application/json")] (lazyByteString $ encode $ SubscribedMessageHttpResponse SubscribeSuccess)
   _ -> respond indexResponse
 
 indexResponse :: Response

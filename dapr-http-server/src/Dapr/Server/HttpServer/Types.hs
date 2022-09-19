@@ -29,48 +29,48 @@ data SubscribedConfiguration = Configuration
   }
   deriving (Eq, Show, Generic, FromJSON)
 
-data SubscriptionHandleStatusType = StatusSuccess | StatusRetry | StatusDrop
+data SubScribeStatus = SubscribeSuccess | SubscribeRetry | SubscribeDrop
   deriving (Eq)
 
-instance Show SubscriptionHandleStatusType where
-  show StatusSuccess = "SUCCESS"
-  show StatusRetry = "RETRY"
-  show StatusDrop = "DROP"
+instance Show SubScribeStatus where
+  show SubscribeSuccess = "SUCCESS"
+  show SubscribeRetry = "RETRY"
+  show SubscribeDrop = "DROP"
 
-instance ToJSON SubscriptionHandleStatusType where
+instance ToJSON SubScribeStatus where
   toJSON = Data.Aeson.String . T.pack . show
 
-newtype SubscriptionHandleStatus = SubscriptionHandleStatus
-  { status :: SubscriptionHandleStatusType
+newtype SubscribedMessageHttpResponse = SubscribedMessageHttpResponse
+  { status :: SubScribeStatus
   }
   deriving (Eq, Show, Generic, ToJSON)
 
-data SubscribedMessage a = SubscribedMessage
-  { msgData :: a,
-    msgPubsubName :: Text,
-    msgTopic :: Text,
-    msgDataContentType :: Text,
-    msgId :: Text,
-    msgSpecVersion :: Text,
-    msgType :: Text,
-    msgSource :: Text,
-    msgTraceId :: Text,
-    msgTraceParent :: Text,
-    msgTraceState :: Text
+data DaprSubMessage a = DaprSubMessage
+  { subMsgData :: a,
+    subMsgPubsubName :: Text,
+    subMsgTopic :: Text,
+    subMsgDataContentType :: Text,
+    subMsgId :: Text,
+    subMsgSpecVersion :: Text,
+    subMsgType :: Text,
+    subMsgSource :: Text,
+    subMsgTraceId :: Text,
+    subMsgTraceParent :: Text,
+    subMsgTraceState :: Text
   }
   deriving (Eq, Show, Generic)
 
-instance FromJSON a => FromJSON (SubscribedMessage a) where
-  parseJSON = withObject "SubscribedMessage" $ \o -> do
-    msgData <- o .: "data"
-    msgPubsubName <- o .: "pubsubname"
-    msgTopic <- o .: "topic"
-    msgDataContentType <- o .: "datacontenttype"
-    msgId <- o .: "id"
-    msgSpecVersion <- o .: "specversion"
-    msgType <- o .: "type"
-    msgSource <- o .: "source"
-    msgTraceId <- o .: "traceid"
-    msgTraceParent <- o .: "traceparent"
-    msgTraceState <- o .: "tracestate"
-    pure SubscribedMessage {..}
+instance FromJSON a => FromJSON (DaprSubMessage a) where
+  parseJSON = withObject "DaprSubMessage" $ \o -> do
+    subMsgData <- o .: "data"
+    subMsgPubsubName <- o .: "pubsubname"
+    subMsgTopic <- o .: "topic"
+    subMsgDataContentType <- o .: "datacontenttype"
+    subMsgId <- o .: "id"
+    subMsgSpecVersion <- o .: "specversion"
+    subMsgType <- o .: "type"
+    subMsgSource <- o .: "source"
+    subMsgTraceId <- o .: "traceid"
+    subMsgTraceParent <- o .: "traceparent"
+    subMsgTraceState <- o .: "tracestate"
+    pure DaprSubMessage {..}
