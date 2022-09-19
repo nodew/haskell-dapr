@@ -1,17 +1,18 @@
-cabal-version: 3.0
-name:           dapr-http-client
-version:        0.1.0.0
-description:    Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
-homepage:       https://github.com/nodew/haskell-dapr#readme
-bug-reports:    https://github.com/nodew/haskell-dapr/issues
-author:         Qiao Wang
-maintainer:     wangqiao11@hotmail.com
-copyright:      2022 Qiao Wang
-license:        Apache-2.0
-license-file:   LICENSE
-category:       Web
-build-type:     Simple
+cabal-version:      3.0
+name:               dapr-http-client
+version:            0.1.0.0
+description:        Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
+homepage:           https://github.com/nodew/haskell-dapr#readme
+bug-reports:        https://github.com/nodew/haskell-dapr/issues
+author:             Qiao Wang
+maintainer:         wangqiao11@hotmail.com
+copyright:          2022 Qiao Wang
+license:            Apache-2.0
+license-file:       LICENSE
+category:           Web
+build-type:         Simple
 extra-source-files: ChangeLog.md
+                  , README.md
 tested-with: GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
 
 source-repository head

@@ -1,8 +1,10 @@
 resolver: lts-16.22
 
 packages:
+- dapr-actor
 - dapr-http-client
 - dapr-http-server
+- dapr-grpc-client
 
 allow-newer: true
 
