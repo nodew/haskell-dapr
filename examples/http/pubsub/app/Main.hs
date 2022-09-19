@@ -4,7 +4,7 @@ import Control.Concurrent
 import Dapr.Client.HttpClient hiding (metadata)
 import Dapr.Server.HttpServer.Types
 import Dapr.Server.HttpServer.Wai.Middleware
-import Data.Aeson (object)
+import Data.Aeson
 import Data.Aeson.Types
 import Data.ByteString hiding (putStrLn)
 import qualified Data.ByteString
@@ -15,13 +15,21 @@ import Data.Text
 import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.Handler.Warp (run)
+import GHC.Generics
+
+data HelloWorldMessage = HelloWorldMessage
+  { message :: Text
+  } deriving (Eq, Show, Generic, ToJSON, FromJSON)
+
+helloWorld = HelloWorldMessage "Hello World!"
 
 app :: Application
 app req respond = case pathInfo req of
   ["message"] -> do
     body <- strictRequestBody req
-    putStrLn $ "Get message: " <> show body
-    respond $ responseBuilder status200 [("Content-Type", "application/json")] (lazyByteString "{ \"status\": \"success\"}")
+    let message = decode body :: Maybe (SubscribedMessage HelloWorldMessage)
+    putStrLn $ "Get message: " <> (show $ msgData <$> message)
+    respond $ responseBuilder status200 [("Content-Type", "application/json")] (lazyByteString $ encode $ SubscriptionHandleStatus StatusSuccess)
   _ -> respond indexResponse
 
 indexResponse :: Response
@@ -44,6 +52,7 @@ server = do
 main :: IO ()
 main = do
   _ <- forkIO server
-  threadDelay 1000
-  _ <- publishJsonMessage defaultDaprConfig (PubSub pubsub') (Topic topic') (object [("hello", "world")]) Nothing
+  threadDelay $ 300 * 1000
+  _ <- publishJsonMessage defaultDaprConfig (PubSub pubsub') (Topic topic') (helloWorld) Nothing
+  threadDelay $ 300 * 1000
   return ()

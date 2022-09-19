@@ -10,7 +10,8 @@ import Network.Wai
 addDaprSubscriptions :: [SubscriptionInfo] -> Middleware
 addDaprSubscriptions subs app request respond = do
   let path = pathInfo request
-  if path == ["dapr", "subscribe"]
+      method = requestMethod request
+  if path == ["dapr", "subscribe"] && method == "GET"
     then
       let subscriptionInfo = encode subs
        in respond $ responseBuilder status200 [("Content-Type", "application/json")] (lazyByteString subscriptionInfo)
@@ -19,7 +20,7 @@ addDaprSubscriptions subs app request respond = do
 subscribeConfigurationChange :: Text -> Text -> (Maybe SubscribedConfiguration -> IO ()) -> Middleware
 subscribeConfigurationChange store key' handler app request respond = do
   let path = pathInfo request
-  let method = requestMethod request
+      method = requestMethod request
   if path == ["configuration", store, key'] && method == "POST"
     then do
       rawBody <- lazyRequestBody request
