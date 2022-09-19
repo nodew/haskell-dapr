@@ -10,7 +10,7 @@
 {-# language TypeFamilies          #-}
 {-# language TypeOperators         #-}
 
-module Dapr.Client.GrpcClient.Schema.Schema where
+module Schema.Schema where
 
 import Data.Text as T
 import GHC.Generics
@@ -18,7 +18,7 @@ import GHC.Generics
 import Mu.Quasi.GRpc
 import Mu.Schema
 
-grpc "TheSchema" id "muproject.proto"
+grpc "TheSchema" id "src/muproject.proto"
 
 -- A. Map to Haskell types
 -- data Message
