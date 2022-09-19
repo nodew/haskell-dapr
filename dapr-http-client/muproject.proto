@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package muproject;
+
+service Service {
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest { string name = 1; }
+message HelloReply { string message = 1; }

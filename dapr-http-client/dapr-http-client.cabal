@@ -28,6 +28,10 @@ common lib
     , extra ^>=1.7.10
     , req >=3.10.0 && <3.14
     , text ^>={ 1.2.5, 2.0.1 }
+    , mu-grpc-server  >=0.4.0
+    , mu-protobuf     >=0.4.0
+    , mu-rpc          >=0.4.0
+    , mu-schema       >=0.3.1
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   default-extensions:
       OverloadedStrings
@@ -69,6 +73,8 @@ library
       Dapr.Client.HttpClient.Types.State
       Dapr.Client.HttpClient.Types.Binding
       Dapr.Client.HttpClient.Types.PublishSubscribe
+      Dapr.Client.GrpcClient
+      Dapr.Client.GrpcClient.Schema.Schema
   other-modules:
       Dapr.Client.HttpClient.Internal
       Dapr.Client.HttpClient.Types.Internal

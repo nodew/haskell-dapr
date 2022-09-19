@@ -3,10 +3,115 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: mu-schema-0.3.0.0@sha256:1281c482e5e55538f818c99048df377e79e715fa837d296acbb9d27ead70c113,1619
+    pantry-tree:
+      size: 1061
+      sha256: c5eb54875cadc536814ce00194cdc1bcf4eeed73323adefe70501b0602f75f85
+  original:
+    hackage: mu-schema-0.3.0.0
+- completed:
+    hackage: mu-rpc-0.4.0.1@sha256:24f2516926a669f860b59d17ed8af6d0704361b5abed30f4e7eb80fb685ae8bc,1383
+    pantry-tree:
+      size: 445
+      sha256: 235597681d97b0789bc7437c752658f2585248d889a289c09532e3e535640cfa
+  original:
+    hackage: mu-rpc-0.4.0.1
+- completed:
+    hackage: mu-optics-0.3.0.1@sha256:c3494c71c6300e6a0dcb77c9782481150956e912c1b47fccd69cbb795e461d52,1068
+    pantry-tree:
+      size: 172
+      sha256: 6f8275b8db1dce6136ebd2eb831495af39774d9560d8d07e60d5da09a5f3ed99
+  original:
+    hackage: mu-optics-0.3.0.1
+- completed:
+    hackage: mu-avro-0.4.0.2@sha256:233d6891b4ac97603a8ebe55cab974e4500798bdfdb1bfa6ec32107ca61c8777,2053
+    pantry-tree:
+      size: 541
+      sha256: 1f36f641ca102ba0c171a9613bb8ab70bd9b80a0320d3eaf958808686b316f51
+  original:
+    hackage: mu-avro-0.4.0.2
+- completed:
+    hackage: mu-protobuf-0.4.0.3@sha256:4a91814ed6c88acecc2ab45f162714a3410a0375b0b762ad77ec86a23fce5828,1953
+    pantry-tree:
+      size: 640
+      sha256: ca9a9c5798a6043aa068b22b3d72787bfc13816587105a8b5b4d6bcbd0e635d3
+  original:
+    hackage: mu-protobuf-0.4.0.3
+- completed:
+    hackage: mu-grpc-server-0.4.0.0@sha256:03963b39f5b0887d261106ec03bfabbd4ccd1489e4c59c6cc216b61a4ffdb52c,2682
+    pantry-tree:
+      size: 334
+      sha256: e0d51b2551de2ecce35707b3dc3fabfe67cbd206522d363bf2316b08c2ccbfda
+  original:
+    hackage: mu-grpc-server-0.4.0.0
+- completed:
+    hackage: mu-grpc-common-0.4.0.0@sha256:568b5879cd67c0bc0e956d53fb87552bb6d9a6287c5d1b09e2284ed5b04de418,1394
+    pantry-tree:
+      size: 281
+      sha256: 7e745ded1cb622178392ae2d5a6d5591af9743b58506de5ed2e17d7d698b0d18
+  original:
+    hackage: mu-grpc-common-0.4.0.0
+- completed:
+    hackage: compendium-client-0.2.1.1@sha256:cd477438d507273b34b82581ade333921ae997c1618b48af0c1da2a4968623e0,1203
+    pantry-tree:
+      size: 181
+      sha256: 18996ce535e40483ca2e29397e606aae551552608f96a6a8cc647ce24e24e937
+  original:
+    hackage: compendium-client-0.2.1.1
+- completed:
+    hackage: http2-client-0.9.0.0@sha256:b8885c89adcc8b9d4ebb9abf6ae0ac6336e3fdf947a2b1f2b95c4e2c8c4acf01,2685
+    pantry-tree:
+      size: 853
+      sha256: d7a1be66eb14e84cfedd87e8363e406abb244bb74b742e8f0141efce27545008
+  original:
+    hackage: http2-client-0.9.0.0
+- completed:
+    hackage: http2-grpc-types-0.5.0.0@sha256:4d34edc06a48496130f19245817a7cd7ea15c78ac8815570c3795ffc4503cf27,1445
+    pantry-tree:
+      size: 405
+      sha256: 3a1a94b87acd230b2f750f0077dc47177f37e46a2984b5764390207a83c4d5e4
+  original:
+    hackage: http2-grpc-types-0.5.0.0
+- completed:
+    hackage: http2-grpc-proto3-wire-0.1.0.0@sha256:4f6c0d27048756155b82ebf7385a20cc8241c7bd854e96d1dd6a1827e75fa410,1504
+    pantry-tree:
+      size: 341
+      sha256: d07d5bb883860e3bf928c00312df133a4c195c99bb397865bd67f433f75387b8
+  original:
+    hackage: http2-grpc-proto3-wire-0.1.0.0
+- completed:
+    hackage: warp-grpc-0.4.0.1@sha256:3859190e4fa23b944cf93ac691b3cec78c2adf4eaff6a4e8070c89fd17915add,1759
+    pantry-tree:
+      size: 709
+      sha256: f542ef3e7e03b9cd0b2c0e0c436ce4e68ab37f56195740639034cc3cd28a6b9f
+  original:
+    hackage: warp-grpc-0.4.0.1
+- completed:
+    hackage: proto3-wire-1.4.0@sha256:f8f9facfe86151c7172fc796e1d33b2be54aa919c0a17d39d21b33e928ee66a4,3082
+    pantry-tree:
+      size: 1017
+      sha256: b834fa8c413a6c67cc76cf42725199f5154a03aaf0e2f144c4a284347c8d3b10
+  original:
+    hackage: proto3-wire-1.4.0
+- completed:
+    hackage: parameterized-0.5.0.0@sha256:880717fbb958de1bac015f0a375ab6636f162a72483d987a11e305da6fac6c97,1969
+    pantry-tree:
+      size: 1019
+      sha256: 843aed822e03279edf00a2595dfb22038b306f4f0acd6984bd108024c5102f90
+  original:
+    hackage: parameterized-0.5.0.0
+- completed:
+    hackage: word-compat-0.0.5@sha256:5c684b0508ff1befe40e7c2f749ce20906dd3849c515d9cb9c0749aa146981c5,1427
+    pantry-tree:
+      size: 355
+      sha256: 9fe79e87470ccee07d33db0275cabee07810349cf637efc67d55a803409b2192
+  original:
+    hackage: word-compat-0.0.5
 snapshots:
 - completed:
-    size: 619161
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/17.yaml
-    sha256: 7f47507fd037228a8d23cf830f5844e1f006221acebdd7cb49f2f5fb561e0546
-  original: lts-19.17
+    size: 532414
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/22.yaml
+    sha256: e483fb88549fc0f454c190979bf35ac91c7aceff2c0e71e7d8edd11842d772d8
+  original: lts-16.22
