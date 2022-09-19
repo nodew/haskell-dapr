@@ -12,14 +12,15 @@ import Data.ByteString.Builder (lazyByteString)
 import qualified Data.ByteString.Lazy as L
 import Data.Map
 import Data.Text
+import GHC.Generics
 import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.Handler.Warp (run)
-import GHC.Generics
 
 data HelloWorldMessage = HelloWorldMessage
   { message :: Text
-  } deriving (Eq, Show, Generic, ToJSON, FromJSON)
+  }
+  deriving (Eq, Show, Generic, ToJSON, FromJSON)
 
 helloWorld = HelloWorldMessage "Hello World!"
 
