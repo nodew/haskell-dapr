@@ -1,6 +1,5 @@
 module GrpcClient
-  ( 
-    module Schema,
+  ( module Schema,
   )
 where
 
