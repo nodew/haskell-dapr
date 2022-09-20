@@ -15,7 +15,7 @@ dropFirstNChars :: Int -> [Char] -> String
 dropFirstNChars n = lowerFirstLetter . drop n
 
 customParseJSON ::
-  (Generic a, GFromJSON' Zero (Rep a)) =>
+  (Generic a, GFromJSON Zero (Rep a)) =>
   Int ->
   Value ->
   Parser a
