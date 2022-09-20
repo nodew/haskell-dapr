@@ -21,8 +21,8 @@ goldenText name actualOutput =
       encodePretty = show,
       writeToFile = T.writeFile,
       readFromFile = T.readFile,
-      goldenFile = goldenBaseDir </> name </> name <> ".golden",
-      actualFile = Just (goldenBaseDir </> name </> name <> ".actual"),
+      -- goldenFile = goldenBaseDir </> name </> name <> ".golden",
+      -- actualFile = Just (goldenBaseDir </> name </> name <> ".actual"),
       failFirstTime = False
     }
 
