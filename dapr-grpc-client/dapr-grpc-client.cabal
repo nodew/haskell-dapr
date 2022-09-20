@@ -1,4 +1,4 @@
-cabal-version:      >=1.10
+cabal-version:      3.0
 name:               dapr-grpc-client
 version:            0.1.0.0
 description:        Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
@@ -13,7 +13,7 @@ category:           Web
 build-type:         Simple
 extra-source-files: CHANGELOG.md
                   , README.md
--- tested-with:        GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
+tested-with:        GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
 
 source-repository head
     type: git
