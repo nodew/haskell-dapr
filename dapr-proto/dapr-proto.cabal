@@ -1,0 +1,71 @@
+cabal-version:      3.0
+name:               dapr-proto
+version:            0.1.0.0
+description:        Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
+homepage:           https://github.com/nodew/haskell-dapr#readme
+bug-reports:        https://github.com/nodew/haskell-dapr/issues
+license:            Apache-2.0
+license-file:       LICENSE
+author:             Qiao Wang
+maintainer:         wangqiao11@hotmail.com
+copyright:          2022 Qiao Wang
+category:           Web
+build-type:         Custom
+extra-source-files: ChangeLog.md
+                  , README.md
+                  , proto/**/*.proto
+tested-with: GHC == { 9.4.2, 9.0.2, 8.10.7, 8.8.4 }
+
+source-repository head
+    type: git
+    location: https://github.com/nodew/haskell-dapr
+
+custom-setup
+  setup-depends: base, Cabal, proto-lens-setup
+
+library
+    build-tool-depends: proto-lens-protoc:proto-lens-protoc
+    build-depends:
+          base >=4.11 && <5
+        , proto-lens-runtime ^>=0.7.0
+    exposed-modules:
+          Proto.Google.Protobuf.Any
+        , Proto.Google.Protobuf.Any_Fields
+        , Proto.Google.Protobuf.Empty
+        , Proto.Google.Protobuf.Empty_Fields
+        , Proto.Dapr.Proto.Common.V1.Common
+        , Proto.Dapr.Proto.Common.V1.Common_Fields
+        , Proto.Dapr.Proto.Runtime.V1.Dapr
+        , Proto.Dapr.Proto.Runtime.V1.Dapr_Fields
+        , Proto.Dapr.Proto.Runtime.V1.Appcallback
+        , Proto.Dapr.Proto.Runtime.V1.Appcallback_Fields
+    autogen-modules:
+          Proto.Google.Protobuf.Any
+        , Proto.Google.Protobuf.Any_Fields
+        , Proto.Google.Protobuf.Empty
+        , Proto.Google.Protobuf.Empty_Fields
+        , Proto.Dapr.Proto.Common.V1.Common
+        , Proto.Dapr.Proto.Common.V1.Common_Fields
+        , Proto.Dapr.Proto.Runtime.V1.Dapr
+        , Proto.Dapr.Proto.Runtime.V1.Dapr_Fields
+        , Proto.Dapr.Proto.Runtime.V1.Appcallback
+        , Proto.Dapr.Proto.Runtime.V1.Appcallback_Fields
+    default-language: Haskell2010
+
+test-suite dapr-proto-test
+    build-depends:
+          base >=4.11 && <5
+        , dapr-proto
+        , QuickCheck ^>=2.14.0
+        , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
+        , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
+        , microlens
+        , proto-lens ^>=0.7.1
+        , proto-lens-runtime ^>=0.7.0
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    other-modules:
+          Proto.Dapr.CommonSpec
+        , Paths_dapr_proto
+    default-language: Haskell2010
