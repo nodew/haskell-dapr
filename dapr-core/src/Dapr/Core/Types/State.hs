@@ -8,150 +8,161 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 
-newtype StateStore = StateStore { getStoreName :: Text }
+-- | 'StateStore' is the name of state store.
+newtype StateStore = StateStore {getStoreName :: Text}
+  deriving (Eq, Show, Generic, FromJSON, ToJSON)
 
--- data SaveStateOptions = SaveStateOptions
---   { concurrency :: ConcurrencyMode,
---     consistency :: ConsistencyMode
---   }
---   deriving (Eq, Show, Generic, ToJSON)
+-- | 'GetStateRequest' is the message to get key-value states from specific state store.
+data GetStateRequest = GetStateRequest
+  { stateStore :: StateStore, -- ^The name of state store.
+    stateKey :: StateKey, -- ^The key of the desired state
+    stateConsitency :: ConsistencyMode, -- ^The read consistency of the state store.
+    stateMetadata :: ExtendedMetadata -- ^The metadata which will be sent to state store components.
+  }
 
--- type StateKey = Text
+-- | 'GetBulkStateRequest' is the message to get a list of key-value states from specific state store.
+data GetBulkStateRequest = GetBulkStateRequest
+  { stateStore :: StateStore, -- ^The name of state store.
+    stateKeys :: [StateKey], -- ^The keys to get
+    stateParallelism :: Maybe Int, -- ^The number of parallel operations executed on the state store for a get operation.
+    stateMetadata :: ExtendedMetadata -- ^The metadata which will be sent to state store components.
+  }
 
--- type ETag = Maybe Text
+-- | 'BulkStateItem' is the response item for a bulk get operation.
+data BulkStateItem a = BulkStateItem
+  { stateItemKey :: StateKey, -- ^State item key
+    stateItemData :: Maybe a, -- ^State data
+    stateItemEtag :: Maybe Etag, -- ^The entity tag which represents the specific version of data. ETag format is defined by the corresponding data store.
+    stateItemError :: Maybe Text, -- ^The error that was returned from the state store in case of a failed get operation.
+    stateItemMetadata :: Maybe ExtendedMetadata -- ^The metadata which will be sent to app.
+  }
+  deriving (Eq, Show, Generic)
 
--- data SaveStateRequest a = SaveStateRequest
---   { stateKey :: StateKey,
---     stateValue :: a,
---     stateEtag :: ETag,
---     stateOptions :: Maybe SaveStateOptions,
---     stateMetadata :: Maybe ExtendedMetadata
---   }
---   deriving (Eq, Show, Generic)
+newtype GetBulkStateResponse a = GetBulkStateResponse
+  { items :: [BulkStateItem a]
+  }
 
--- instance ToJSON a => ToJSON (SaveStateRequest a) where
---   toJSON = customToJSON 5
+data GetStateResponse a = GetStateResponse
+  { stateData :: a,
+    stateEtag :: Maybe Etag,
+    stateMetadata :: ExtendedMetadata
+  }
 
--- makeSimpleSaveStateRequest :: Text -> a -> SaveStateRequest a
--- makeSimpleSaveStateRequest key value = SaveStateRequest key value Nothing Nothing Nothing
+data DeleteStateRequest = DeleteStateRequest
+  { stateStore :: StateStore,
+    stateKey :: StateKey,
+    stateEtag :: Maybe Etag,
+    stateOption :: Maybe StateOption,
+    stateMetadta :: ExtendedMetadata
+  }
 
--- data BulkStateRequest = BulkStateRequest
---   { keys :: [Text],
---     parallelism :: Maybe Int
---   }
---   deriving (Eq, Show, Generic, ToJSON)
+data DeleteBulkStateRequest a = DeleteBulkStateRequest
+  { stateStore :: StateStore,
+    stateItems :: [StateItem a]
+  }
 
--- data BulkStateItem a = BulkStateItem
---   { itemKey :: Text,
---     itemData :: Maybe a,
---     itemEtag :: Maybe Text
---   }
---   deriving (Eq, Show, Generic)
+data SaveStateRequest a = SaveStateRequest
+  { stateStore :: StateStore,
+    stateItems :: [StateItem a]
+  }
 
--- instance FromJSON a => FromJSON (BulkStateItem a) where
---   parseJSON = customParseJSON 4
+data QueryStateRequest = QueryStateRequest
+  { stateStore :: StateStore,
+    stateQuery :: StateQuery,
+    stateMetadata :: ExtendedMetadata
+  }
 
--- data StateOperationType = Unspecified | Upsert | Delete deriving (Eq)
+data QueryStateItem a = QueryStateItem
+  { stateKey :: StateKey,
+    stateData :: a,
+    stateEtag :: Maybe Etag,
+    stateError :: Maybe Text
+  }
 
--- instance Show StateOperationType where
---   show Unspecified = "unspecified"
---   show Upsert = "upsert"
---   show Delete = "delete"
+-- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
+data TransactionalStateOperation a = TransactionalStateOperation
+  { transactionOperation :: TransactionOperation, -- ^The type of operation to be executed
+    transactionRequest :: StateItem a -- ^State values to be operated on
+  }
 
--- instance ToJSON StateOperationType where
---   toJSON = Data.Aeson.String . T.pack . show
+-- | 'ExecuteStateTransactionRequest' is the message to execute multiple operations on a specified store.
+data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
+  { stateStore :: StateStore,
+    stateOperations :: [TransactionalStateOperation a],
+    stateMetadata :: ExtendedMetadata
+  }
 
--- data StateOperationRequest a = StateOperationRequest
---   { stateKey :: StateKey,
---     stateValue :: Maybe a,
---     stateEtag :: Maybe Text,
---     stateOptions :: Maybe SaveStateOptions,
---     stateMetadata :: Maybe ExtendedMetadata
---   }
---   deriving (Eq, Show, Generic)
+data QueryStateResponse a = QueryStateResponse
+  {
+    results :: [QueryStateItem a],
+    token :: Text,
+    metadata :: ExtendedMetadata
+  }
 
--- instance ToJSON a => ToJSON (StateOperationRequest a) where
---   toJSON = customToJSON 5
+data StateQueryItem a = StateQueryItem
+  { itemKey :: Text,
+    itemData :: Maybe a,
+    itemEtag :: Maybe Text,
+    itemError :: Maybe Text
+  }
+  deriving (Eq, Show, Generic)
 
--- data StateOperation a = StateOperation
---   { operation :: StateOperationType,
---     request :: StateOperationRequest a
---   }
---   deriving (Eq, Show, Generic, ToJSON)
+instance FromJSON a => FromJSON (StateQueryItem a) where
+  parseJSON = customParseJSON 4
 
--- data StateTransaction a = StateTransaction
---   { transactionOperations :: [StateOperation a],
---     transactionMetadata :: Maybe ExtendedMetadata
---   }
---   deriving (Eq, Show, Generic)
+data StateQueryResponse a = StateQueryResponse
+  { results :: [StateQueryItem a],
+    token :: Text,
+    metadata :: Maybe ExtendedMetadata
+  }
+  deriving (Eq, Show, Generic, FromJSON)
 
--- instance ToJSON a => ToJSON (StateTransaction a) where
---   toJSON = customToJSON 11
+data StateQueryOrder = StateQueryOrderAsc | StateQueryOrderDesc deriving (Eq)
 
--- data StateQueryItem a = StateQueryItem
---   { itemKey :: Text,
---     itemData :: Maybe a,
---     itemEtag :: Maybe Text,
---     itemError :: Maybe Text
---   }
---   deriving (Eq, Show, Generic)
+instance Show StateQueryOrder where
+  show StateQueryOrderAsc = "ASC"
+  show StateQueryOrderDesc = "DESC"
 
--- instance FromJSON a => FromJSON (StateQueryItem a) where
---   parseJSON = customParseJSON 4
+instance ToJSON StateQueryOrder where
+  toJSON = Data.Aeson.String . T.pack . show
 
--- data StateQueryResponse a = StateQueryResponse
---   { results :: [StateQueryItem a],
---     token :: Text,
---     metadata :: Maybe ExtendedMetadata
---   }
---   deriving (Eq, Show, Generic, FromJSON)
+data StateQuerySort = StateQuerySort
+  { stateOrderKey :: Text,
+    stateOrderOrder :: Maybe StateQueryOrder
+  }
+  deriving (Eq, Show, Generic)
 
--- data StateQueryOrder = StateQueryOrderAsc | StateQueryOrderDesc deriving (Eq)
+instance ToJSON StateQuerySort where
+  toJSON = customToJSON 10
 
--- instance Show StateQueryOrder where
---   show StateQueryOrderAsc = "ASC"
---   show StateQueryOrderDesc = "DESC"
+data StateQueryFilter
+  = AndFilter [StateQueryFilter]
+  | OrFilter [StateQueryFilter]
+  | EqFilter (Map Text Text)
+  | InFilter (Map Text [Text])
+  deriving (Eq, Show)
 
--- instance ToJSON StateQueryOrder where
---   toJSON = Data.Aeson.String . T.pack . show
+instance ToJSON StateQueryFilter where
+  toJSON (EqFilter a) = object ["EQ" .= a]
+  toJSON (InFilter a) = object ["IN" .= a]
+  toJSON (AndFilter a) = object ["AND" .= a]
+  toJSON (OrFilter a) = object ["OR" .= a]
 
--- data StateQuerySort = StateQuerySort
---   { stateOrderKey :: Text,
---     stateOrderOrder :: Maybe StateQueryOrder
---   }
---   deriving (Eq, Show, Generic)
+data StateQueryPagination = StateQueryPagination
+  { paginationLimit :: Int,
+    paginationToken :: Maybe Text
+  }
+  deriving (Eq, Show, Generic)
 
--- instance ToJSON StateQuerySort where
---   toJSON = customToJSON 10
+instance ToJSON StateQueryPagination where
+  toJSON = customToJSON 10
 
--- data StateQueryFilter
---   = AndFilter [StateQueryFilter]
---   | OrFilter [StateQueryFilter]
---   | EqFilter (Map Text Text)
---   | InFilter (Map Text [Text])
---   deriving (Eq, Show)
+data StateQuery = StateQuery
+  { stateQueryFilter :: StateQueryFilter,
+    stateQuerySort :: [StateQuerySort],
+    stateQueryPage :: StateQueryPagination
+  }
+  deriving (Eq, Show, Generic)
 
--- instance ToJSON StateQueryFilter where
---   toJSON (EqFilter a) = object ["EQ" .= a]
---   toJSON (InFilter a) = object ["IN" .= a]
---   toJSON (AndFilter a) = object ["AND" .= a]
---   toJSON (OrFilter a) = object ["OR" .= a]
-
--- data StateQueryPagination = StateQueryPagination
---   { paginationLimit :: Int,
---     paginationToken :: Maybe Text
---   }
---   deriving (Eq, Show, Generic)
-
--- instance ToJSON StateQueryPagination where
---   toJSON = customToJSON 10
-
--- data StateQuery = StateQuery
---   { stateQueryFilter :: StateQueryFilter,
---     stateQuerySort :: [StateQuerySort],
---     stateQueryPage :: StateQueryPagination
---   }
---   deriving (Eq, Show, Generic)
-
--- instance ToJSON StateQuery where
---   toJSON = customToJSON 10
+instance ToJSON StateQuery where
+  toJSON = customToJSON 10

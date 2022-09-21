@@ -16,6 +16,6 @@ data InvokeResponse a = InvokeResponse
   }
 
 data InvokeServiceRequest a = InvokeServiceRequest
-  { serviceId :: DaprHostedService,
+  { serviceId :: RemoteAppId,
     serviceMessage :: InvokeRequest a
   }

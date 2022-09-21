@@ -15,15 +15,3 @@ data InvokeBindingRequest a = InvokeBindingRequest
     bindingOperation :: Text
   }
   deriving (Eq, Show, Generic)
-
-data InvokeBindingRequestPayload a = InvokeBindingRequestPayload
-  { bindingMetadata :: ExtendedMetadata,
-    bindingData :: a,
-    bindingOperation :: Text
-  } deriving (Eq, Show, Generic)
-
-instance ToJSON a => ToJSON (InvokeBindingRequestPayload a) where
-  toJSON = customToJSON 7
-
-mapInvokeBindingRequestToPayload :: InvokeBindingRequest a -> InvokeBindingRequestPayload a
-mapInvokeBindingRequestToPayload InvokeBindingRequest{..} = InvokeBindingRequestPayload{..}

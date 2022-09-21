@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 module Dapr.Client.HttpClient.Actor where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -18,14 +16,9 @@ invokeActor ::
     HttpResponse c
   ) =>
   DaprConfig ->
-  Actor ->
-  ActorMethod ->
-  method ->
-  body ->
-  Proxy c ->
-  Option 'Http ->
+  InvokeActorRequest body ->
   m (Either DaprClientError c)
-invokeActor config actor method reqMethod reqBody handler options = do
+invokeActor config request = do
   let url = ["actors", actorType actor, actorId actor, "method", getMethodName method]
   response <- makeHttpRequest config reqMethod url reqBody handler options
   return $ first DaprHttpException response

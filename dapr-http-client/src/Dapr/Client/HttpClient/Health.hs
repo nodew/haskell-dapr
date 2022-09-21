@@ -9,5 +9,5 @@ checkHealth :: (MonadIO m) => DaprConfig -> m DaprHealthStatus
 checkHealth config = do
   response <- makeHttpRequest config GET ["healthz"] NoReqBody ignoreResponse mempty
   return $ case response of
-    Right _ -> Healthy
-    Left _ -> Unhealthy
+    Right _ -> DaprHealthy
+    Left _ -> DaprUnhealthy

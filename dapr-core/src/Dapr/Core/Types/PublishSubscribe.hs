@@ -1,9 +1,16 @@
 module Dapr.Core.Types.PublishSubscribe where
 
 import Data.Text (Text)
+import Dapr.Core.Types.Common
 
-newtype PubSub = PubSub {getPubSubName :: Text}
+newtype PubsubName = PubsubName {getPubsubName :: Text}
 
-newtype Topic = Topic {topicName :: Text}
+newtype PubsubTopic = PubSubTopic {getPubsubTopic :: Text}
 
-type TextMessage = Text
+data PublishEventRequest a = PublishEventRequest
+  { pubsubName :: PubsubName,
+    pubsubTopic :: PubsubTopic,
+    pubsubData :: a,
+    pubsubDataContentType :: Text,
+    pubsubMetadata :: ExtendedMetadata
+  }

@@ -3,28 +3,45 @@ module Dapr.Core.Types.DistributedLock where
 import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
+import Dapr.Core.Types.Internal
 
 newtype LockStore = LockStore {getLockStoreName :: Text}
 
-data LockRequest = LockRequest
-  { resourceId :: Text,
+data TryLockRequest = TryLockRequest
+  { lockStore :: LockStore,
+    resourceId :: Text,
     lockOwner :: Text,
     expiryInSeconds :: Int
   }
-  deriving (Eq, Show, Generic, ToJSON)
 
-newtype LockResponseBody = LockResponseBody
-  { success :: Text
+newtype TryLockResponse = TryLockResponse
+  { success :: Bool
   }
   deriving (Eq, Show, Generic, FromJSON)
 
 data UnlockRequest = UnlockRequest
-  { resourceId :: Text,
+  { lockStore :: LockStore,
+    resourceId :: Text,
     lockOwner :: Text
   }
-  deriving (Eq, Show, Generic, ToJSON)
 
-newtype UnlockResponseBody = UnlockResponseBody
-  { status :: Int
-  }
-  deriving (Eq, Show, Generic, FromJSON)
+data UnlockStatus
+  = UnlockSUCCESS
+  | LockDoesNotExist
+  | LockBelongsToOthers
+  | InternalError
+  deriving (Generic, FromJSON)
+
+instance Show UnlockStatus where
+  show UnlockSUCCESS = "Success"
+  show LockDoesNotExist = "LockDoesNotExist"
+  show LockBelongsToOthers = "LockBelongsToOthers"
+  show InternalError = "InternalError"
+
+
+newtype UnlockResponse = UnlockResponse
+  { unlockStatus :: UnlockStatus
+  } deriving (Show, Generic)
+
+instance FromJSON UnlockResponse where
+  parseJSON = customParseJSON 6

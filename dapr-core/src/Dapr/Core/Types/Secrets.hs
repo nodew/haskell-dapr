@@ -1,12 +1,30 @@
 module Dapr.Core.Types.Secrets where
 
-import Data.Map (Map)
+import Dapr.Core.Types.Common (ExtendedMetadata)
+import Data.Map
 import Data.Text (Text)
 
 newtype SecretStore = SecretStore {getSecretStoreName :: Text}
 
-type SecretName = Text
+newtype SecretKey = SecretKey {getSecretKey :: Text}
 
-type Secrets = Map SecretName Text
+data GetSecretRequest = GetSecretRequest
+  { secretStore :: SecretStore,
+    secretKey :: SecretKey,
+    secretMetadata :: ExtendedMetadata
+  }
 
-type BulkSecrets = Map Text Secrets
+type Secrets = Map Text Text
+
+newtype GetSecretResponse = GetSecretResponse
+  { results :: Secrets
+  }
+
+data GetBulkSecretRequest = GetBulkSecretRequest
+  { secretStore :: SecretStore,
+    secretMetadata :: ExtendedMetadata
+  }
+
+newtype GetBulkSecretResponse = GetBulkSecretResponse
+  { results :: Map Text Secrets
+  }
