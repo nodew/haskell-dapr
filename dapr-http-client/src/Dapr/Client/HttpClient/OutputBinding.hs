@@ -1,3 +1,9 @@
+-- |
+-- Module      : OutputBinding
+-- Description : Invokes an output binding
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module lets you invoke output bindings
 module Dapr.Client.HttpClient.OutputBinding where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -7,6 +13,7 @@ import Data.Aeson
 import Data.Bifunctor (bimap)
 import Network.HTTP.Req
 
+-- | Invokes an output binding
 invokeBinding ::
   (MonadIO io, ToJSON a) =>
   DaprConfig ->

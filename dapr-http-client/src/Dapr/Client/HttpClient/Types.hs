@@ -1,3 +1,7 @@
+-- |
+-- Module      : Types
+-- Copyright   : (c)
+-- License     : Apache-2.0
 module Dapr.Client.HttpClient.Types
   ( module Configuration,
     module Core,
