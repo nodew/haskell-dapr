@@ -69,6 +69,7 @@ jobs:
         sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
         sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
         rm -f $PROTOC_ZIP
+        sudo chmod 755 /usr/local/bin/protoc
 
     - name: Install dependencies
       run: |
