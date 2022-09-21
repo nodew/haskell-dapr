@@ -1,6 +1,7 @@
 packages:
   -- libraries
   ./dapr-core
+  ./dapr-proto
   ./dapr-actor
   ./dapr-http-client
   ./dapr-http-server
@@ -8,3 +9,5 @@ packages:
 
   -- examples
   ./examples/http/pubsub
+
+tests: true
