@@ -2,7 +2,7 @@ module Dapr.Client.HttpClient.Health where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Network.HTTP.Req
 
 checkHealth :: (MonadIO m) => DaprConfig -> m DaprHealthStatus

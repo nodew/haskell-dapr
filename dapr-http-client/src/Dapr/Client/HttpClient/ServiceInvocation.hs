@@ -2,14 +2,14 @@ module Dapr.Client.HttpClient.ServiceInvocation where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Data.Aeson
 import Data.Bifunctor (first)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Network.HTTP.Req
 
-invokeMethod ::
+invokeServiceMethod ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody payload),
     MonadIO m,
     HttpMethod method,
@@ -17,17 +17,14 @@ invokeMethod ::
   ) =>
   DaprConfig ->
   DaprHostApp ->
-  method ->
-  [Text] ->
-  payload ->
-  Option 'Http ->
+  InvokeServiceRequest ->
   m (Either DaprClientError LbsResponse)
-invokeMethod config app httpMethod path payload options = do
+invokeServiceMethod config app httpMethod path payload options = do
   let url = ["invoke", getId app, "method"] <> path
   response <- makeHttpRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
-invokeMethod' ::
+invokeServiceMethod' ::
   ( HttpBodyAllowed (AllowsBody method) 'CanHaveBody,
     MonadIO m,
     HttpMethod method,
@@ -41,9 +38,9 @@ invokeMethod' ::
   a ->
   Option 'Http ->
   m (Either DaprClientError b)
-invokeMethod' config app httpMethod path payload options = do
+invokeServiceMethod' config app httpMethod path payload options = do
   response <-
-    invokeMethod
+    invokeServiceMethod
       config
       app
       httpMethod

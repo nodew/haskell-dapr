@@ -1,0 +1,58 @@
+cabal-version:      3.0
+name:               dapr-core
+version:            0.1.0.0
+description:        Please see the README on Github at <https://github.com/nodew/haskell-dapr#readme>
+homepage:           https://github.com/nodew/haskell-dapr#readme
+bug-reports:        https://github.com/nodew/haskell-dapr/issues
+license:            Apache-2.0
+license-file:       LICENSE
+author:             Qiao Wang
+maintainer:         wangqiao11@hotmail.com
+copyright:          2022 Qiao Wang
+category:           Web
+build-type:         Simple
+extra-source-files: CHANGELOG.md
+                  , README.md
+tested-with: GHC == { 9.2.4, 9.0.2, 8.10.7, 8.8.4 }
+
+common lib
+    build-depends:
+        aeson ^>={ 2.0.3, 2.1.0 }
+        , base >=4.11 && <5
+        , bytestring ^>={ 0.10.12, 0.11.3 }
+        , containers ^>=0.6.4
+        , exceptions ^>=0.10.4
+        , extra ^>=1.7.10
+        , req >=3.10.0 && <3.14
+        , text ^>={ 1.2.5, 2.0.1 }
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
+    default-extensions:
+          OverloadedStrings
+        , DataKinds
+        , DeriveGeneric
+        , DeriveAnyClass
+        , DuplicateRecordFields
+        , RecordWildCards
+
+library
+    import: lib
+    exposed-modules:  Dapr.Core.Types
+                    , Dapr.Core.Types.Actor
+                    , Dapr.Core.Types.Configuration
+                    , Dapr.Core.Types.Common
+                    , Dapr.Core.Types.DistributedLock
+                    , Dapr.Core.Types.Metadata
+                    , Dapr.Core.Types.Secrets
+                    , Dapr.Core.Types.State
+                    , Dapr.Core.Types.Binding
+                    , Dapr.Core.Types.PublishSubscribe
+    other-modules:    Dapr.Core.Types.Internal
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+test-suite dapr-core-test
+    default-language: Haskell2010
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          MyLibTest.hs
+    build-depends:    base ^>=4.15.1.0

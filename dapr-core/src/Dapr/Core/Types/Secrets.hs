@@ -1,4 +1,4 @@
-module Dapr.Client.HttpClient.Types.Secrets where
+module Dapr.Core.Types.Secrets where
 
 import Data.Map (Map)
 import Data.Text (Text)

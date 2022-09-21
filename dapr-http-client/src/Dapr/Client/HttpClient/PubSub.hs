@@ -5,7 +5,7 @@ module Dapr.Client.HttpClient.PubSub where
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Data.Aeson
 import Data.Bifunctor (bimap)
 import qualified Data.Text.Encoding as T

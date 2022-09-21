@@ -2,7 +2,7 @@ module Dapr.Client.HttpClient.Req where
 
 import Control.Monad.Catch
 import Control.Monad.IO.Class (MonadIO)
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Data.Data (Proxy (Proxy))
 import Data.Text (Text)
 import Network.HTTP.Req

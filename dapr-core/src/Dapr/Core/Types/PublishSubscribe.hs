@@ -1,4 +1,4 @@
-module Dapr.Client.HttpClient.Types.PublishSubscribe where
+module Dapr.Core.Types.PublishSubscribe where
 
 import Data.Text (Text)
 

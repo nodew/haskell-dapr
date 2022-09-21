@@ -1,7 +1,7 @@
-module Dapr.Client.HttpClient.Types.Actor where
+module Dapr.Core.Types.Actor where
 
-import Dapr.Client.HttpClient.Types.Internal
-import Dapr.Client.HttpClient.Types.State
+import Dapr.Core.Types.Internal
+import Dapr.Core.Types.State
 import Data.Aeson
 import Data.Text
 import GHC.Generics (Generic)

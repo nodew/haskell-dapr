@@ -25,4 +25,4 @@ import Dapr.Client.HttpClient.Req as Req
 import Dapr.Client.HttpClient.Secrets as Secrets
 import Dapr.Client.HttpClient.ServiceInvocation as ServiceInvocation
 import Dapr.Client.HttpClient.StateManagement as StateManagement
-import Dapr.Client.HttpClient.Types as Types
+import Dapr.Core.Types as Types

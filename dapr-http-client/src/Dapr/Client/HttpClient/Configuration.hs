@@ -4,7 +4,7 @@ module Dapr.Client.HttpClient.Configuration where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Data.Bifunctor (bimap)
 import Data.Text (Text)
 import Network.HTTP.Req

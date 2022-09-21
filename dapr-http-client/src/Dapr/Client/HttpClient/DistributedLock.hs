@@ -2,7 +2,7 @@ module Dapr.Client.HttpClient.DistributedLock where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types
 import Data.Bifunctor (bimap)
 import Network.HTTP.Req
 

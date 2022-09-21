@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Dapr.Client.HttpClient.Types.Internal where
+module Dapr.Core.Types.Internal where
 
 import Data.Aeson
 import Data.Aeson.Types

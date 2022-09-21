@@ -1,11 +1,19 @@
-module Dapr.Client.HttpClient.Types.Configuration where
+module Dapr.Core.Types.Configuration where
 
-import Dapr.Client.HttpClient.Types.Internal
+import Dapr.Core.Types.Internal
 import Data.Aeson
 import Data.Text (Text)
 import GHC.Generics (Generic)
+import Dapr.Core.Types.Common
 
-newtype ConfigurationStore = ConfigurationStore {getConfigStoreName :: Text}
+newtype ConfigurationStore = ConfigurationStore { getConfigStoreName :: Text }
+
+data GetConfigurationRequest = GetConfigurationRequest
+  {
+    storeName :: ConfigurationStore,
+    keys :: [Text],
+    metadata :: ExtendedMetadata
+  }
 
 data Configuration = Configuration
   { configKey :: Text,
