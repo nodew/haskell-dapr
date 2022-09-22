@@ -1,3 +1,9 @@
+-- |
+-- Module      : ServiceInvocation
+-- Description : Lets you perform service invocations
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module lets you perform service invocations
 module Dapr.Client.HttpClient.ServiceInvocation where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -9,6 +15,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Network.HTTP.Req
 
+-- | Perform service invocation using the request provided by payload with specified `HttpMethod`. The response will be returned without performing any validation on status code.
 invokeMethod ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody payload),
     MonadIO m,
@@ -27,6 +34,7 @@ invokeMethod config app httpMethod path payload options = do
   response <- makeHttpRequest config httpMethod url payload lbsResponse options
   return $ first DaprHttpException response
 
+-- |  Perform service invocation using the provided request payload with specified `HttpMethod`. If the response has a success status code the JSON body will be validated.
 invokeMethod' ::
   ( HttpBodyAllowed (AllowsBody method) 'CanHaveBody,
     MonadIO m,

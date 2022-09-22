@@ -1,3 +1,7 @@
+-- |
+-- Module      : Req
+-- Copyright   : (c)
+-- License     : Apache-2.0
 module Dapr.Client.HttpClient.Req where
 
 import Control.Monad.Catch
@@ -7,6 +11,7 @@ import Data.Data (Proxy (Proxy))
 import Data.Text (Text)
 import Network.HTTP.Req
 
+-- | Method to make http calls to public Dapr APIs
 makeHttpRequest ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
     MonadIO m,

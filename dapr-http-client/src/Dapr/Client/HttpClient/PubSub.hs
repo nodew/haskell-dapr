@@ -1,5 +1,11 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
+-- |
+-- Module      : PubSub
+-- Description : Manages publishing of events to Dapr Publish subscribe service
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module manages publishing of events to Dapr Publish subscribe service
 module Dapr.Client.HttpClient.PubSub where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -11,6 +17,7 @@ import Data.Bifunctor (bimap)
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 
+-- | Publishes an event to specified topic
 publishMessage ::
   (MonadIO m, HttpBody body) =>
   DaprConfig ->
@@ -27,6 +34,7 @@ publishMessage config pubsub topic message optionalHeader metadata = do
   response <- makeHttpRequest config POST url message ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
+-- | Publishes an event to a specified topic
 publishJsonMessage ::
   (MonadIO m, ToJSON a) =>
   DaprConfig ->
@@ -38,6 +46,7 @@ publishJsonMessage ::
 publishJsonMessage config pubsub topic message =
   publishMessage config pubsub topic (ReqBodyJson message) mempty
 
+-- | Publishes an event to a specified topic
 publishTextMessage ::
   MonadIO m =>
   DaprConfig ->
@@ -49,6 +58,7 @@ publishTextMessage ::
 publishTextMessage config pubsub topic message =
   publishMessage config pubsub topic (ReqBodyBs (T.encodeUtf8 message)) (header "Content-Type" "text/plain")
 
+-- | Publishes an event to a specified topic
 publishCloudEvent ::
   (MonadIO m, ToJSON a) =>
   DaprConfig ->

@@ -1,3 +1,8 @@
+-- |
+-- Module      : DistributedLock
+-- Description :
+-- Copyright   : (c)
+-- License     : Apache-2.0
 module Dapr.Client.HttpClient
   ( module Req,
     module Configuration,
