@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveAnyClass #-}
+
 -- |
 -- Module      : Dapr.Core.Types.State
 -- Description : Defines the types used by State module
@@ -25,7 +27,7 @@ data GetStateRequest = GetStateRequest
     -- | The key of the desired state
     stateKey :: StateKey,
     -- | The read consistency of the state store.
-    stateConsitency :: ConsistencyMode,
+    stateConsitency :: Maybe ConsistencyMode,
     -- | The metadata which will be sent to state store components.
     stateMetadata :: ExtendedMetadata
   }
@@ -88,13 +90,23 @@ data SaveStateRequest a = SaveStateRequest
     stateItems :: [StateItem a]
   }
 
+data TransactionalOperation a
+  = TransactionalUpsert StateKey a
+  | TransactionalDelete StateKey
+  deriving (Eq, Show)
+
+instance ToJSON a => ToJSON (TransactionalOperation a) where
+  toJSON (TransactionalUpsert key value) = object ["key" .= key, "value" .= value]
+  toJSON (TransactionalDelete key) = object ["key" .= key]
+
 -- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
 data TransactionalStateOperation a = TransactionalStateOperation
   { -- | The type of operation to be executed
     transactionOperation :: TransactionOperation,
     -- | State values to be operated on
-    transactionRequest :: StateItem a
-  } deriving (Eq, Show, Generic)
+    transactionRequest :: TransactionalOperation a
+  }
+  deriving (Eq, Show, Generic)
 
 instance ToJSON a => ToJSON (TransactionalStateOperation a) where
   toJSON = customToJSON 11
@@ -105,7 +117,6 @@ data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
     stateOperations :: [TransactionalStateOperation a],
     stateMetadata :: ExtendedMetadata
   }
-
 
 data QueryStateRequest = QueryStateRequest
   { stateStore :: StateStore,

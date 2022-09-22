@@ -6,6 +6,7 @@ import Data.Either
 import Data.Map as Map
 import Data.Text (Text)
 import GHC.Generics
+import Network.HTTP.Req
 import Test.Hspec
 
 newtype TestHelloWorldMessage = TestHelloWorldMessage
@@ -19,35 +20,37 @@ redisStore = StateStore "state-redis"
 mqttBinding :: Binding
 mqttBinding = Binding "binding-mqtt"
 
-pubsubRedis :: PubSub
-pubsubRedis = PubSub "pubsub-redis"
+pubsubRedis :: PubsubName
+pubsubRedis = PubsubName "pubsub-redis"
 
-testTopic :: Topic
-testTopic = Topic "test-topic"
+testTopic :: PubsubTopic
+testTopic = PubsubTopic "test-topic"
 
 cleanState :: IO ()
 cleanState = do
-  _ <- deleteState defaultDaprConfig redisStore "key-1" Nothing Nothing Nothing Nothing
-  _ <- deleteState defaultDaprConfig redisStore "key-2" Nothing Nothing Nothing Nothing
-  _ <- deleteState defaultDaprConfig redisStore "key-3" Nothing Nothing Nothing Nothing
+  let request = DeleteStateRequest redisStore (StateKey "key-1") Nothing Nothing mempty
+  _ <- deleteState defaultDaprConfig request
+  _ <- deleteState defaultDaprConfig (request {stateKey = StateKey "key-2"})
+  _ <- deleteState defaultDaprConfig (request {stateKey = StateKey "key-3"})
   return ()
 
 saveDefaultState :: IO (Either DaprClientError ())
-saveDefaultState =
+saveDefaultState = do
+  let stateItem1 = StateItem (StateKey "key-1") ("value-1" :: Text) Nothing mempty Nothing
+  let stateItem2 = StateItem (StateKey "key-2") ("value-2" :: Text) Nothing mempty Nothing
+  let stateItem3 = StateItem (StateKey "key-3") ("value-3" :: Text) Nothing mempty Nothing
   saveState
     defaultDaprConfig
-    redisStore
-    [ makeSimpleSaveStateRequest "key-1" ("value-1" :: Text),
-      makeSimpleSaveStateRequest "key-2" ("value-2" :: Text),
-      makeSimpleSaveStateRequest "key-3" ("value-3" :: Text)
-    ]
+    ( SaveStateRequest
+        redisStore
+        [stateItem1, stateItem2, stateItem3]
+    )
 
 spec :: Spec
 spec = do
-  describe "Health check" $ do
-    it "Dapr service is Health" $ do
-      r <- checkHealth defaultDaprConfig
-      r `shouldBe` Healthy
+  describe "Health check" $ it "Dapr service is Health" $ do
+    r <- checkHealth defaultDaprConfig
+    r `shouldBe` DaprHealthy
 
   describe "Metadata" $ do
     it "Can get metadata" $ do
@@ -55,8 +58,9 @@ spec = do
       isRight r `shouldBe` True
       let d = head $ rights [r]
       metadataId d `shouldBe` "haskell-dapr"
+
     it "Add custom label" $ do
-      _ <- addCustomLabel defaultDaprConfig "testKey" "Hello World"
+      _ <- setMetadata defaultDaprConfig (SetMetadataRequest "testKey" "Hello World")
       r <- getMetadata defaultDaprConfig
       isRight r `shouldBe` True
       let d = head $ rights [r]
@@ -68,96 +72,111 @@ spec = do
       it "Save state" $ do
         r <- saveDefaultState
         isRight r `shouldBe` True
-        rs <- getState defaultDaprConfig redisStore "key-1" Nothing Nothing
+        rs <- getState defaultDaprConfig (GetStateRequest redisStore (StateKey "key-1") Nothing mempty)
         isRight rs `shouldBe` True
         let d = head $ rights [rs]
         d `shouldBe` ("value-1" :: Text)
 
       it "Save state with metadata, etag and options" $ do
+        let stateItem1 =
+              StateItem
+                { stateItemKey = StateKey "key-1",
+                  stateItemValue = "value-1" :: Text,
+                  stateItemEtag = Just $ Etag "1",
+                  stateItemMetadata = Map.fromList [("hello", "world")],
+                  stateItemOption =
+                    Just $
+                      StateOption
+                        { concurrency = ConcurrencyFirstWrite,
+                          consistency = ConsistencyStrong
+                        }
+                }
+            stateItem2 = StateItem (StateKey "key-2") ("value-2" :: Text) Nothing mempty Nothing
+            stateItem3 = StateItem (StateKey "key-3") ("value-3" :: Text) Nothing mempty Nothing
         r <-
           saveState
             defaultDaprConfig
-            redisStore
-            [ SaveStateRequest
-                { stateKey = "key-1",
-                  stateValue = "value-1",
-                  stateEtag = Just "1",
-                  stateOptions =
-                    Just
-                      SaveStateOptions
-                        { concurrency = FirstWrite,
-                          consistency = Strong
-                        },
-                  stateMetadata = Just $ Map.fromList [("hello", "world")]
-                },
-              makeSimpleSaveStateRequest "key-2" ("value-2" :: Text),
-              makeSimpleSaveStateRequest "key-3" ("value-3" :: Text)
-            ]
+            (SaveStateRequest redisStore [stateItem1, stateItem2, stateItem3])
         isRight r `shouldBe` True
-        rs <- getState defaultDaprConfig redisStore "key-1" Nothing Nothing
+        rs <- getState defaultDaprConfig (GetStateRequest redisStore (StateKey "key-1") Nothing mempty)
         isRight rs `shouldBe` True
         let d = head $ rights [rs]
         d `shouldBe` ("value-1" :: Text)
 
       it "Get state with non-existed key" $ do
         _ <- saveDefaultState
-        r <- getState defaultDaprConfig redisStore "key-not-exist" Nothing Nothing :: IO (Either DaprClientError Text)
+        r <- getState defaultDaprConfig (GetStateRequest redisStore (StateKey "key-non-exist") Nothing mempty) :: IO (Either DaprClientError Text)
         isLeft r `shouldBe` True
 
       it "Get bulk states" $ do
         _ <- saveDefaultState
-        r <- getBulkState defaultDaprConfig redisStore ["key-2", "key-3"] Nothing Nothing :: IO (Either DaprClientError [BulkStateItem Text])
+        r <-
+          getBulkState
+            defaultDaprConfig
+            (GetBulkStateRequest redisStore [StateKey "key-2", StateKey "key-3"] 10 mempty) ::
+            IO (Either DaprClientError [BulkStateItem Text])
         isRight r `shouldBe` True
         let items = fromRight [] r
         length items `shouldBe` 2
-        let (BulkStateItem key1 value1 _) = head items
-        let (BulkStateItem key2 value2 _) = head $ tail items
-        key1 `shouldBe` "key-2"
+        let (BulkStateItem key1 value1 _ _ _) = head items
+        let (BulkStateItem key2 value2 _ _ _) = head $ tail items
+        getStateKey key1 `shouldBe` "key-2"
         value1 `shouldBe` Just "value-2"
-        key2 `shouldBe` "key-3"
+        getStateKey key2 `shouldBe` "key-3"
         value2 `shouldBe` Just "value-3"
 
       it "Delete state" $ do
         _ <- saveDefaultState
-        r <- deleteState defaultDaprConfig redisStore "key-1" Nothing Nothing Nothing Nothing
+        r <- deleteState defaultDaprConfig (DeleteStateRequest redisStore (StateKey "key-1") Nothing Nothing mempty)
         isRight r `shouldBe` True
-        rs <- getState defaultDaprConfig redisStore "key-1" Nothing Nothing :: IO (Either DaprClientError Text)
+        rs <-
+          getState
+            defaultDaprConfig
+            (GetStateRequest redisStore (StateKey "key-not-exist") Nothing mempty) ::
+            IO (Either DaprClientError Text)
         show rs `shouldBe` "Left NotFound"
 
       it "Delete state with non-existed key" $ do
-        r <- deleteState defaultDaprConfig redisStore "key1" Nothing Nothing Nothing Nothing :: IO (Either DaprClientError ())
+        r <-
+          deleteState
+            defaultDaprConfig
+            (DeleteStateRequest redisStore (StateKey "key-non-exist") Nothing Nothing mempty) ::
+            IO (Either DaprClientError ())
         isRight r `shouldBe` True
 
       it "Execute transaction" $ do
-        r <-
-          executeStateTransaction
-            defaultDaprConfig
-            redisStore
-            ( StateTransaction
-                [ StateOperation Upsert (StateOperationRequest "key-1" (Just ("my-new-data-1" :: Text)) Nothing Nothing Nothing),
-                  StateOperation Delete (StateOperationRequest "key-3" Nothing Nothing Nothing Nothing)
+        let request =
+              ExecuteStateTransactionRequest
+                redisStore
+                [ TransactionalStateOperation TransactionOperationUpsert (TransactionalUpsert (StateKey "key-1") ("my-new-data-1" :: Text)),
+                  TransactionalStateOperation TransactionOperationDelete (TransactionalDelete (StateKey "key-3"))
                 ]
-                Nothing
-            )
+                mempty
+        r <- executeStateTransaction defaultDaprConfig request
         isRight r `shouldBe` True
-        rs <- getState defaultDaprConfig redisStore "key-1" Nothing Nothing
+        rs <-
+          getState
+            defaultDaprConfig
+            (GetStateRequest redisStore (StateKey "key-1") Nothing mempty)
         isRight rs `shouldBe` True
         let d = head $ rights [rs] :: Text
         d `shouldBe` "my-new-data-1"
-        rs' <- getState defaultDaprConfig redisStore "key-3" Nothing Nothing :: IO (Either DaprClientError Text)
+        rs' <-
+          getState
+            defaultDaprConfig
+            (GetStateRequest redisStore (StateKey "key-3") Nothing mempty) ::
+            IO (Either DaprClientError Text)
         show rs' `shouldBe` "Left NotFound"
 
-  describe "Pubsub" $ do
-    it "Can publish message" $ do
-      r <- publishJsonMessage defaultDaprConfig pubsubRedis testTopic (TestHelloWorldMessage "Hello World") Nothing
-      isRight r `shouldBe` True
+  describe "Pubsub" $ it "Can publish message" $ do
+    r <- publishMessage defaultDaprConfig (PublishEventRequest pubsubRedis testTopic (ReqBodyJson (TestHelloWorldMessage "Hello World")) "application/json" mempty)
+    isRight r `shouldBe` True
 
-  describe "OutputBinding" $ do
-    it "Invokes a dapr output binding" $ do
-      let dataObject = object [("k1", "v1"), ("k2", "v2")]
-      let requestBody = BindingRequest {bindingOperation = "create", bindingMetadata = Map.fromList [("key", "123")], bindingData = dataObject}
-      r <- invokeBinding defaultDaprConfig mqttBinding requestBody
-      isRight r `shouldBe` True
+  describe "OutputBinding" $ it "Invokes a dapr output binding" $ do
+    let dataObject = object [("k1", "v1"), ("k2", "v2")]
+        bindingRequest = InvokeBindingRequest mqttBinding "create" dataObject (Map.fromList [("key", "123")])
+    r <- invokeOutputBinding defaultDaprConfig bindingRequest
+    isRight r `shouldBe` True
 
 -- describe "Secrets" $ do
 --   it "Can get secret" $ do

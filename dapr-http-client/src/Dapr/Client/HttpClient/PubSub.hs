@@ -10,19 +10,21 @@ import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
-import Data.Aeson (ToJSON)
 import Data.Bifunctor (bimap)
+import Data.Text.Encoding (encodeUtf8)
 import Network.HTTP.Req
 
 -- | Publishes an event to specified topic
 publishMessage ::
-  (MonadIO m, ToJSON message) =>
+  ( MonadIO m,
+    HttpBody payload
+  ) =>
   DaprConfig ->
-  PublishEventRequest message ->
+  PublishEventRequest payload ->
   m (Either DaprClientError ())
 publishMessage config PublishEventRequest {..} = do
   let url = ["publish", getPubsubName pubsubName, getPubsubTopic pubsubTopic]
       metadataParam = mapMetadataToQueryParam pubsubMetadata
-      options = metadataParam
-  response <- makeHttpRequest config POST url (ReqBodyJson pubsubData) ignoreResponse options
+      options = metadataParam <> header "Content-Type" (encodeUtf8 pubsubDataContentType)
+  response <- makeHttpRequest config POST url pubsubData ignoreResponse options
   return $ bimap DaprHttpException (const ()) response

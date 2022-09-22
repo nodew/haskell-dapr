@@ -26,7 +26,10 @@ data InvokeServiceRequest method a = InvokeServiceRequest
     requestContentType :: Maybe Text
   }
 
+-- | 'InvokeResponse' represents the response of Service invocation.
 data InvokeResponse = InvokeResponse
-  { responseData :: L.ByteString,
+  { -- | Response data as byte string
+    responseData :: L.ByteString,
+    -- | The content type of response data
     responseContentType :: Text
   }

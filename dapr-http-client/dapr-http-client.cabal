@@ -32,12 +32,12 @@ common lib
     , text ^>={ 1.2.5, 2.0.1 }
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   default-extensions:
-      OverloadedStrings
       DataKinds
-      DeriveGeneric
-      DeriveAnyClass
-      DuplicateRecordFields
-      RecordWildCards
+    , DeriveGeneric
+    , DeriveAnyClass
+    , DuplicateRecordFields
+    , OverloadedStrings
+    , RecordWildCards
 
 common test-deps
   build-depends:
@@ -75,6 +75,5 @@ test-suite dapr-http-client-test-e2e
   other-modules:
       Dapr.Client.HttpClientSpec
       Paths_dapr_http_client
-  hs-source-dirs:
-      test/e2e
+  hs-source-dirs: test/e2e
   default-language: Haskell2010

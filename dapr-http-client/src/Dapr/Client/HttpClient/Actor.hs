@@ -12,6 +12,8 @@ module Dapr.Client.HttpClient.Actor
     getActorReminder,
     registerActorTimer,
     unregisterActorTimer,
+    invokeActorMethod,
+    invokeActorMethod',
   )
 where
 
@@ -20,6 +22,8 @@ import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Data.Aeson
 import Data.Bifunctor (Bifunctor (bimap))
+import qualified Data.Text as T
+import Data.Text.Encoding (encodeUtf8)
 import GHC.Generics (Generic)
 import Network.HTTP.Req
 
@@ -34,20 +38,6 @@ data ExecuteActorStateTransactionOp a = ExecuteActorStateTransactionOp
     request :: ExecuteActorStateTransactionItem a
   }
   deriving (Generic, ToJSON)
-
--- | Invokes an Actor method on Dapr runtime without remoting
--- invokeActor ::
---   ( MonadIO m,
---     HttpBody body,
---     HttpResponse response
---   ) =>
---   DaprConfig ->
---   InvokeActorRequest body ->
---   m (Either DaprClientError response)
--- invokeActor config InvokeActorRequest {..} = do
---   let url = ["actors", getActorType $ actorType actor, getActorIdText $ actorId actor, "method", actorMethod]
---   response <- makeHttpRequest config POST url actorData jsonResponse mempty
---   return $ first DaprHttpException response
 
 -- | Persists the change to the state for an `Actor` as a multi-item transaction.
 -- Note that this operation is dependant on a using state store component that supports multi-item transactions
@@ -111,3 +101,46 @@ unregisterActorTimer config UnregisterActorTimerRequest {..} = do
   let url = ["actors", getActorType $ actorType timerActor, getActorIdText $ actorId timerActor, "timers", timerName]
   response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
+
+-- | Invoke a method on an actor
+invokeActorMethod ::
+  ( HttpBodyAllowed
+      (AllowsBody method)
+      (ProvidesBody payload),
+    MonadIO m,
+    HttpMethod method,
+    HttpBody payload
+  ) =>
+  DaprConfig ->
+  InvokeActorRequest method payload ->
+  m (Either DaprClientError InvokeActorResponse)
+invokeActorMethod config InvokeActorRequest {..} = do
+  let url = ["actors", getActorType $ actorType actor, getActorIdText $ actorId actor, "method", actorMethod]
+      options = maybe mempty (header "ContentType" . encodeUtf8) actorContentType
+  response <- makeHttpRequest config httpMethod url actorData lbsResponse options
+  return $ bimap DaprHttpException getResponse response
+  where
+    getResponse :: LbsResponse -> InvokeActorResponse
+    getResponse response =
+      let content = responseBody response
+       in InvokeActorResponse content
+
+-- | Invoke a method on an actor, and decode the response if it's JSON
+invokeActorMethod' ::
+  ( HttpBodyAllowed (AllowsBody method) (ProvidesBody payload),
+    MonadIO m,
+    HttpMethod method,
+    HttpBody payload,
+    FromJSON response
+  ) =>
+  DaprConfig ->
+  InvokeActorRequest method payload ->
+  m (Either DaprClientError response)
+invokeActorMethod' config request = do
+  response <- invokeActorMethod config request
+  return $ case response of
+    Left err -> Left err
+    Right (InvokeActorResponse content) ->
+      case eitherDecode content of
+        Left err' -> Left $ JsonDecodeError (T.pack err')
+        Right result -> Right result

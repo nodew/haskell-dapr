@@ -18,10 +18,11 @@ newtype Binding = Binding {getBindingName :: Text}
 data InvokeBindingRequest a = InvokeBindingRequest
   { -- | The name of the output binding to invoke.
     bindingName :: Binding,
-    -- | The metadata passing to output binding components
-    bindingMetadata :: ExtendedMetadata,
-    bindingData :: a,
+    -- | The name of the operation type for the binding to invoke
+    bindingOperation :: Text,
     -- | The data which will be sent to output binding.
-    bindingOperation :: Text -- \| The name of the operation type for the binding to invoke
+    bindingData :: a,
+    -- | The metadata passing to output binding components
+    bindingMetadata :: ExtendedMetadata
   }
   deriving (Eq, Show, Generic)

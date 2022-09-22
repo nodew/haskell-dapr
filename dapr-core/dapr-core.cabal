@@ -31,10 +31,8 @@ common lib
           OverloadedStrings
         , DataKinds
         , DeriveGeneric
-        , DeriveAnyClass
         , DuplicateRecordFields
         , RecordWildCards
-
 library
     import: lib
     exposed-modules:  Dapr.Core.Types

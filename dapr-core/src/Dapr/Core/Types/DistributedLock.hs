@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveAnyClass #-}
 -- |
 -- Module      : Dapr.Core.Types.DistributedLock
 -- Description : Defines the types used by DistributedLock module
@@ -47,7 +48,7 @@ data UnlockStatus
   | LockDoesNotExist
   | LockBelongsToOthers
   | InternalError
-  deriving (Generic, FromJSON)
+  deriving (Generic, Bounded, Enum, FromJSON)
 
 instance Show UnlockStatus where
   show UnlockSUCCESS = "Success"

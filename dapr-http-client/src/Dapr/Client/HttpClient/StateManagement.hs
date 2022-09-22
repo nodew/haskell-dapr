@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-
 -- |
 -- Module      : ServiceInvocation
 -- Description : Manages Dapr state
@@ -34,6 +32,12 @@ data BulkStateRequestPayload = BulkStateRequestPayload
   }
   deriving (Eq, Show, Generic, ToJSON)
 
+data ExecuteStateTransactionRequestPayload a = ExecuteStateTransactionRequestPayload
+  {
+    operations :: [TransactionalStateOperation a],
+    metadata :: ExtendedMetadata
+  } deriving (Eq, Show, Generic, ToJSON)
+
 -- | Tries to save the provided list of `SaveStateRequest`s to the configured Dapr State.
 saveState :: (MonadIO m, ToJSON a) => DaprConfig -> SaveStateRequest a -> m (Either DaprClientError ())
 saveState config SaveStateRequest {..} = do
@@ -50,7 +54,7 @@ getState ::
 getState config GetStateRequest {..} = do
   let url = ["state", getStoreName stateStore, getStateKey stateKey]
       metadataQueryParam = mapMetadataToQueryParam stateMetadata
-      options = metadataQueryParam <> queryParam "consistency" (show <$> Just stateConsitency)
+      options = metadataQueryParam <> queryParam "consistency" (show <$> stateConsitency)
   response <- makeHttpRequest config GET url NoReqBody lbsResponse options
   return $ case response of
     Right response' -> case responseStatusCode response' of
@@ -96,7 +100,7 @@ executeStateTransaction ::
   m (Either DaprClientError ())
 executeStateTransaction config ExecuteStateTransactionRequest {..} = do
   let url = ["state", getStoreName stateStore, "transaction"]
-  response <- makeHttpRequest config POST url (ReqBodyJson stateOperations) ignoreResponse mempty
+  response <- makeHttpRequest config POST url (ReqBodyJson (ExecuteStateTransactionRequestPayload stateOperations stateMetadata)) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
 -- | Queries the specified state store with the given query of type `StateQuery`. Note that underlying state store must support queries.

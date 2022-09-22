@@ -7,11 +7,12 @@
 module Dapr.Core.Types.Actor where
 
 import Dapr.Core.Types.Common (ExtendedMetadata, StateKey, TransactionOperation)
-import Dapr.Core.Types.Internal ( customParseJSON )
+import Dapr.Core.Types.Internal (customParseJSON)
+import Data.Aeson (FromJSON (parseJSON))
+import qualified Data.ByteString.Lazy as L
 import Data.Text (Text)
 import Data.UUID (UUID, toText)
 import GHC.Generics (Generic)
-import Data.Aeson (FromJSON (parseJSON), ToJSON)
 
 -- | Represents a Dapr virtual actor type
 newtype ActorType = ActorType {getActorType :: Text}
@@ -45,8 +46,10 @@ data RegisterActorTimerRequest a = RegisterActorTimerRequest
 
 -- | 'UnregisterActorTimerRequest' is the message to unregister an actor timer
 data UnregisterActorTimerRequest = UnregisterActorTimerRequest
-  { timerActor :: Actor, -- ^Actor
-    timerName :: Text -- ^The name of actor timer
+  { -- | Actor
+    timerActor :: Actor,
+    -- | The name of actor timer
+    timerName :: Text
   }
 
 -- | 'RegisterActorReminderRequest' is the message to register a reminder for an actor of a given type and id.
@@ -67,8 +70,10 @@ data RegisterActorReminderRequest a = RegisterActorReminderRequest
 
 -- | 'GetActorReminderRequest' is the message to unregister an actor reminder.
 data GetActorReminderRequest = GetActorReminderRequest
-  { reminderActor :: Actor, -- ^Actor
-    reminderName :: Text -- ^ The name of actor reminder
+  { -- | Actor
+    reminderActor :: Actor,
+    -- | The name of actor reminder
+    reminderName :: Text
   }
 
 data GetActorReminderResponse a = GetActorReminderResponse
@@ -78,57 +83,80 @@ data GetActorReminderResponse a = GetActorReminderResponse
     reminderPeriod :: Text,
     -- | Extra data
     reminderData :: Maybe a
-  } deriving (Eq, Show, Generic)
+  }
+  deriving (Eq, Show, Generic)
 
 instance FromJSON a => FromJSON (GetActorReminderResponse a) where
   parseJSON = customParseJSON 8
 
 -- | 'UnregisterActorReminderRequest' is the message to unregister an actor reminder.
 data UnregisterActorReminderRequest = UnregisterActorReminderRequest
-  { reminderActor :: Actor, -- ^Actor
-    reminderName :: Text -- ^ The name of actor reminder
+  { -- | Actor
+    reminderActor :: Actor,
+    -- | The name of actor reminder
+    reminderName :: Text
   }
 
 -- | 'RenameActorReminderRequest' is the message to rename an actor reminder.
 data RenameActorReminderRequest = RenameActorReminderRequest
-  { reminderActor :: Actor, -- ^Actor
-    reminderNewName :: Text, -- ^The new name of actor reminder
-    reminderOldName :: Text -- ^ The old name of actor reminder
+  { -- | Actor
+    reminderActor :: Actor,
+    -- | The new name of actor reminder
+    reminderNewName :: Text,
+    -- | The old name of actor reminder
+    reminderOldName :: Text
   }
 
 -- | 'GetActorStateRequest' is the message to get key-value states from specific actor.
 data GetActorStateRequest = GetActorStateRequest
-  { actor :: Actor, -- ^Actor
-    key :: StateKey -- ^State key
+  { -- | Actor
+    actor :: Actor,
+    -- | State key
+    key :: StateKey
   }
 
 -- | 'GetActorStateResponse' is the response conveying the actor's state value.
 newtype GetActorStateResponse a = GetActorStateResponse
-  { result :: a -- ^Result of get actor state call
+  { -- | Result of get actor state call
+    result :: a
   }
 
 -- | 'ExecuteActorStateTransactionRequest' is the message to execute multiple operations on a specified actor.
 data ExecuteActorStateTransactionRequest a = ExecuteActorStateTransactionRequest
-  { actor :: Actor, -- ^Actor
-    operations :: [TransactionalActorStateOperation a] -- ^Bulk operations on a specified actor
+  { -- | Actor
+    actor :: Actor,
+    -- | Bulk operations on a specified actor
+    operations :: [TransactionalActorStateOperation a]
   }
 
 -- | 'TransactionalActorStateOperation' is the message to execute a specified operation with a key-value pair.
 data TransactionalActorStateOperation a = TransactionalActorStateOperation
-  { operationType :: TransactionOperation, -- ^Operation
-    key :: StateKey, -- ^State key
-    value :: Maybe a -- ^State value
-  } deriving (Eq, Show, Generic)
+  { -- | Operation
+    operationType :: TransactionOperation,
+    -- | State key
+    key :: StateKey,
+    -- | State value
+    value :: Maybe a
+  }
+  deriving (Eq, Show, Generic)
 
 -- | 'InvokeActorRequest' is the message to call an actor.
-data InvokeActorRequest a = InvokeActorRequest
-  { actor :: Actor, -- ^Actor
-    actorMethod :: Text, -- ^Actor method
-    actorData :: a, -- ^Data pass to the actor method
-    actorMetadata :: ExtendedMetadata -- ^The metadata
+data InvokeActorRequest method a = InvokeActorRequest
+  { -- | Actor
+    actor :: Actor,
+    -- | Http method, PUT, POST, GET, DELETE, etc
+    httpMethod :: method,
+    -- | Actor method
+    actorMethod :: Text,
+    -- | Data pass to the actor method
+    actorData :: a,
+    -- | Content type of request data
+    actorContentType :: Maybe Text,
+    -- | The metadata
+    actorMetadata :: ExtendedMetadata
   }
 
 -- | 'InvokeActorResponse' is the method that returns an actor invocation response.
-newtype InvokeActorResponse a = InvokeActorResponse
-  { result :: a
+newtype InvokeActorResponse = InvokeActorResponse
+  { result :: L.ByteString
   }

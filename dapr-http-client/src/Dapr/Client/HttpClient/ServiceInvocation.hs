@@ -39,7 +39,7 @@ invokeServiceMethod config InvokeServiceRequest {..} = do
           contentType = responseHeader response "Content-Type"
        in InvokeResponse content (maybe "text/plain" decodeUtf8 contentType)
 
--- | Invoke a method on a remote dapr app, and it will try to decode the response as JSON
+-- | Invoke a method on a remote dapr app, and it will try to decode the response if it's JSON
 invokeServiceMethod' ::
   ( HttpBodyAllowed
       (AllowsBody method)

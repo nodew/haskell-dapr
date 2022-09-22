@@ -1,3 +1,5 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 -- |
 -- Module      : Dapr.Core.Types.Common
 -- Description : Defines the types used by multiple modules
@@ -67,7 +69,7 @@ data ConcurrencyMode
     ConcurrencyFirstWrite
   | -- | Last-write-wins fashion
     ConcurrencyLastWrite
-  deriving (Eq)
+  deriving (Eq, Bounded, Enum)
 
 instance Show ConcurrencyMode where
   show ConcurrencyUnspecified = "unspecified"
@@ -85,7 +87,7 @@ data ConsistencyMode
     ConsistencyStrong
   | -- | Eventual consistency
     ConsistencyEventual
-  deriving (Eq)
+  deriving (Eq, Bounded, Enum)
 
 instance Show ConsistencyMode where
   show ConsistencyUnspecified = "unspecified"
@@ -121,16 +123,18 @@ instance ToJSON a => ToJSON (StateItem a) where
   toJSON = customToJSON 9
 
 -- | 'StateOption' configures concurrency and consistency for state operations
-data StateOption = StateOperation
+data StateOption = StateOption
   { concurrency :: ConcurrencyMode,
     consistency :: ConsistencyMode
   }
-  deriving (Eq, Show, Generic, ToJSON)
+  deriving (Eq, Show, Generic)
+
+instance ToJSON StateOption
 
 data TransactionOperation
   = TransactionOperationUpsert
   | TransactionOperationDelete
-  deriving (Eq)
+  deriving (Eq, Bounded, Enum)
 
 instance Show TransactionOperation where
   show TransactionOperationUpsert = "upsert"
