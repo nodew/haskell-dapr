@@ -1,3 +1,9 @@
+-- |
+-- Module      : Dapr.Client.HttpClient.Req
+-- Description : Make http calls to public Dapr APIs
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module provides base method to call public Dapr APIs
 module Dapr.Client.HttpClient.Req where
 
 import Control.Monad.Catch
@@ -7,6 +13,7 @@ import Data.Data (Proxy (Proxy))
 import Data.Text (Text)
 import Network.HTTP.Req
 
+-- | Method to make http calls to public Dapr APIs
 makeHttpRequest ::
   ( HttpBodyAllowed (AllowsBody method) (ProvidesBody body),
     MonadIO m,

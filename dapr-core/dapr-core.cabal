@@ -52,8 +52,17 @@ library
     default-language: Haskell2010
 
 test-suite dapr-core-test
+    import: lib
     default-language: Haskell2010
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
-    main-is:          MyLibTest.hs
-    build-depends:    base ^>=4.15.1.0
+    main-is:          Spec.hs
+    other-modules:  , Dapr.Core.Types.SerializationSpec
+                    , Paths_dapr_core
+    build-depends:    dapr-core
+                    , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
+                    , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
+                    , QuickCheck ^>=2.14.0
+                    , aeson-pretty ^>=0.8.9
+                    , filepath ^>=1.4.2
+                    , hspec-golden ^>=0.2.0

@@ -1,8 +1,14 @@
+-- |
+-- Module      : Dapr.Core.Types.Common
+-- Description : Defines the types used by multiple modules
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- Defines the types used by multiple modules
 module Dapr.Core.Types.Common where
 
 import Control.Exception (Exception)
-import Dapr.Core.Types.Internal
-import Data.Aeson
+import Dapr.Core.Types.Internal (customParseJSON, customToJSON)
+import Data.Aeson (FromJSON(parseJSON), ToJSON (toJSON), Value (String), FromJSONKey)
 import Data.Map (Map)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -11,9 +17,12 @@ import Network.HTTP.Req (HttpException)
 
 -- | 'DaprConfig' daprConfig
 data DaprConfig = DaprConfig
-  { daprHost :: Text, -- ^Dapr host
-    daprPort :: Int, -- ^Dapr port
-    daprApiVersion :: Text -- ^Dapr API version
+  { -- | Dapr host
+    daprHost :: Text,
+    -- | Dapr port
+    daprPort :: Int,
+    -- | Dapr API version
+    daprApiVersion :: Text
   }
   deriving (Show)
 
@@ -28,10 +37,14 @@ defaultDaprConfig =
 
 -- | 'DaprClientError' is the exception for client request
 data DaprClientError
-  = DaprHttpException HttpException -- ^ HttpException
-  | JsonDecodeError Text -- ^JSON decode error
-  | NotFound -- ^ Not found expected data
-  | UnknownError -- ^ Unknown error
+  = -- | HttpException
+    DaprHttpException HttpException
+  | -- | JSON decode error
+    JsonDecodeError Text
+  | -- | Not found expected data
+    NotFound
+  | -- | Unknown error
+    UnknownError
   deriving (Show)
 
 instance Exception DaprClientError
@@ -46,11 +59,14 @@ type ExtendedMetadata = Map Text Text
 newtype Etag = Etag {getEtagValue :: Text}
   deriving (Show, Eq, Generic, ToJSON)
 
--- | Supported concurrency mode
+-- | Concurrency mode for Dapr operations
 data ConcurrencyMode
-  = ConcurrencyUnspecified
-  | ConcurrencyFirstWrite
-  | ConcurrencyLastWrite
+  = -- | Unspecified concurrency
+    ConcurrencyUnspecified
+  | -- | First-write-wins fashion
+    ConcurrencyFirstWrite
+  | -- | Last-write-wins fashion
+    ConcurrencyLastWrite
   deriving (Eq)
 
 instance Show ConcurrencyMode where
@@ -61,11 +77,14 @@ instance Show ConcurrencyMode where
 instance ToJSON ConcurrencyMode where
   toJSON = Data.Aeson.String . T.pack . show
 
--- | Supported consistency mode
+-- | Consistency Mode for Dapr operations
 data ConsistencyMode
-  = ConsistencyUnspecified
-  | ConsistencyStrong
-  | ConsistencyEventual
+  = -- | Unspecified consistency
+    ConsistencyUnspecified
+  | -- | Strong consistency
+    ConsistencyStrong
+  | -- | Eventual consistency
+    ConsistencyEventual
   deriving (Eq)
 
 instance Show ConsistencyMode where
@@ -79,17 +98,21 @@ instance ToJSON ConsistencyMode where
 -- | 'DaprHealthStatus' indicates the healthy status of dapr side-car
 data DaprHealthStatus = DaprHealthy | DaprUnhealthy deriving (Eq, Show)
 
-
 -- | 'StateKey' is the name of state key.
 newtype StateKey = StateKey {getStateKey :: Text}
   deriving (Eq, Show, Generic, FromJSON, ToJSON)
 
 -- | 'StateItem' represents state key, value, and additional options to save state.
 data StateItem a = StateItem
-  { stateItemKey :: StateKey,
+  { -- | Required. The state key
+    stateItemKey :: StateKey,
+    -- | Required. The state data for key
     stateItemValue :: a,
+    -- | The entity tag which represents the specific version of data.
     stateItemEtag :: Maybe Etag,
+    -- | The metadata which will be passed to state store component.
     stateItemMetadata :: ExtendedMetadata,
+    -- | Options for concurrency and consistency to save the state.
     stateItemOption :: Maybe StateOption
   }
   deriving (Eq, Show, Generic)
@@ -116,14 +139,16 @@ instance Show TransactionOperation where
 instance ToJSON TransactionOperation where
   toJSON = Data.Aeson.String . T.pack . show
 
-newtype ConfigurationKey = ConfigurationKey { getConfigurationKey :: Text}
-  deriving (Eq, Show, Generic, ToJSON, FromJSON)
+newtype ConfigurationKey = ConfigurationKey {getConfigurationKey :: Text}
+  deriving (Eq, Ord, Show, Generic, ToJSON, FromJSON, FromJSONKey)
 
 -- | 'ConfigurationItem' represents all the configuration with its name(key).
 data ConfigurationItem = ConfigurationItem
-  { configurationItemKey :: ConfigurationKey,
+  { -- | Required. The value of configuration item.
     configurationItemValue :: Text,
+    -- | Version is response only and cannot be fetched. Store is not expected to keep all versions available
     configurationItemVersion :: Text,
+    -- | The metadata which will be passed to/from configuration store component
     configurationItemMetadata :: ExtendedMetadata
   }
   deriving (Eq, Show, Generic)
@@ -131,7 +156,10 @@ data ConfigurationItem = ConfigurationItem
 instance ToJSON ConfigurationItem where
   toJSON = customToJSON 17
 
-newtype SubscriptionId = SubscriptionId { getSubscriptionId :: Text }
+instance FromJSON ConfigurationItem where
+  parseJSON = customParseJSON 17
+
+newtype SubscriptionId = SubscriptionId {getSubscriptionId :: Text}
   deriving (Eq, Show, Generic, ToJSON, FromJSON)
 
 -- | Type of HTTP 1.1 Methods

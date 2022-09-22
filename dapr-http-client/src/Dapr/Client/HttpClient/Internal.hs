@@ -1,5 +1,10 @@
 {-# LANGUAGE FlexibleContexts #-}
 
+-- |
+-- Module      : Internal
+-- Description : Defines some of the useful internal methods
+-- Copyright   : (c)
+-- License     : Apache-2.0
 module Dapr.Client.HttpClient.Internal where
 
 import Dapr.Core.Types

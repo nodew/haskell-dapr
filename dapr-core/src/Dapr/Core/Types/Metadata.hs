@@ -1,16 +1,26 @@
+-- |
+-- Module      : Dapr.Core.Types.Metadata
+-- Description : Defines the types used by Metadata module
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- Defines the types used by Metadata module.
 module Dapr.Core.Types.Metadata where
 
-import Dapr.Core.Types.Internal
-import Dapr.Core.Types.Common
-import Data.Aeson
+import Dapr.Core.Types.Common (ExtendedMetadata)
+import Dapr.Core.Types.Internal (customParseJSON)
+import Data.Aeson (FromJSON (parseJSON))
 import Data.Text (Text)
 import GHC.Generics (Generic)
 
 -- | The 'GetMetadataResponse' is the message that is returned by GetMetadata call
 data GetMetadataResponse = GetMetadataResponse
-  { metadataId :: Text,
+  { -- | Metadata ID
+    metadataId :: Text,
+    -- | Active actor counts
     metadataActors :: [ActiveActorsCount],
+    -- | Registered componoents
     metadataComponents :: [RegisteredComponent],
+    -- | Extended metadata
     metadataExtended :: ExtendedMetadata
   }
   deriving (Eq, Show, Generic)
@@ -18,8 +28,11 @@ data GetMetadataResponse = GetMetadataResponse
 instance FromJSON GetMetadataResponse where
   parseJSON = customParseJSON 8
 
+-- | 'ActiveActorsCount' represents registered actor and count
 data ActiveActorsCount = ActiveActorsCount
-  { actorType :: Text,
+  { -- | The registered actor type.
+    actorType :: Text,
+    -- | Number of actors running
     actorCount :: Int
   }
   deriving (Eq, Show, Generic)
@@ -27,10 +40,15 @@ data ActiveActorsCount = ActiveActorsCount
 instance FromJSON ActiveActorsCount where
   parseJSON = customParseJSON 5
 
+-- | 'ActiveActorsCount' represents registered component
 data RegisteredComponent = RegisteredComponent
-  { componentName :: Text,
+  { -- | Name of the component
+    componentName :: Text,
+    -- | Component type
     componentType :: Text,
+    -- | Component version
     componentVersion :: Text,
+    -- | Supported capabilities for this component type and version
     componentCapabilities :: [Text]
   }
   deriving (Eq, Show, Generic)
@@ -38,7 +56,7 @@ data RegisteredComponent = RegisteredComponent
 instance FromJSON RegisteredComponent where
   parseJSON = customParseJSON 9
 
--- | The 'SetMetadataRequest' is the request message of SetMetadata call
+-- | The 'SetMetadataRequest' is the request message of set metadata call
 data SetMetadataRequest = SetMetadataRequest
   { key :: Text,
     value :: Text

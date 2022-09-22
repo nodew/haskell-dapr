@@ -1,3 +1,9 @@
+-- |
+-- Module      : DistributedLock
+-- Description : Manages Distrubuted locks
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module manages Distrubuted locks
 module Dapr.Client.HttpClient.DistributedLock where
 
 import Control.Monad.IO.Class (MonadIO)

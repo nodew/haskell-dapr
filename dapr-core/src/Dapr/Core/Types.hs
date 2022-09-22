@@ -1,3 +1,9 @@
+-- |
+-- Module      : Dapr.Core.Types
+-- Description : Core type definitions
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module export core types
 module Dapr.Core.Types
   ( module Configuration,
     module Common,

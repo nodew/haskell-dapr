@@ -78,18 +78,3 @@ test-suite dapr-http-client-test-e2e
   hs-source-dirs:
       test/e2e
   default-language: Haskell2010
-
-test-suite dapr-http-client-test-unit
-  import: lib, test-deps
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Dapr.Client.HttpClient.SerializationSpec
-      Paths_dapr_http_client
-  hs-source-dirs:
-      test/unit
-  build-depends:
-      aeson-pretty ^>=0.8.9
-    , filepath ^>=1.4.2
-    , hspec-golden ^>=0.2.0
-  default-language: Haskell2010

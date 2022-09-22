@@ -1,5 +1,11 @@
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 
+-- |
+-- Module      : ServiceInvocation
+-- Description : Manages Dapr state
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module manages Dapr state
 module Dapr.Client.HttpClient.StateManagement where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -13,15 +19,18 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import Network.HTTP.Req
 
+-- | Tries to save the provided list of `SaveStateRequest`s to the configured Dapr State.
 saveState :: (MonadIO m, ToJSON a) => DaprConfig -> StateStore -> [SaveStateRequest a] -> m (Either DaprClientError ())
 saveState config store body = do
   let url = ["state", getStoreName store]
   response <- makeHttpRequest config POST url (ReqBodyJson body) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
+-- | Tries to save the provided `SaveStateRequest` associated with `StateKey` to the configured Dapr State.
 saveSingleState :: (MonadIO m, ToJSON a) => DaprConfig -> StateStore -> SaveStateRequest a -> m (Either DaprClientError ())
 saveSingleState config store body = saveState config store [body]
 
+-- | Gets the current value associated with `StateKey` from the configured Dapr State.
 getState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
@@ -42,9 +51,11 @@ getState config store key consistency metadata = do
       _ -> Left UnknownError
     Left e -> Left $ DaprHttpException e
 
+-- | Gets the current value associated with `StateKey` from the configured Dapr State.
 getStateSimple :: (MonadIO m, FromJSON a) => DaprConfig -> StateStore -> StateKey -> m (Either DaprClientError a)
 getStateSimple config store key = getState config store key Nothing Nothing
 
+-- | Gets the values associated with provided list of `StateKey`s from the configured Dapr State in bulk.
 getBulkState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
@@ -59,6 +70,7 @@ getBulkState config store keys parallelism metadata = do
   response <- makeHttpRequest config POST url (ReqBodyJson (BulkStateRequest keys parallelism)) jsonResponse metadataQueryParam
   return $ bimap DaprHttpException responseBody response
 
+-- | Gets the values associated with provided list of `StateKey`s from the configured Dapr State.
 getBulkStateSimple ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
@@ -67,6 +79,7 @@ getBulkStateSimple ::
   m (Either DaprClientError [BulkStateItem a])
 getBulkStateSimple config store keys = getBulkState config store keys Nothing Nothing
 
+-- | Deletes the value associated with provided `StateKey` from the configured Dapr State.
 deleteState ::
   (MonadIO m) =>
   DaprConfig ->
@@ -88,9 +101,11 @@ deleteState config store key etag concurrency consistency metadata = do
   response <- makeHttpRequest config DELETE url NoReqBody ignoreResponse options
   return $ bimap DaprHttpException (const ()) response
 
+-- | Deletes the value associated with `StateKey` from the configured Dapr State.
 deleteStateSimple :: MonadIO m => DaprConfig -> StateStore -> StateKey -> m (Either DaprClientError ())
 deleteStateSimple config store key = deleteState config store key Nothing Nothing Nothing Nothing
 
+-- | Saves the provided trasaction of type `StateTransaction` to the configured Dapr store.
 executeStateTransaction ::
   (MonadIO m, ToJSON a) =>
   DaprConfig ->
@@ -102,6 +117,7 @@ executeStateTransaction config store transaction = do
   response <- makeHttpRequest config POST url (ReqBodyJson transaction) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
 
+-- | Queries the specified state store with the given query of type `StateQuery`. Note that underlying state store must support queries.
 queryState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->

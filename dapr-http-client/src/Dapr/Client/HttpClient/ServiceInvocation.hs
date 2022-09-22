@@ -1,3 +1,9 @@
+-- |
+-- Module      : ServiceInvocation
+-- Description : Lets you perform service invocations
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module lets you perform service invocations
 module Dapr.Client.HttpClient.ServiceInvocation where
 
 import Control.Monad.IO.Class (MonadIO)

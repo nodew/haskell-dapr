@@ -1,7 +1,10 @@
-module Dapr.Client.HttpClient.OutputBinding
-  ( invokeOutputBinding,
-  )
-where
+-- |
+-- Module      : OutputBinding
+-- Description : Invokes an output binding
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module lets you invoke output bindings
+module Dapr.Client.HttpClient.OutputBinding where
 
 import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal

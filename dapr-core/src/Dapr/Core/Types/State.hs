@@ -1,3 +1,9 @@
+-- |
+-- Module      : Dapr.Core.Types.State
+-- Description : Defines the types used by State module
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- Defines the types used by State module.
 module Dapr.Core.Types.State where
 
 import Dapr.Core.Types.Common
@@ -14,27 +20,40 @@ newtype StateStore = StateStore {getStoreName :: Text}
 
 -- | 'GetStateRequest' is the message to get key-value states from specific state store.
 data GetStateRequest = GetStateRequest
-  { stateStore :: StateStore, -- ^The name of state store.
-    stateKey :: StateKey, -- ^The key of the desired state
-    stateConsitency :: ConsistencyMode, -- ^The read consistency of the state store.
-    stateMetadata :: ExtendedMetadata -- ^The metadata which will be sent to state store components.
+  { -- | The name of state store.
+    stateStore :: StateStore,
+    -- | The key of the desired state
+    stateKey :: StateKey,
+    -- | The read consistency of the state store.
+    stateConsitency :: ConsistencyMode,
+    -- | The metadata which will be sent to state store components.
+    stateMetadata :: ExtendedMetadata
   }
 
 -- | 'GetBulkStateRequest' is the message to get a list of key-value states from specific state store.
 data GetBulkStateRequest = GetBulkStateRequest
-  { stateStore :: StateStore, -- ^The name of state store.
-    stateKeys :: [StateKey], -- ^The keys to get
-    stateParallelism :: Maybe Int, -- ^The number of parallel operations executed on the state store for a get operation.
-    stateMetadata :: ExtendedMetadata -- ^The metadata which will be sent to state store components.
+  { -- | The name of state store.
+    stateStore :: StateStore,
+    -- | The keys to get
+    stateKeys :: [StateKey],
+    -- | The number of parallel operations executed on the state store for a get operation.
+    stateParallelism :: Maybe Int,
+    -- | The metadata which will be sent to state store components.
+    stateMetadata :: ExtendedMetadata
   }
 
 -- | 'BulkStateItem' is the response item for a bulk get operation.
 data BulkStateItem a = BulkStateItem
-  { stateItemKey :: StateKey, -- ^State item key
-    stateItemData :: Maybe a, -- ^State data
-    stateItemEtag :: Maybe Etag, -- ^The entity tag which represents the specific version of data. ETag format is defined by the corresponding data store.
-    stateItemError :: Maybe Text, -- ^The error that was returned from the state store in case of a failed get operation.
-    stateItemMetadata :: Maybe ExtendedMetadata -- ^The metadata which will be sent to app.
+  { -- | State item key
+    stateItemKey :: StateKey,
+    -- | State data
+    stateItemData :: Maybe a,
+    -- | The entity tag which represents the specific version of data. ETag format is defined by the corresponding data store.
+    stateItemEtag :: Maybe Etag,
+    -- | The error that was returned from the state store in case of a failed get operation.
+    stateItemError :: Maybe Text,
+    -- | The metadata which will be sent to app.
+    stateItemMetadata :: Maybe ExtendedMetadata
   }
   deriving (Eq, Show, Generic)
 
@@ -81,8 +100,10 @@ data QueryStateItem a = QueryStateItem
 
 -- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
 data TransactionalStateOperation a = TransactionalStateOperation
-  { transactionOperation :: TransactionOperation, -- ^The type of operation to be executed
-    transactionRequest :: StateItem a -- ^State values to be operated on
+  { -- | The type of operation to be executed
+    transactionOperation :: TransactionOperation,
+    -- | State values to be operated on
+    transactionRequest :: StateItem a
   }
 
 -- | 'ExecuteStateTransactionRequest' is the message to execute multiple operations on a specified store.
@@ -93,8 +114,7 @@ data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
   }
 
 data QueryStateResponse a = QueryStateResponse
-  {
-    results :: [QueryStateItem a],
+  { results :: [QueryStateItem a],
     token :: Text,
     metadata :: ExtendedMetadata
   }

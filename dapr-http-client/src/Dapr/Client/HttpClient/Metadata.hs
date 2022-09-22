@@ -1,3 +1,9 @@
+-- |
+-- Module      : Metadata
+-- Description : Provides information about the sidecar allowing runtime discoverability. It also allows you to store additional attributes in the format of key-value pairs.
+-- Copyright   : (c)
+-- License     : Apache-2.0
+-- This module provides information about the sidecar allowing runtime discoverability. It also allows you to store additional attributes in the format of key-value pairs.
 module Dapr.Client.HttpClient.Metadata where
 
 import Control.Monad.IO.Class (MonadIO)
