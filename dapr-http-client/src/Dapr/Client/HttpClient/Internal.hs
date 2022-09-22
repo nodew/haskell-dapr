@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
-
 -- |
 -- Module      : Internal
 -- Description : Defines some of the useful internal methods
@@ -7,13 +5,20 @@
 -- License     : Apache-2.0
 module Dapr.Client.HttpClient.Internal where
 
-import Dapr.Client.HttpClient.Types
+import Dapr.Core.Types (ExtendedMetadata)
 import Data.Map.Strict (foldlWithKey)
+import Data.Text
 import Network.HTTP.Req
 
--- | Internal method to map given `RequestMetadata` to Http query parameter `Option`s.
-mapMetadataToQueryParam :: Maybe RequestMetadata -> Option 'Http
+mapMetadataToQueryParam :: ExtendedMetadata -> Option 'Http
 mapMetadataToQueryParam =
-  maybe
-    mempty
-    (foldlWithKey (\query key' value' -> query <> queryParam key' (Just value')) mempty)
+  foldlWithKey (\query key' value' -> query <> queryParam ("metadata." <> key') (Just value')) mempty
+
+mapKeysToParam ::
+  -- | Key
+  Text ->
+  -- | Text values
+  [Text] ->
+  Option 'Http
+mapKeysToParam _ [] = mempty
+mapKeysToParam key (x : xs) = queryParam key (Just x) <> mapKeysToParam key xs

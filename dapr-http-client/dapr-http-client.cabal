@@ -25,17 +25,19 @@ common lib
     , base >=4.11 && <5
     , bytestring ^>={ 0.10.12, 0.11.3 }
     , containers ^>=0.6.4
+    , dapr-core
     , exceptions ^>=0.10.4
     , extra ^>=1.7.10
     , req >=3.10.0 && <3.14
     , text ^>={ 1.2.5, 2.0.1 }
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   default-extensions:
-      OverloadedStrings
       DataKinds
-      DeriveGeneric
-      DeriveAnyClass
-      DuplicateRecordFields
+    , DeriveGeneric
+    , DeriveAnyClass
+    , DuplicateRecordFields
+    , OverloadedStrings
+    , RecordWildCards
 
 common test-deps
   build-depends:
@@ -60,19 +62,8 @@ library
       Dapr.Client.HttpClient.ServiceInvocation
       Dapr.Client.HttpClient.StateManagement
       Dapr.Client.HttpClient.OutputBinding
-      Dapr.Client.HttpClient.Types
-      Dapr.Client.HttpClient.Types.Actor
-      Dapr.Client.HttpClient.Types.Configuration
-      Dapr.Client.HttpClient.Types.Core
-      Dapr.Client.HttpClient.Types.DistributedLock
-      Dapr.Client.HttpClient.Types.Metadata
-      Dapr.Client.HttpClient.Types.Secrets
-      Dapr.Client.HttpClient.Types.State
-      Dapr.Client.HttpClient.Types.Binding
-      Dapr.Client.HttpClient.Types.PublishSubscribe
   other-modules:
       Dapr.Client.HttpClient.Internal
-      Dapr.Client.HttpClient.Types.Internal
   hs-source-dirs:
       src
   default-language: Haskell2010
@@ -84,21 +75,5 @@ test-suite dapr-http-client-test-e2e
   other-modules:
       Dapr.Client.HttpClientSpec
       Paths_dapr_http_client
-  hs-source-dirs:
-      test/e2e
-  default-language: Haskell2010
-
-test-suite dapr-http-client-test-unit
-  import: lib, test-deps
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Dapr.Client.HttpClient.SerializationSpec
-      Paths_dapr_http_client
-  hs-source-dirs:
-      test/unit
-  build-depends:
-      aeson-pretty ^>=0.8.9
-    , filepath ^>=1.4.2
-    , hspec-golden ^>=0.2.0
+  hs-source-dirs: test/e2e
   default-language: Haskell2010

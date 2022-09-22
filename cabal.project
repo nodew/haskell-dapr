@@ -1,5 +1,6 @@
 packages:
   -- libraries
+  ./dapr-core
   ./dapr-proto
   ./dapr-actor
   ./dapr-http-client

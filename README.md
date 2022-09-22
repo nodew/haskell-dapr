@@ -8,6 +8,10 @@ Bring [dapr](https://dapr.io/) to Haskell world.
 
 See [Install the Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
 
+### Install protoc
+
+Follow the document [Installing protoc](https://github.com/google/proto-lens/blob/master/docs/installing-protoc.md)
+
 ### Clone code
 
 ```bash

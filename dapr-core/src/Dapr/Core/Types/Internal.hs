@@ -1,17 +1,26 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 -- |
--- Module      : Types.Internal
+-- Module      : Dapr.Core.Types.Internal
 -- Description : Defines some of the internal types and methods used by other module
 -- Copyright   : (c)
 -- License     : Apache-2.0
 -- Defines some of the internal types and methods used by other module
-module Dapr.Client.HttpClient.Types.Internal where
+module Dapr.Core.Types.Internal where
 
 import Data.Aeson
-import Data.Aeson.Types
+  ( GFromJSON,
+    GToJSON',
+    Options (fieldLabelModifier),
+    Value,
+    Zero,
+    defaultOptions,
+    genericParseJSON,
+    genericToJSON,
+  )
+import Data.Aeson.Types (Parser)
 import Data.Char (toLower)
-import GHC.Generics
+import GHC.Generics (Generic (Rep))
 
 -- | Converts the given string's first letter to lower case
 lowerFirstLetter :: String -> String

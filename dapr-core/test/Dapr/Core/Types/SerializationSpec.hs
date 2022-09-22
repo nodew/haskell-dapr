@@ -1,6 +1,6 @@
-module Dapr.Client.HttpClient.SerializationSpec where
+module Dapr.Core.Types.SerializationSpec where
 
-import Dapr.Client.HttpClient
+import Dapr.Core.Types
 import Data.Aeson.Encode.Pretty as Aeson
 import Data.Map (fromList)
 import Data.Text (Text)
@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Golden
 
 goldenBaseDir :: FilePath
-goldenBaseDir = "test" </> "unit" </> ".golden"
+goldenBaseDir = "test" </> ".golden"
 
 goldenText :: String -> Text -> Golden Text
 goldenText name actualOutput =
