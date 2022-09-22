@@ -20,10 +20,9 @@ publishMessage ::
   DaprConfig ->
   PublishEventRequest message ->
   m (Either DaprClientError ())
-publishMessage config request = do
-  let url = ["publish", getPubsubName $ pubsubName request, getPubsubTopic $ pubsubTopic request]
-      metadataParam = mapMetadataToQueryParam $ pubsubMetadata request
-      options = metadataParam <> header "Content-Type" "application/json"
-      message = pubsubData request
-  response <- makeHttpRequest config POST url (ReqBodyJson message) ignoreResponse options
+publishMessage config PublishEventRequest {..} = do
+  let url = ["publish", getPubsubName pubsubName, getPubsubTopic pubsubTopic]
+      metadataParam = mapMetadataToQueryParam pubsubMetadata
+      options = metadataParam
+  response <- makeHttpRequest config POST url (ReqBodyJson pubsubData) ignoreResponse options
   return $ bimap DaprHttpException (const ()) response

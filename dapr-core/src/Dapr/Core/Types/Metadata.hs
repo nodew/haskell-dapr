@@ -31,14 +31,14 @@ instance FromJSON GetMetadataResponse where
 -- | 'ActiveActorsCount' represents registered actor and count
 data ActiveActorsCount = ActiveActorsCount
   { -- | The registered actor type.
-    actorType :: Text,
+    activeActorType :: Text,
     -- | Number of actors running
-    actorCount :: Int
+    activeActorCount :: Int
   }
   deriving (Eq, Show, Generic)
 
 instance FromJSON ActiveActorsCount where
-  parseJSON = customParseJSON 5
+  parseJSON = customParseJSON 11
 
 -- | 'ActiveActorsCount' represents registered component
 data RegisteredComponent = RegisteredComponent

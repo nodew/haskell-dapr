@@ -1,6 +1,6 @@
 -- |
 -- Module      : Metadata
--- Description : Provides information about the sidecar allowing runtime discoverability. It also allows you to store additional attributes in the format of key-value pairs.
+-- Description : Provides information about the sidecar allowing runtime discoverability.
 -- Copyright   : (c)
 -- License     : Apache-2.0
 -- This module provides information about the sidecar allowing runtime discoverability. It also allows you to store additional attributes in the format of key-value pairs.
@@ -13,13 +13,15 @@ import Data.Bifunctor (bimap)
 import Data.Text.Encoding (encodeUtf8)
 import Network.HTTP.Req
 
+-- | Gets the Dapr sidecar information provided by the metadata endpoint.
 getMetadata :: MonadIO m => DaprConfig -> m (Either DaprClientError GetMetadataResponse)
 getMetadata config = do
   response <- makeHttpRequest config GET ["metadata"] NoReqBody jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
+-- | Adds a custom label to the Dapr sidecar information stored by the metadata endpoint.
 setMetadata :: MonadIO m => DaprConfig -> SetMetadataRequest -> m (Either DaprClientError ())
-setMetadata config SetMetadataRequest{..} = do
+setMetadata config SetMetadataRequest {..} = do
   let url = ["metadata", key]
       options = header "Content-Type" "text/plain"
   response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 value) ignoreResponse options

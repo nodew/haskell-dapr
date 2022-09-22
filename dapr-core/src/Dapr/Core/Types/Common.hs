@@ -49,15 +49,15 @@ data DaprClientError
 
 instance Exception DaprClientError
 
--- | 'RemoteAppId' is the App ID associated with the remote app
-newtype RemoteAppId = RemoteAppId {getRemoteAppId :: Text}
+-- | 'RemoteApp' represents the remote app
+newtype RemoteApp = RemoteApp {getRemoteAppId :: Text}
 
 -- | 'ExtendedMetadata' is a list of key-value pairs
 type ExtendedMetadata = Map Text Text
 
 -- | 'Etag' represents the specific version of data.
 newtype Etag = Etag {getEtagValue :: Text}
-  deriving (Show, Eq, Generic, ToJSON)
+  deriving (Show, Eq, Generic, ToJSON, FromJSON)
 
 -- | Concurrency mode for Dapr operations
 data ConcurrencyMode
@@ -161,32 +161,3 @@ instance FromJSON ConfigurationItem where
 
 newtype SubscriptionId = SubscriptionId {getSubscriptionId :: Text}
   deriving (Eq, Show, Generic, ToJSON, FromJSON)
-
--- | Type of HTTP 1.1 Methods
-data HttpVerb
-  = HttpVerbGet
-  | HttpVerbHead
-  | HttpVerbPost
-  | HttpVerbPut
-  | HttpVerbDelete
-  | HttpVerbConnect
-  | HttpVerbOptions
-  | HttpVerbTrace
-  | HttpVerbPatch
-
-instance Show HttpVerb where
-  show HttpVerbGet = "GET"
-  show HttpVerbHead = "HEAD"
-  show HttpVerbPost = "POST"
-  show HttpVerbPut = "PUT"
-  show HttpVerbDelete = "DELETE"
-  show HttpVerbConnect = "CONNECT"
-  show HttpVerbOptions = "OPTIOTNS"
-  show HttpVerbTrace = "TRACE"
-  show HttpVerbPatch = "PATCH"
-
--- | Dapr runtime will parse POST as a verb and extract querystring to quersytring map.
-data HttpExtension = HttpExtension
-  { httpVerb :: HttpVerb,
-    queryString :: Text
-  }

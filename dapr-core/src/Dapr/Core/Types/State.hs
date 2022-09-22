@@ -37,7 +37,7 @@ data GetBulkStateRequest = GetBulkStateRequest
     -- | The keys to get
     stateKeys :: [StateKey],
     -- | The number of parallel operations executed on the state store for a get operation.
-    stateParallelism :: Maybe Int,
+    stateParallelism :: Int,
     -- | The metadata which will be sent to state store components.
     stateMetadata :: ExtendedMetadata
   }
@@ -57,6 +57,9 @@ data BulkStateItem a = BulkStateItem
   }
   deriving (Eq, Show, Generic)
 
+instance FromJSON a => FromJSON (BulkStateItem a) where
+  parseJSON = customParseJSON 9
+
 newtype GetBulkStateResponse a = GetBulkStateResponse
   { items :: [BulkStateItem a]
   }
@@ -72,7 +75,7 @@ data DeleteStateRequest = DeleteStateRequest
     stateKey :: StateKey,
     stateEtag :: Maybe Etag,
     stateOption :: Maybe StateOption,
-    stateMetadta :: ExtendedMetadata
+    stateMetadata :: ExtendedMetadata
   }
 
 data DeleteBulkStateRequest a = DeleteBulkStateRequest
@@ -85,6 +88,25 @@ data SaveStateRequest a = SaveStateRequest
     stateItems :: [StateItem a]
   }
 
+-- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
+data TransactionalStateOperation a = TransactionalStateOperation
+  { -- | The type of operation to be executed
+    transactionOperation :: TransactionOperation,
+    -- | State values to be operated on
+    transactionRequest :: StateItem a
+  } deriving (Eq, Show, Generic)
+
+instance ToJSON a => ToJSON (TransactionalStateOperation a) where
+  toJSON = customToJSON 11
+
+-- | 'ExecuteStateTransactionRequest' is the message to execute multiple operations on a specified store.
+data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
+  { stateStore :: StateStore,
+    stateOperations :: [TransactionalStateOperation a],
+    stateMetadata :: ExtendedMetadata
+  }
+
+
 data QueryStateRequest = QueryStateRequest
   { stateStore :: StateStore,
     stateQuery :: StateQuery,
@@ -96,21 +118,6 @@ data QueryStateItem a = QueryStateItem
     stateData :: a,
     stateEtag :: Maybe Etag,
     stateError :: Maybe Text
-  }
-
--- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
-data TransactionalStateOperation a = TransactionalStateOperation
-  { -- | The type of operation to be executed
-    transactionOperation :: TransactionOperation,
-    -- | State values to be operated on
-    transactionRequest :: StateItem a
-  }
-
--- | 'ExecuteStateTransactionRequest' is the message to execute multiple operations on a specified store.
-data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
-  { stateStore :: StateStore,
-    stateOperations :: [TransactionalStateOperation a],
-    stateMetadata :: ExtendedMetadata
   }
 
 data QueryStateResponse a = QueryStateResponse

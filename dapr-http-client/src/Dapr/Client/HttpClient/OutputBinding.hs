@@ -4,12 +4,12 @@
 -- Copyright   : (c)
 -- License     : Apache-2.0
 -- This module lets you invoke output bindings
-module Dapr.Client.HttpClient.OutputBinding where
+module Dapr.Client.HttpClient.OutputBinding (invokeOutputBinding) where
 
 import Control.Monad.IO.Class (MonadIO)
-import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
+import Dapr.Core.Types.Internal
 import Data.Aeson
 import Data.Bifunctor (bimap)
 import Data.Text
@@ -35,7 +35,8 @@ invokeOutputBinding ::
   DaprConfig ->
   InvokeBindingRequest a ->
   m (Either DaprClientError ())
-invokeOutputBinding config bindingRequest = do
-  let url = ["bindings", bindingName bindingRequest]
-  response <- makeHttpRequest config POST url (ReqBodyJson $ mapInvokeBindingRequestToPayload bindingRequest) ignoreResponse mempty
+invokeOutputBinding config request@(InvokeBindingRequest {..})  = do
+  let url = ["bindings", getBindingName bindingName]
+      payload = mapInvokeBindingRequestToPayload request
+  response <- makeHttpRequest config POST url (ReqBodyJson payload) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response

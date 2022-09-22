@@ -31,6 +31,10 @@ data GetConfigurationRequest = GetConfigurationRequest
     metadata :: ExtendedMetadata
   }
 
+newtype GetConfigurationResponse = GetConfigurationResponse {
+  items :: Map ConfigurationKey ConfigurationItem
+}
+
 -- | 'SubscribeConfigurationRequest' is the message to get a list of key-value configuration from specified configuration store.
 data SubscribeConfigurationRequest = SubscribeConfigurationRequest
   { -- | The name of configuration store.
