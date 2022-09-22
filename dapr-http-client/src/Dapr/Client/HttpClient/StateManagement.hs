@@ -33,10 +33,10 @@ data BulkStateRequestPayload = BulkStateRequestPayload
   deriving (Eq, Show, Generic, ToJSON)
 
 data ExecuteStateTransactionRequestPayload a = ExecuteStateTransactionRequestPayload
-  {
-    operations :: [TransactionalStateOperation a],
+  { operations :: [TransactionalStateOperation a],
     metadata :: ExtendedMetadata
-  } deriving (Eq, Show, Generic, ToJSON)
+  }
+  deriving (Eq, Show, Generic, ToJSON)
 
 -- | Tries to save the provided list of `SaveStateRequest`s to the configured Dapr State.
 saveState :: (MonadIO m, ToJSON a) => DaprConfig -> SaveStateRequest a -> m (Either DaprClientError ())

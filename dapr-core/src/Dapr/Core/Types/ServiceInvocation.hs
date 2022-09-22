@@ -7,9 +7,8 @@
 module Dapr.Core.Types.ServiceInvocation where
 
 import Dapr.Core.Types.Common (RemoteApp)
-import Data.Text (Text)
 import qualified Data.ByteString.Lazy as L
-
+import Data.Text (Text)
 
 -- | 'InvokeServiceRequest' represents the request message for Service invocation.
 data InvokeServiceRequest method a = InvokeServiceRequest

@@ -35,7 +35,7 @@ invokeOutputBinding ::
   DaprConfig ->
   InvokeBindingRequest a ->
   m (Either DaprClientError ())
-invokeOutputBinding config request@(InvokeBindingRequest {..})  = do
+invokeOutputBinding config request@(InvokeBindingRequest {..}) = do
   let url = ["bindings", getBindingName bindingName]
       payload = mapInvokeBindingRequestToPayload request
   response <- makeHttpRequest config POST url (ReqBodyJson payload) ignoreResponse mempty

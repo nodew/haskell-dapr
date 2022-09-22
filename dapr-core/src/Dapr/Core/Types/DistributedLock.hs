@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
+
 -- |
 -- Module      : Dapr.Core.Types.DistributedLock
 -- Description : Defines the types used by DistributedLock module

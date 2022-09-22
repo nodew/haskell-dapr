@@ -1,7 +1,7 @@
 module Main where
 
 import Control.Concurrent
-import Dapr.Client.HttpClient hiding (metadata)
+import Dapr.Client.HttpClient
 import Dapr.Server.HttpServer.Types
 import Dapr.Server.HttpServer.Wai.Middleware
 import Data.Aeson

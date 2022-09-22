@@ -10,7 +10,7 @@ module Dapr.Core.Types.Common where
 
 import Control.Exception (Exception)
 import Dapr.Core.Types.Internal (customParseJSON, customToJSON)
-import Data.Aeson (FromJSON(parseJSON), ToJSON (toJSON), Value (String), FromJSONKey)
+import Data.Aeson (FromJSON (parseJSON), FromJSONKey, ToJSON (toJSON), Value (String))
 import Data.Map (Map)
 import Data.Text (Text)
 import qualified Data.Text as T
