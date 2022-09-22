@@ -28,10 +28,12 @@ testTopic = PubsubTopic "test-topic"
 
 cleanState :: IO ()
 cleanState = do
-  let request = DeleteStateRequest redisStore (StateKey "key-1") Nothing Nothing mempty
-  _ <- deleteState defaultDaprConfig request
-  _ <- deleteState defaultDaprConfig (request {stateKey = StateKey "key-2"})
-  _ <- deleteState defaultDaprConfig (request {stateKey = StateKey "key-3"})
+  let request1 = DeleteStateRequest redisStore (StateKey "key-1") Nothing Nothing mempty
+  let request2 = DeleteStateRequest redisStore (StateKey "key-2") Nothing Nothing mempty
+  let request3 = DeleteStateRequest redisStore (StateKey "key-3") Nothing Nothing mempty
+  _ <- deleteState defaultDaprConfig request1
+  _ <- deleteState defaultDaprConfig request2
+  _ <- deleteState defaultDaprConfig request3
   return ()
 
 saveDefaultState :: IO (Either DaprClientError ())
