@@ -1,5 +1,7 @@
 # haskell-dapr
 
+![Haskell loves Dapr](./docs/assets/haskell-dapr-400x200.jpg)
+
 Bring [dapr](https://dapr.io/) to Haskell world.
 
 ## Local development
@@ -48,4 +50,3 @@ stack test
 - [ ] Add Server module
 - [ ] Create a sample app
 - [ ] GRPC integration
-- [ ] Simplify the APIs
