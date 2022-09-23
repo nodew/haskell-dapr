@@ -10,6 +10,12 @@ Bring [dapr](https://dapr.io/) to Haskell world.
 
 See [How to get started with Haskell in 2022 (the straightforward way)](https://wasp-lang.dev/blog/2022/09/02/how-to-get-started-with-haskell-in-2022)
 
+### Install Docker
+
+Windows/MacOS: [Docker desktop](https://docs.docker.com/desktop/)
+
+Linux: [Docker engine](https://docs.docker.com/engine/install/)
+
 ### Install the Dapr CLI
 
 See [Install the Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
