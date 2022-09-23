@@ -6,6 +6,10 @@ Bring [dapr](https://dapr.io/) to Haskell world.
 
 ## Local development
 
+### Setup Haskell development environment
+
+See [How to get started with Haskell in 2022 (the straightforward way)](https://wasp-lang.dev/blog/2022/09/02/how-to-get-started-with-haskell-in-2022)
+
 ### Install the Dapr CLI
 
 See [Install the Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
@@ -13,6 +17,12 @@ See [Install the Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli
 ### Install protoc
 
 Follow the document [Installing protoc](https://github.com/google/proto-lens/blob/master/docs/installing-protoc.md)
+
+The default `protoc` installed by above scripts requires `sudo` permission, you can update the permission by
+
+```bash
+chmod 755 /usr/local/bin/protoc
+```
 
 ### Clone code
 
