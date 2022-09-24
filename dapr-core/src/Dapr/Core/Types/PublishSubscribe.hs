@@ -24,7 +24,7 @@ data PublishEventRequest a = PublishEventRequest
     -- | The data which will be published to topic
     pubsubData :: a,
     -- | The content type for the data (optional)
-    pubsubDataContentType :: Text,
+    pubsubDataContentType :: Maybe Text,
     -- | The metadata passing to pubsub components
     pubsubMetadata :: ExtendedMetadata
   }

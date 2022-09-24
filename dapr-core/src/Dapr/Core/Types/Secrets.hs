@@ -29,7 +29,7 @@ data GetSecretRequest = GetSecretRequest
 type Secrets = Map Text Text
 
 newtype GetSecretResponse = GetSecretResponse
-  { results :: Secrets
+  { result :: Secrets
   }
 
 -- | 'GetBulkSecretRequest' is the message to get the secrets from secret store.
@@ -41,5 +41,5 @@ data GetBulkSecretRequest = GetBulkSecretRequest
   }
 
 newtype GetBulkSecretResponse = GetBulkSecretResponse
-  { results :: Map Text Secrets
+  { result :: Map Text Secrets
   }

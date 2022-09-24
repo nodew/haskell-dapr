@@ -8,6 +8,7 @@ module Dapr.Client.HttpClient.Req where
 
 import Control.Monad.Catch
 import Control.Monad.IO.Class (MonadIO)
+import Dapr.Client.HttpClient.Internal
 import Dapr.Core.Types
 import Data.Data (Proxy (Proxy))
 import Data.Text (Text)
@@ -32,11 +33,11 @@ makeHttpRequest config method subUrl reqBody responseHandler options = runReq de
   let host = daprHost config
       apiVersion = daprApiVersion config
       defaultContentType = case httpMethodName (proxy method) of
-        "POST" -> header "Content-Type" "application/json"
-        "PUT" -> header "Content-Type" "application/json"
+        "POST" -> headerContentTypeJSON
+        "PUT" -> headerContentTypeJSON
         _ -> mempty
-      defaultOptions = port $ daprPort config
-      updatedOptions = defaultContentType <> defaultOptions <> options
+      defaultOptions = defaultContentType <> port (daprPort config)
+      updatedOptions = defaultOptions <> options
       completeUrl = appendUrl (http host /: apiVersion) subUrl
   try $ req method completeUrl reqBody responseHandler updatedOptions
   where

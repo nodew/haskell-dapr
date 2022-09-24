@@ -1,5 +1,5 @@
 -- |
--- Module      : Health
+-- Module      : Dapr.Client.HttpClient.Health
 -- Description : To check the Health of Dapr sidecar
 -- Copyright   : (c)
 -- License     : Apache-2.0

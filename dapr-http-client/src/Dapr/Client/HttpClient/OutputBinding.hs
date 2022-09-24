@@ -1,5 +1,5 @@
 -- |
--- Module      : OutputBinding
+-- Module      : Dapr.Client.HttpClient.OutputBinding
 -- Description : Invokes an output binding
 -- Copyright   : (c)
 -- License     : Apache-2.0

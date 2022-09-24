@@ -1,5 +1,5 @@
 -- |
--- Module      : DistributedLock
+-- Module      : Dapr.Client.HttpClient.DistributedLock
 -- Description : Manages Distrubuted locks
 -- Copyright   : (c)
 -- License     : Apache-2.0
