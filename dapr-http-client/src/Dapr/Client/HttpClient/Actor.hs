@@ -22,10 +22,10 @@ import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Data.Aeson
 import Data.Bifunctor (Bifunctor (bimap))
+import Data.CaseInsensitive (CI (original))
 import Data.Text.Encoding (encodeUtf8)
 import GHC.Generics (Generic)
 import Network.HTTP.Req
-import Data.CaseInsensitive (CI(original))
 import Network.HTTP.Types (hContentType)
 
 data ExecuteActorStateTransactionItem a = ExecuteActorStateTransactionItem
