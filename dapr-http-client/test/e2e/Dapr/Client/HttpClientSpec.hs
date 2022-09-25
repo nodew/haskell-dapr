@@ -116,9 +116,9 @@ spec = do
           getBulkState
             defaultDaprConfig
             (GetBulkStateRequest redisStore [StateKey "key-2", StateKey "key-3"] 10 mempty) ::
-            IO (Either DaprClientError [BulkStateItem Text])
+            IO (Either DaprClientError (GetBulkStateResponse Text))
         isRight r `shouldBe` True
-        let items = fromRight [] r
+        let (GetBulkStateResponse items) = fromRight (GetBulkStateResponse []) r
         length items `shouldBe` 2
         let (BulkStateItem key1 value1 _ _ _) = head items
         let (BulkStateItem key2 value2 _ _ _) = head $ tail items
@@ -150,8 +150,8 @@ spec = do
         let request =
               ExecuteStateTransactionRequest
                 redisStore
-                [ TransactionalStateOperation TransactionOperationUpsert (TransactionalUpsert (StateKey "key-1") ("my-new-data-1" :: Text)),
-                  TransactionalStateOperation TransactionOperationDelete (TransactionalDelete (StateKey "key-3"))
+                [ TransactionalStateOperation TransactionOperationUpsert (StateItem (StateKey "key-1") (Just "my-new-data-1" :: Maybe Text) Nothing mempty Nothing),
+                  TransactionalStateOperation TransactionOperationDelete (StateItem (StateKey "key-2") Nothing Nothing mempty Nothing)
                 ]
                 mempty
         r <- executeStateTransaction defaultDaprConfig request
@@ -171,7 +171,7 @@ spec = do
         show rs' `shouldBe` "Left NotFound"
 
   describe "Pubsub" $ it "Can publish message" $ do
-    r <- publishMessage defaultDaprConfig (PublishEventRequest pubsubRedis testTopic (ReqBodyJson (TestHelloWorldMessage "Hello World")) "application/json" mempty)
+    r <- publishMessage defaultDaprConfig (PublishEventRequest pubsubRedis testTopic (ReqBodyJson (TestHelloWorldMessage "Hello World")) Nothing mempty)
     isRight r `shouldBe` True
 
   describe "OutputBinding" $ it "Invokes a dapr output binding" $ do

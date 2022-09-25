@@ -1,5 +1,5 @@
 -- |
--- Module      : Configuration
+-- Module      : Dapr.Client.HttpClient.Configuration
 -- Description : Manage Configuration stores
 -- Copyright   : (c)
 -- License     : Apache-2.0

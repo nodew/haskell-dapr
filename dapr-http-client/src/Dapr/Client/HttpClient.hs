@@ -1,5 +1,5 @@
 -- |
--- Module      : DistributedLock
+-- Module      : Dapr.Client.HttpClient
 -- Description :
 -- Copyright   : (c)
 -- License     : Apache-2.0

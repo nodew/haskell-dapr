@@ -1,5 +1,5 @@
 -- |
--- Module      : ServiceInvocation
+-- Module      : Dapr.Client.HttpClient.StateManagement
 -- Description : Manages Dapr state
 -- Copyright   : (c)
 -- License     : Apache-2.0
@@ -68,12 +68,12 @@ getBulkState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
   GetBulkStateRequest ->
-  m (Either DaprClientError [BulkStateItem a])
+  m (Either DaprClientError (GetBulkStateResponse a))
 getBulkState config GetBulkStateRequest {..} = do
   let url = ["state", getStoreName stateStore, "bulk"]
       metadataQueryParam = mapMetadataToQueryParam stateMetadata
   response <- makeHttpRequest config POST url (ReqBodyJson (BulkStateRequestPayload stateKeys stateParallelism)) jsonResponse metadataQueryParam
-  return $ bimap DaprHttpException responseBody response
+  return $ bimap DaprHttpException (GetBulkStateResponse . responseBody) response
 
 -- | Deletes the value associated with provided `StateKey` from the configured Dapr State.
 deleteState ::
@@ -108,7 +108,7 @@ queryState ::
   (MonadIO m, FromJSON a) =>
   DaprConfig ->
   QueryStateRequest ->
-  m (Either DaprClientError (StateQueryResponse a))
+  m (Either DaprClientError (QueryStateResponse a))
 queryState config QueryStateRequest {..} = do
   let url = ["state", getStoreName stateStore, "query"]
       metadataQueryParam = mapMetadataToQueryParam stateMetadata

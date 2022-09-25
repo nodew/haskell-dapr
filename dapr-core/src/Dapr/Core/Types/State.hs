@@ -31,6 +31,7 @@ data GetStateRequest = GetStateRequest
     -- | The metadata which will be sent to state store components.
     stateMetadata :: ExtendedMetadata
   }
+  deriving (Eq, Show)
 
 -- | 'GetBulkStateRequest' is the message to get a list of key-value states from specific state store.
 data GetBulkStateRequest = GetBulkStateRequest
@@ -43,6 +44,7 @@ data GetBulkStateRequest = GetBulkStateRequest
     -- | The metadata which will be sent to state store components.
     stateMetadata :: ExtendedMetadata
   }
+  deriving (Eq, Show)
 
 -- | 'BulkStateItem' is the response item for a bulk get operation.
 data BulkStateItem a = BulkStateItem
@@ -71,6 +73,7 @@ data GetStateResponse a = GetStateResponse
     stateEtag :: Maybe Etag,
     stateMetadata :: ExtendedMetadata
   }
+  deriving (Eq, Show)
 
 data DeleteStateRequest = DeleteStateRequest
   { stateStore :: StateStore,
@@ -79,32 +82,26 @@ data DeleteStateRequest = DeleteStateRequest
     stateOption :: Maybe StateOption,
     stateMetadata :: ExtendedMetadata
   }
+  deriving (Eq, Show)
 
 data DeleteBulkStateRequest a = DeleteBulkStateRequest
   { stateStore :: StateStore,
     stateItems :: [StateItem a]
   }
+  deriving (Eq, Show)
 
 data SaveStateRequest a = SaveStateRequest
   { stateStore :: StateStore,
     stateItems :: [StateItem a]
   }
-
-data TransactionalOperation a
-  = TransactionalUpsert StateKey a
-  | TransactionalDelete StateKey
   deriving (Eq, Show)
-
-instance ToJSON a => ToJSON (TransactionalOperation a) where
-  toJSON (TransactionalUpsert key value) = object ["key" .= key, "value" .= value]
-  toJSON (TransactionalDelete key) = object ["key" .= key]
 
 -- | 'TransactionalStateOperation' is the message to execute a specified operation with a key-value pair.
 data TransactionalStateOperation a = TransactionalStateOperation
   { -- | The type of operation to be executed
     transactionOperation :: TransactionOperation,
     -- | State values to be operated on
-    transactionRequest :: TransactionalOperation a
+    transactionRequest :: StateItem a
   }
   deriving (Eq, Show, Generic)
 
@@ -117,43 +114,14 @@ data ExecuteStateTransactionRequest a = ExecuteStateTransactionRequest
     stateOperations :: [TransactionalStateOperation a],
     stateMetadata :: ExtendedMetadata
   }
+  deriving (Eq, Show)
 
 data QueryStateRequest = QueryStateRequest
   { stateStore :: StateStore,
     stateQuery :: StateQuery,
     stateMetadata :: ExtendedMetadata
   }
-
-data QueryStateItem a = QueryStateItem
-  { stateKey :: StateKey,
-    stateData :: a,
-    stateEtag :: Maybe Etag,
-    stateError :: Maybe Text
-  }
-
-data QueryStateResponse a = QueryStateResponse
-  { results :: [QueryStateItem a],
-    token :: Text,
-    metadata :: ExtendedMetadata
-  }
-
-data StateQueryItem a = StateQueryItem
-  { itemKey :: Text,
-    itemData :: Maybe a,
-    itemEtag :: Maybe Text,
-    itemError :: Maybe Text
-  }
-  deriving (Eq, Show, Generic)
-
-instance FromJSON a => FromJSON (StateQueryItem a) where
-  parseJSON = customParseJSON 4
-
-data StateQueryResponse a = StateQueryResponse
-  { results :: [StateQueryItem a],
-    token :: Text,
-    metadata :: Maybe ExtendedMetadata
-  }
-  deriving (Eq, Show, Generic, FromJSON)
+  deriving (Eq, Show)
 
 data StateQueryOrder = StateQueryOrderAsc | StateQueryOrderDesc deriving (Eq)
 
@@ -204,3 +172,21 @@ data StateQuery = StateQuery
 
 instance ToJSON StateQuery where
   toJSON = customToJSON 10
+
+data QueryStateItem a = QueryStateItem
+  { stateKey :: StateKey,
+    stateData :: a,
+    stateEtag :: Maybe Etag,
+    stateError :: Text
+  }
+  deriving (Eq, Show, Generic)
+
+instance FromJSON a => FromJSON (QueryStateItem a) where
+  parseJSON = customParseJSON 4
+
+data QueryStateResponse a = QueryStateResponse
+  { results :: [QueryStateItem a],
+    token :: Text,
+    metadata :: ExtendedMetadata
+  }
+  deriving (Eq, Show, Generic, FromJSON)

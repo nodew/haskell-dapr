@@ -1,5 +1,5 @@
 -- |
--- Module      : Metadata
+-- Module      : Dapr.Client.HttpClient.Metadata
 -- Description : Provides information about the sidecar allowing runtime discoverability.
 -- Copyright   : (c)
 -- License     : Apache-2.0
@@ -7,6 +7,7 @@
 module Dapr.Client.HttpClient.Metadata where
 
 import Control.Monad.IO.Class (MonadIO)
+import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Data.Bifunctor (bimap)
@@ -23,6 +24,5 @@ getMetadata config = do
 setMetadata :: MonadIO m => DaprConfig -> SetMetadataRequest -> m (Either DaprClientError ())
 setMetadata config SetMetadataRequest {..} = do
   let url = ["metadata", key]
-      options = header "Content-Type" "text/plain"
-  response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 value) ignoreResponse options
+  response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 value) ignoreResponse headerContentTypeText
   return $ bimap DaprHttpException (const ()) response

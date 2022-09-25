@@ -13,7 +13,7 @@ module Dapr.Client.HttpClient.Actor
     registerActorTimer,
     unregisterActorTimer,
     invokeActorMethod,
-    invokeActorMethod',
+    invokeActorMethodWithJsonPayload,
   )
 where
 
@@ -22,10 +22,11 @@ import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Data.Aeson
 import Data.Bifunctor (Bifunctor (bimap))
-import qualified Data.Text as T
+import Data.CaseInsensitive (CI (original))
 import Data.Text.Encoding (encodeUtf8)
 import GHC.Generics (Generic)
 import Network.HTTP.Req
+import Network.HTTP.Types (hContentType)
 
 data ExecuteActorStateTransactionItem a = ExecuteActorStateTransactionItem
   { key :: StateKey,
@@ -61,11 +62,11 @@ executeActorStateTransaction config ExecuteActorStateTransactionRequest {..} = d
         )
 
 -- | Gets the state for an `Actor` using a specified `OperationKey`
-getActorState :: (MonadIO m, FromJSON a) => DaprConfig -> GetActorStateRequest -> m (Either DaprClientError a)
+getActorState :: (MonadIO m, FromJSON a) => DaprConfig -> GetActorStateRequest -> m (Either DaprClientError (GetActorStateResponse a))
 getActorState config GetActorStateRequest {..} = do
   let url = ["actors", getActorType $ actorType actor, getActorIdText $ actorId actor, "state", getStateKey key]
   response <- makeHttpRequest config GET url NoReqBody jsonResponse mempty
-  return $ bimap DaprHttpException responseBody response
+  return $ bimap DaprHttpException (GetActorStateResponse . responseBody) response
 
 -- | Creates a persistent reminder for an `Actor`
 registerActorReminder :: (MonadIO m, ToJSON a) => DaprConfig -> RegisterActorReminderRequest a -> m (Either DaprClientError ())
@@ -116,7 +117,7 @@ invokeActorMethod ::
   m (Either DaprClientError InvokeActorResponse)
 invokeActorMethod config InvokeActorRequest {..} = do
   let url = ["actors", getActorType $ actorType actor, getActorIdText $ actorId actor, "method", actorMethod]
-      options = maybe mempty (header "ContentType" . encodeUtf8) actorContentType
+      options = maybe mempty (header (original hContentType) . encodeUtf8) actorContentType
   response <- makeHttpRequest config httpMethod url actorData lbsResponse options
   return $ bimap DaprHttpException getResponse response
   where
@@ -126,21 +127,15 @@ invokeActorMethod config InvokeActorRequest {..} = do
        in InvokeActorResponse content
 
 -- | Invoke a method on an actor, and decode the response if it's JSON
-invokeActorMethod' ::
-  ( HttpBodyAllowed (AllowsBody method) (ProvidesBody payload),
+invokeActorMethodWithJsonPayload ::
+  ( HttpBodyAllowed (AllowsBody method) 'CanHaveBody,
     MonadIO m,
     HttpMethod method,
-    HttpBody payload,
-    FromJSON response
+    ToJSON payload
   ) =>
   DaprConfig ->
   InvokeActorRequest method payload ->
-  m (Either DaprClientError response)
-invokeActorMethod' config request = do
-  response <- invokeActorMethod config request
-  return $ case response of
-    Left err -> Left err
-    Right (InvokeActorResponse content) ->
-      case eitherDecode content of
-        Left err' -> Left $ JsonDecodeError (T.pack err')
-        Right result -> Right result
+  m (Either DaprClientError InvokeActorResponse)
+invokeActorMethodWithJsonPayload config InvokeActorRequest {..} = do
+  let updatedRequest = InvokeActorRequest actor httpMethod actorMethod (ReqBodyJson actorData) actorContentType actorMetadata
+  invokeActorMethod config updatedRequest
