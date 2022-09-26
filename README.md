@@ -1,6 +1,6 @@
 # haskell-dapr
 
-![Haskell loves Dapr](./docs/assets/haskell-dapr-400x200.jpg)
+![Haskell loves Dapr](./docs/assets/haskell-dapr-combination_400x200.jpg)
 
 Bring [dapr](https://dapr.io/) to Haskell world.
 
