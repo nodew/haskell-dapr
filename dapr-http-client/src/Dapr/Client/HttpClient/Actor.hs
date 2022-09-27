@@ -119,12 +119,7 @@ invokeActorMethod config InvokeActorRequest {..} = do
   let url = ["actors", getActorType $ actorType actor, getActorIdText $ actorId actor, "method", actorMethod]
       options = maybe mempty (header (original hContentType) . encodeUtf8) actorContentType
   response <- makeHttpRequest config httpMethod url actorData lbsResponse options
-  return $ bimap DaprHttpException getResponse response
-  where
-    getResponse :: LbsResponse -> InvokeActorResponse
-    getResponse response =
-      let content = responseBody response
-       in InvokeActorResponse content
+  return $ bimap DaprHttpException (InvokeActorResponse . responseBody) response
 
 -- | Invoke a method on an actor, and decode the response if it's JSON
 invokeActorMethodWithJsonPayload ::

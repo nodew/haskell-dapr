@@ -4,7 +4,7 @@
 -- Copyright   : (c)
 -- License     : Apache-2.0
 -- Defines the types used by PubSub module.
-module Dapr.Core.Types.PublishSubscribe where
+module Dapr.Core.Types.Pubsub where
 
 import Dapr.Core.Types.Common (ExtendedMetadata)
 import Data.Text (Text)
@@ -28,3 +28,4 @@ data PublishEventRequest a = PublishEventRequest
     -- | The metadata passing to pubsub components
     pubsubMetadata :: ExtendedMetadata
   }
+
