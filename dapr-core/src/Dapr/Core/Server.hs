@@ -1,15 +1,19 @@
 -- |
 -- Module      : Dapr.Core.Server
--- Description : Core type definitions
+-- Description : Core core type definitions for server module
 -- Copyright   : (c)
 -- License     : Apache-2.0
 -- This module export
 module Dapr.Core.Server where
 
 import Dapr.Core.Types.Common
+import Dapr.Core.Types.Internal
 import Dapr.Core.Types.Pubsub
+import Data.Aeson
 import qualified Data.ByteString.Lazy as L
 import Data.Text
+import qualified Data.Text as T
+import GHC.Generics (Generic)
 
 -- | TopicEvent is the content of the inbound topic message.
 data TopicEvent = TopicEvent
@@ -25,10 +29,6 @@ data TopicEvent = TopicEvent
     topicEventDataContentType :: Text,
     -- | The content of the event.
     topicEventData :: L.ByteString,
-    -- | The base64 encoding content of the event.
-    -- | Note, this is processing rawPayload and binary content types.
-    -- | This field is deprecated and will be removed in the future.
-    topicEventDataBase64 :: Text,
     -- | The pubsub topic which publisher sent to.
     topicEventTopic :: PubsubTopic,
     -- | The name of the pubsub the publisher sent to.
@@ -38,7 +38,7 @@ data TopicEvent = TopicEvent
 -- | Subscription represents single topic subscription.
 data Subscription = Subscription
   { -- | The name of the pub/sub this message came from
-    subscriptionName :: PubsubName,
+    subscriptionPubsubname :: PubsubName,
     -- | The name of the topic
     subscriptionTopic :: PubsubTopic,
     -- | The subscription metadata
@@ -52,6 +52,14 @@ data Subscription = Subscription
     -- | DisableTopicValidation allows to receive events from publisher topics that differ from the subscribed topic.
     subscriptionDisableTopicValidation :: Bool
   }
+  deriving (Show, Eq, Generic)
+
+instance ToJSON Subscription where
+  toJSON = customToJSON 12
+
+newtype EventHandler m event result = EventHandler {
+  handle :: event -> m result
+}
 
 -- | BindingEvent represents the binding event handler input.
 data BindingEvent = BindingEvent
@@ -59,4 +67,26 @@ data BindingEvent = BindingEvent
     bindingEventData :: L.ByteString,
     -- | The input binding metadata
     bindingEventMetadata :: ExtendedMetadata
+  }
+
+-- | Handler for input binding
+type BindingEventHandler m = EventHandler m BindingEvent Bool
+
+data TopicEventResult = TopicEventSuccess | TopicEventRetry | TopicEventDrop
+  deriving (Eq)
+
+instance Show TopicEventResult where
+  show TopicEventSuccess = "SUCCESS"
+  show TopicEventRetry = "RETRY"
+  show TopicEventDrop = "DROP"
+
+instance ToJSON TopicEventResult where
+  toJSON = Data.Aeson.String . T.pack . show
+
+-- | Handler for subscribed topic
+type TopicEventHandler m = EventHandler m TopicEvent TopicEventResult
+
+data DaprServerConfig m = DaprServerConfig
+  { subscriptions :: [(Subscription, TopicEventHandler m)],
+    inputBindings :: [(Text, BindingEventHandler m)]
   }

@@ -25,6 +25,7 @@ common lib
         , base >=4.11 && <5
         , bytestring ^>={ 0.10.12, 0.11.3 }
         , containers ^>=0.6.4
+        , dapr-core ^>=0.1.0.0
         , http-types ^>=0.12.3
         , text ^>={ 1.2.5, 2.0.1 }
         , wai ^>=3.2.3
@@ -35,6 +36,7 @@ common lib
         DeriveGeneric
         DeriveAnyClass
         DuplicateRecordFields
+        RecordWildCards
 
 common test-deps
     build-depends:
@@ -47,8 +49,7 @@ common test-deps
 library
     import:           lib
     exposed-modules:
-          Dapr.Server.HttpServer.Wai.Middleware
-        , Dapr.Server.HttpServer.Types
+          Dapr.Server.HttpServer.Wai
     hs-source-dirs:   src
     default-language: Haskell2010
 
