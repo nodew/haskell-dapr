@@ -1,3 +1,4 @@
+{-# LANGUAGE BinaryLiterals #-}
 -- |
 -- Module      : Dapr.Core.Server
 -- Description : Core core type definitions for server module
@@ -16,7 +17,7 @@ import qualified Data.Text as T
 import GHC.Generics (Generic)
 
 -- | TopicEvent is the content of the inbound topic message.
-data TopicEvent = TopicEvent
+data TopicEvent a = TopicEvent
   { -- | ID identifies the event.
     topicEventId :: Text,
     -- | The version of the CloudEvents specification.
@@ -28,12 +29,15 @@ data TopicEvent = TopicEvent
     -- | The content type of data value.
     topicEventDataContentType :: Text,
     -- | The content of the event.
-    topicEventData :: L.ByteString,
+    topicEventData :: a,
     -- | The pubsub topic which publisher sent to.
     topicEventTopic :: PubsubTopic,
     -- | The name of the pubsub the publisher sent to.
     topicEventPubsubName :: PubsubName
-  }
+  } deriving (Show, Eq, Generic)
+
+instance FromJSON a => FromJSON (TopicEvent a) where
+  parseJSON = customParseJSON 10
 
 -- | Subscription represents single topic subscription.
 data Subscription = Subscription
@@ -84,9 +88,9 @@ instance ToJSON TopicEventResult where
   toJSON = Data.Aeson.String . T.pack . show
 
 -- | Handler for subscribed topic
-type TopicEventHandler m = EventHandler m TopicEvent TopicEventResult
+type TopicEventHandler m a = EventHandler m (TopicEvent a) TopicEventResult
 
-data DaprServerConfig m = DaprServerConfig
-  { subscriptions :: [(Subscription, TopicEventHandler m)],
+data DaprServerConfig m a = DaprServerConfig
+  { subscriptions :: [(Subscription, TopicEventHandler m a)],
     inputBindings :: [(Text, BindingEventHandler m)]
   }
