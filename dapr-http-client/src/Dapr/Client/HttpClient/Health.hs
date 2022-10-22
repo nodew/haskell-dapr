@@ -6,7 +6,7 @@
 -- This module allows to check the Health of Dapr sidecar
 module Dapr.Client.HttpClient.Health where
 
-import Dapr.Client.HttpClient.Req (makeHttpRequest, DaprHttpClient)
+import Dapr.Client.HttpClient.Req (DaprHttpClient, makeHttpRequest)
 import Dapr.Core.Types (DaprHealthStatus (..))
 import Network.HTTP.Req
   ( GET (GET),
