@@ -6,7 +6,6 @@
 -- This module lets you perform service invocations
 module Dapr.Client.HttpClient.ServiceInvocation where
 
-import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
@@ -22,17 +21,15 @@ invokeServiceMethod ::
   ( HttpBodyAllowed
       (AllowsBody method)
       (ProvidesBody payload),
-    MonadIO m,
     HttpMethod method,
     HttpBody payload
   ) =>
-  DaprConfig ->
   InvokeServiceRequest method payload ->
-  m (Either DaprClientError InvokeResponse)
-invokeServiceMethod config InvokeServiceRequest {..} = do
+  DaprHttpClient (Either DaprClientError InvokeResponse)
+invokeServiceMethod InvokeServiceRequest {..} = do
   let url = ["invoke", getRemoteAppId remoteApp, "method"] <> requestEndpoint
       options = maybe mempty (header (original hContentType) . encodeUtf8) requestContentType <> mapQueryToParam requestQueryString
-  response <- makeHttpRequest config httpMethod url reqeustData lbsResponse options
+  response <- makeHttpRequest httpMethod url reqeustData lbsResponse options
   return $ bimap DaprHttpException getInvokeResponse response
   where
     getInvokeResponse :: LbsResponse -> InvokeResponse
@@ -46,13 +43,11 @@ invokeServiceMethodWithJsonPayload ::
   ( HttpBodyAllowed
       (AllowsBody method)
       'CanHaveBody,
-    MonadIO m,
     HttpMethod method,
     ToJSON payload
   ) =>
-  DaprConfig ->
   InvokeServiceRequest method payload ->
-  m (Either DaprClientError InvokeResponse)
-invokeServiceMethodWithJsonPayload config (InvokeServiceRequest {..}) = do
+  DaprHttpClient (Either DaprClientError InvokeResponse)
+invokeServiceMethodWithJsonPayload (InvokeServiceRequest {..}) = do
   let updatedRequest = InvokeServiceRequest remoteApp httpMethod requestEndpoint (ReqBodyJson reqeustData) requestContentType requestQueryString
-  invokeServiceMethod config updatedRequest
+  invokeServiceMethod updatedRequest

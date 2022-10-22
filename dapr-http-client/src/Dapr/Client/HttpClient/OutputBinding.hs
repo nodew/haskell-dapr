@@ -6,7 +6,6 @@
 -- This module lets you invoke output bindings
 module Dapr.Client.HttpClient.OutputBinding (invokeOutputBinding) where
 
-import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Dapr.Core.Types.Internal
@@ -30,13 +29,9 @@ mapInvokeBindingRequestToPayload :: InvokeBindingRequest a -> InvokeBindingReque
 mapInvokeBindingRequestToPayload InvokeBindingRequest {..} = InvokeBindingRequestPayload {..}
 
 -- | 'invokeOutputBinding' lets you invoke a Dapr output binding. Dapr bindings support various operations.
-invokeOutputBinding ::
-  (MonadIO m, ToJSON a) =>
-  DaprConfig ->
-  InvokeBindingRequest a ->
-  m (Either DaprClientError ())
-invokeOutputBinding config request@(InvokeBindingRequest {..}) = do
+invokeOutputBinding :: (ToJSON a) => InvokeBindingRequest a -> DaprHttpClient (Either DaprClientError ())
+invokeOutputBinding request@(InvokeBindingRequest {..}) = do
   let url = ["bindings", getBindingName bindingName]
       payload = mapInvokeBindingRequestToPayload request
-  response <- makeHttpRequest config POST url (ReqBodyJson payload) ignoreResponse mempty
+  response <- makeHttpRequest POST url (ReqBodyJson payload) ignoreResponse mempty
   return $ bimap DaprHttpException (const ()) response
