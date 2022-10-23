@@ -30,6 +30,7 @@ common lib
     , exceptions ^>=0.10.4
     , extra ^>=1.7.10
     , http-types ^>=0.12.3
+    , mtl ^>= 2.2.2
     , req >=3.10.0 && <3.14
     , text ^>={ 1.2.5, 2.0.1 }
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints

@@ -6,9 +6,8 @@
 -- This module allows to check the Health of Dapr sidecar
 module Dapr.Client.HttpClient.Health where
 
-import Control.Monad.IO.Class (MonadIO)
-import Dapr.Client.HttpClient.Req (makeHttpRequest)
-import Dapr.Core.Types (DaprConfig, DaprHealthStatus (..))
+import Dapr.Client.HttpClient.Req (DaprHttpClient, makeHttpRequest)
+import Dapr.Core.Types (DaprHealthStatus (..))
 import Network.HTTP.Req
   ( GET (GET),
     NoReqBody (NoReqBody),
@@ -16,9 +15,9 @@ import Network.HTTP.Req
   )
 
 -- | Perform health-check of Dapr sidecar. Returns `Healthy` if sidecar is healthy. Otherwise 'Unhealthy'.
-checkHealth :: (MonadIO m) => DaprConfig -> m DaprHealthStatus
-checkHealth config = do
-  response <- makeHttpRequest config GET ["healthz"] NoReqBody ignoreResponse mempty
+checkHealth :: DaprHttpClient DaprHealthStatus
+checkHealth = do
+  response <- makeHttpRequest GET ["healthz"] NoReqBody ignoreResponse mempty
   return $ case response of
     Right _ -> DaprHealthy
     Left _ -> DaprUnhealthy

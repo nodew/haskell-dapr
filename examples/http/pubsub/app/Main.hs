@@ -55,6 +55,6 @@ main :: IO ()
 main = do
   _ <- forkIO server
   threadDelay $ 300 * 1000
-  _ <- publishMessageWithJsonPayload defaultDaprConfig (PublishEventRequest (PubsubName pubsub') (PubsubTopic topic') helloWorld Nothing mempty)
+  _ <- runDaprHttpClient defaultDaprConfig $ publishMessageWithJsonPayload (PublishEventRequest (PubsubName pubsub') (PubsubTopic topic') helloWorld Nothing mempty)
   threadDelay $ 300 * 1000
   return ()

@@ -10,7 +10,6 @@ module Dapr.Client.HttpClient.DistributedLock
   )
 where
 
-import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
 import Data.Aeson
@@ -39,17 +38,17 @@ mapUnlockRequestToPayload :: UnlockRequest -> UnlockRequestPayload
 mapUnlockRequestToPayload UnlockRequest {..} = UnlockRequestPayload {..}
 
 -- | Attempt to lock the given resourceId with response indicating success
-tryLock :: MonadIO m => DaprConfig -> TryLockRequest -> m (Either DaprClientError TryLockResponse)
-tryLock config request@(TryLockRequest {..}) = do
+tryLock :: TryLockRequest -> DaprHttpClient (Either DaprClientError TryLockResponse)
+tryLock request@(TryLockRequest {..}) = do
   let url = ["lock", getLockStoreName lockStore]
       payload = mapTryLockRequestToPayload request
-  response <- makeHttpRequest config POST url (ReqBodyJson payload) jsonResponse mempty
+  response <- makeHttpRequest POST url (ReqBodyJson payload) jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
 -- | Attempt to unlock the given resourceId with response indicating success
-unlock :: MonadIO m => DaprConfig -> UnlockRequest -> m (Either DaprClientError UnlockResponse)
-unlock config request@(UnlockRequest {..}) = do
+unlock :: UnlockRequest -> DaprHttpClient (Either DaprClientError UnlockResponse)
+unlock request@(UnlockRequest {..}) = do
   let url = ["unlock", getLockStoreName lockStore]
       payload = mapUnlockRequestToPayload request
-  response <- makeHttpRequest config POST url (ReqBodyJson payload) jsonResponse mempty
+  response <- makeHttpRequest POST url (ReqBodyJson payload) jsonResponse mempty
   return $ bimap DaprHttpException responseBody response

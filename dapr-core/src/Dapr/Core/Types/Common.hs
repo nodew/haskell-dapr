@@ -9,6 +9,7 @@
 module Dapr.Core.Types.Common where
 
 import Control.Exception (Exception)
+import Control.Monad.Reader
 import Dapr.Core.Types.Internal (customParseJSON, customToJSON)
 import Data.Aeson (FromJSON (parseJSON), FromJSONKey, ToJSON (toJSON), Value (String))
 import Data.Map (Map)
@@ -36,6 +37,16 @@ defaultDaprConfig =
       daprPort = 3500,
       daprApiVersion = "v1.0"
     }
+
+-- | 'DaprClient' dapr client
+newtype DaprClient m a = DaprClient {runDaprClient :: ReaderT DaprConfig m a}
+  deriving
+    ( Functor,
+      Applicative,
+      Monad,
+      MonadTrans,
+      MonadReader DaprConfig
+    )
 
 -- | 'DaprClientError' is the exception for client request
 data DaprClientError

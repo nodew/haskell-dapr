@@ -6,7 +6,6 @@
 -- This module provides information about the sidecar allowing runtime discoverability. It also allows you to store additional attributes in the format of key-value pairs.
 module Dapr.Client.HttpClient.Metadata where
 
-import Control.Monad.IO.Class (MonadIO)
 import Dapr.Client.HttpClient.Internal
 import Dapr.Client.HttpClient.Req
 import Dapr.Core.Types
@@ -15,14 +14,14 @@ import Data.Text.Encoding (encodeUtf8)
 import Network.HTTP.Req
 
 -- | Gets the Dapr sidecar information provided by the metadata endpoint.
-getMetadata :: MonadIO m => DaprConfig -> m (Either DaprClientError GetMetadataResponse)
-getMetadata config = do
-  response <- makeHttpRequest config GET ["metadata"] NoReqBody jsonResponse mempty
+getMetadata :: DaprHttpClient (Either DaprClientError GetMetadataResponse)
+getMetadata = do
+  response <- makeHttpRequest GET ["metadata"] NoReqBody jsonResponse mempty
   return $ bimap DaprHttpException responseBody response
 
 -- | Adds a custom label to the Dapr sidecar information stored by the metadata endpoint.
-setMetadata :: MonadIO m => DaprConfig -> SetMetadataRequest -> m (Either DaprClientError ())
-setMetadata config SetMetadataRequest {..} = do
+setMetadata :: SetMetadataRequest -> DaprHttpClient (Either DaprClientError ())
+setMetadata SetMetadataRequest {..} = do
   let url = ["metadata", key]
-  response <- makeHttpRequest config PUT url (ReqBodyBs $ encodeUtf8 value) ignoreResponse headerContentTypeText
+  response <- makeHttpRequest PUT url (ReqBodyBs $ encodeUtf8 value) ignoreResponse headerContentTypeText
   return $ bimap DaprHttpException (const ()) response

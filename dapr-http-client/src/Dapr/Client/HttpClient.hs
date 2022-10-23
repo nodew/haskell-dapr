@@ -16,9 +16,12 @@ module Dapr.Client.HttpClient
     module OutputBinding,
     module Types,
     module Actor,
+    runDaprHttpClient,
   )
 where
 
+import Control.Monad.Cont (MonadIO)
+import Control.Monad.Reader (ReaderT (runReaderT))
 import Dapr.Client.HttpClient.Actor as Actor
 import Dapr.Client.HttpClient.Configuration as Configuration
 import Dapr.Client.HttpClient.DistributedLock as DistributedLock
@@ -31,3 +34,8 @@ import Dapr.Client.HttpClient.Secrets as Secrets
 import Dapr.Client.HttpClient.ServiceInvocation as ServiceInvocation
 import Dapr.Client.HttpClient.StateManagement as StateManagement
 import Dapr.Core.Types as Types
+import Network.HTTP.Req (defaultHttpConfig, runReq)
+
+-- | Run a computation in the 'DaprHttpClient' monad with the given 'DaprConfig'.
+runDaprHttpClient :: MonadIO m => DaprConfig -> DaprHttpClient a -> m a
+runDaprHttpClient config client = runReq defaultHttpConfig $ runReaderT (runDaprClient client) config
