@@ -184,15 +184,15 @@ spec = do
     r <- runReq_ $ invokeOutputBinding bindingRequest
     isRight r `shouldBe` True
 
--- describe "Secrets" $ do
---   it "Can get secret" $ do
---     r <- getSecrets "secret-envvars" "TEST_SECRET_1" Nothing
---     isRight r `shouldBe` True
---     let d = fromRight Map.empty r
---     Map.lookup "TEST_SECRET_1" d `shouldBe` Just "secret_val_1"
+  describe "Secrets" $ do
+    it "Can get secret" $ do
+      r <- runReq_ $ getSecrets $ GetSecretRequest (SecretStore "secret-localstore") (SecretKey "username") empty
+      isRight r `shouldBe` True
+      let (GetSecretResponse r') = fromRight (GetSecretResponse empty) r
+      Map.lookup "username" r' `shouldBe` Just "admin"
 
---   it "Can get secrets in bulk" $ do
---     r <- getBulkSecrets "secret-envvars" Nothing
---     isRight r `shouldBe` True
---     let d = fromRight Map.empty r
---     Map.size d >= 1 `shouldBe` True
+    it "Can get secrets in bulk" $ do
+      r <- runReq_ $ getBulkSecrets $ GetBulkSecretRequest (SecretStore "secret-localstore") empty
+      isRight r `shouldBe` True
+      let (GetBulkSecretResponse r') = fromRight (GetBulkSecretResponse empty) r
+      Map.size r' >= 1 `shouldBe` True
