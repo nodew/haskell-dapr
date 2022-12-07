@@ -1,6 +1,9 @@
-# haskell-dapr
+# haskell-dapr (archived)
 
 ![Haskell loves Dapr](./docs/assets/haskell-dapr-combination_400x200.jpg)
+
+## Important!!!
+*This repo has been archived, please go to [dapr-sandbox/haskell-sdk](https://github.com/dapr-sandbox/haskell-sdk) for recent updates*.
 
 ## Local development
 
