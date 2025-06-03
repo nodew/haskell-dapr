@@ -24,8 +24,6 @@ service Operator {
   rpc ComponentUpdate (ComponentUpdateRequest) returns (stream ComponentUpdateEvent) {}
   // Returns a list of available components
   rpc ListComponents (ListComponentsRequest) returns (ListComponentResponse) {}
-  // Returns a list fo available pluggable components
-  rpc ListPluggableComponents(ListPluggableComponentsRequest) returns (ListPluggableComponentsResponse) {}
   // Returns a given configuration by name
   rpc GetConfiguration (GetConfigurationRequest) returns (GetConfigurationResponse) {}
   // Returns a list of pub/sub subscriptions
@@ -36,17 +34,27 @@ service Operator {
   rpc ListResiliency (ListResiliencyRequest) returns (ListResiliencyResponse) {}
   // Returns a list of pub/sub subscriptions, ListSubscriptionsRequest to expose pod info
   rpc ListSubscriptionsV2 (ListSubscriptionsRequest) returns (ListSubscriptionsResponse) {}
+  // Sends events to Dapr sidecars upon subscription changes.
+  rpc SubscriptionUpdate (SubscriptionUpdateRequest) returns (stream SubscriptionUpdateEvent) {}
+  // Returns a list of http endpoints
+  rpc ListHTTPEndpoints (ListHTTPEndpointsRequest) returns (ListHTTPEndpointsResponse) {}
+  // Sends events to Dapr sidecars upon http endpoint changes.
+  rpc HTTPEndpointUpdate (HTTPEndpointUpdateRequest) returns (stream HTTPEndpointUpdateEvent) {}
 }
 
-// ListPluggableComponentsRequest is the request to get pluggable components available.
-message ListPluggableComponentsRequest {
-  string namespace = 1;
-  string pod_name = 2;
-}
+// ResourceEventType is the type of event to a resource.
+enum ResourceEventType {
+  // UNKNOWN indicates that the event type is unknown.
+  UNKNOWN = 0;
 
-// ListPluggableComponentsResponse includes the list of available pluggable components.
-message ListPluggableComponentsResponse {
-  repeated bytes pluggable_components = 1;
+  // CREATED indicates that the resource has been created.
+  CREATED = 1;
+
+  // UPDATED indicates that the resource has been updated.
+  UPDATED = 2;
+
+  // DELETED indicates that the resource has been deleted.
+  DELETED = 3;
 }
 
 // ListComponentsRequest is the request to get components for a sidecar in namespace.
@@ -64,6 +72,9 @@ message ComponentUpdateRequest {
 // ComponentUpdateEvent includes the updated component event.
 message ComponentUpdateEvent {
   bytes component = 1;
+
+  // type is the type of event.
+  ResourceEventType type = 2;
 }
 
 // ListComponentResponse includes the list of available components.
@@ -86,6 +97,21 @@ message GetConfigurationResponse {
 // ListSubscriptionsResponse includes pub/sub subscriptions.
 message ListSubscriptionsResponse {
   repeated bytes subscriptions = 1;
+}
+
+// SubscriptionUpdateRequest is the request to get updates about new
+// subscriptions for a given namespace.
+message SubscriptionUpdateRequest {
+  string namespace = 1;
+  string podName = 2;
+}
+
+// SubscriptionUpdateEvent includes the updated subscription event.
+message SubscriptionUpdateEvent {
+  bytes subscription = 1;
+
+  // type is the type of event.
+  ResourceEventType type = 2;
 }
 
 // GetResiliencyRequest is the request to get a resiliency configuration.
@@ -112,4 +138,35 @@ message ListResiliencyResponse {
 message ListSubscriptionsRequest {
   string podName = 1;
   string namespace = 2;
+}
+
+// GetHTTPEndpointRequest is the request to get an http endpoint configuration.
+message GetHTTPEndpointRequest {
+  string name = 1;
+  string namespace = 2;
+}
+
+// GetHTTPEndpointResponse includes the requested http endpoint configuration.
+message GetHTTPEndpointResponse {
+  bytes http_endpoint = 1;
+}
+
+// ListHTTPEndpointsResponse includes the list of available http endpoint configurations.
+message ListHTTPEndpointsResponse {
+  repeated bytes http_endpoints = 1;
+}
+
+message ListHTTPEndpointsRequest {
+  string namespace = 1;
+}
+
+// HTTPEndpointsUpdateRequest is the request to get updates about new http endpoints for a given namespace.
+message HTTPEndpointUpdateRequest {
+  string namespace = 1;
+  string pod_name = 2;
+}
+
+// HTTPEndpointsUpdateEvent includes the updated http endpoint event.
+message HTTPEndpointUpdateEvent {
+  bytes http_endpoints = 1;
 }
