@@ -13,27 +13,29 @@ category:           Web
 build-type:         Simple
 extra-source-files: CHANGELOG.md
                   , README.md
-tested-with: GHC == { 9.10.1, 9.8.2, 9.6.6 }
+tested-with: GHC == { 9.10.1, 9.8.4, 9.6.7 }
 
 common lib
     build-depends:
-          aeson ^>={ 2.0.3, 2.1.0 }
-        , base >=4.11 && <5
-        , bytestring ^>={ 0.10.12, 0.11.3 }
-        , containers ^>=0.6.4
-        , exceptions ^>=0.10.4
-        , extra ^>=1.7.10
-        , http-types ^>=0.12.3
-        , mtl ^>= 2.2.2
-        , req >=3.10.0 && <3.14
-        , text ^>={ 1.2.5, 2.0.1 }
-        , unliftio-core (>=0.1.1 && <0.3)
-        , uuid ^>=1.3.15
+          base >= 4.18 && < 5
+        , aeson >=2.1
+        , bytestring >=0.10
+        , containers >=0.7
+        , exceptions >=0.10
+        , extra >=1.7
+        , http-types >=0.12
+        , mtl >=2.3
+        , req >=3.10
+        , text >=1.2
+        , time >=1.9
+        , unliftio-core >=0.1.1
+        , uuid >=1.3
     ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
     default-extensions:
           OverloadedStrings
         , DataKinds
         , DeriveGeneric
+        , DeriveAnyClass
         , DuplicateRecordFields
         , RecordWildCards
 library
@@ -42,14 +44,18 @@ library
                     , Dapr.Core.Types.Actor
                     , Dapr.Core.Types.Configuration
                     , Dapr.Core.Types.Common
+                    , Dapr.Core.Types.Conversation
+                    , Dapr.Core.Types.Cryptography
                     , Dapr.Core.Types.DistributedLock
                     , Dapr.Core.Types.Metadata
                     , Dapr.Core.Types.Secrets
+                    , Dapr.Core.Types.Scheduler
                     , Dapr.Core.Types.State
                     , Dapr.Core.Types.Binding
                     , Dapr.Core.Types.PublishSubscribe
                     , Dapr.Core.Types.Internal
                     , Dapr.Core.Types.ServiceInvocation
+                    , Dapr.Core.Types.Workflow
     hs-source-dirs:   src
     default-language: Haskell2010
 
@@ -62,9 +68,9 @@ test-suite dapr-core-test
     other-modules:  , Dapr.Core.Types.SerializationSpec
                     , Paths_dapr_core
     build-depends:    dapr-core
-                    , hspec ^>={ 2.8.5, 2.9.7, 2.10.4 }
-                    , hspec-core ^>={ 2.8.5, 2.9.7, 2.10.4 }
-                    , QuickCheck ^>=2.14.0
-                    , aeson-pretty ^>=0.8.9
-                    , filepath ^>=1.4.2
-                    , hspec-golden ^>=0.2.0
+                    , hspec >=2.11
+                    , hspec-core >=2.11
+                    , QuickCheck >=2.14
+                    , aeson-pretty >=0.8
+                    , filepath >=1.4
+                    , hspec-golden >=0.2
