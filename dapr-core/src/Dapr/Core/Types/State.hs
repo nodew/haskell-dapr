@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DerivingStrategies #-}
 
 -- |
 -- Module      : Dapr.Core.Types.State
@@ -18,7 +19,8 @@ import GHC.Generics (Generic)
 
 -- | 'StateStore' is the name of state store.
 newtype StateStore = StateStore {getStoreName :: Text}
-  deriving (Eq, Show, Generic, FromJSON, ToJSON)
+  deriving stock (Eq, Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
 
 -- | 'GetStateRequest' is the message to get key-value states from specific state store.
 data GetStateRequest = GetStateRequest
