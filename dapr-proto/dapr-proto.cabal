@@ -14,7 +14,7 @@ build-type:         Custom
 extra-source-files: ChangeLog.md
                   , README.md
                   , proto/**/*.proto
-tested-with: GHC == { 9.10.1, 9.8.2, 9.6.6 }
+tested-with: GHC == { 9.10.1, 9.8.4, 9.6.7 }
 
 source-repository head
     type: git
@@ -27,7 +27,7 @@ custom-setup
     , proto-lens-setup >= 0.4  && < 0.5
 
 common lang
-  build-depends:    base >= 4.14 && < 5
+  build-depends:    base >= 4.18 && < 5
   default-language: Haskell2010
   ghc-options:      -Wall
 

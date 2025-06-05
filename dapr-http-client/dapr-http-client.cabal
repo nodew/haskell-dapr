@@ -13,7 +13,7 @@ category:           Web
 build-type:         Simple
 extra-source-files: ChangeLog.md
                   , README.md
-tested-with: GHC == { 9.10.1, 9.8.2, 9.6.6 }
+tested-with: GHC == { 9.10.1, 9.8.4, 9.6.7 }
 
 source-repository head
   type: git

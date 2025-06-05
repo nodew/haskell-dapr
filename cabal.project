@@ -2,12 +2,12 @@ packages:
   -- libraries
   ./dapr-core
   ./dapr-proto
-  ./dapr-actor
-  ./dapr-http-client
-  ./dapr-http-server
-  ./dapr-grpc-client
+--  ./dapr-actor
+--  ./dapr-http-client
+--   ./dapr-http-server
+--   ./dapr-grpc-client
 
   -- examples
-  ./examples/http/pubsub
+--  ./examples/http/pubsub
 
 tests: true
