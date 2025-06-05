@@ -1,8 +1,0 @@
-resolver: lts-19.17
-
-packages:
-- dapr-core
-- dapr-actor
-- dapr-http-client
-- dapr-http-server
-- dapr-grpc-client
