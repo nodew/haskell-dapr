@@ -1,3 +1,4 @@
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 -- |
@@ -12,9 +13,11 @@ import Control.Exception (Exception)
 import Control.Monad.Reader
 import Dapr.Core.Types.Internal (customParseJSON, customToJSON)
 import Data.Aeson (FromJSON (parseJSON), FromJSONKey, ToJSON (toJSON), Value (String))
+import qualified Data.ByteString as BS
 import Data.Map (Map)
 import Data.Text (Text)
 import qualified Data.Text as T
+import Data.Word (Word64)
 import GHC.Generics (Generic)
 import Network.HTTP.Req (HttpException)
 
@@ -40,7 +43,7 @@ defaultDaprConfig =
 
 -- | 'DaprClient' dapr client
 newtype DaprClient m a = DaprClient {runDaprClient :: ReaderT DaprConfig m a}
-  deriving
+  deriving newtype
     ( Functor,
       Applicative,
       Monad,
@@ -70,7 +73,8 @@ type ExtendedMetadata = Map Text Text
 
 -- | 'Etag' represents the specific version of data.
 newtype Etag = Etag {getEtagValue :: Text}
-  deriving (Show, Eq, Generic, ToJSON, FromJSON)
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
 
 -- | Concurrency mode for Dapr operations
 data ConcurrencyMode
@@ -113,7 +117,8 @@ data DaprHealthStatus = DaprHealthy | DaprUnhealthy deriving (Eq, Show)
 
 -- | 'StateKey' is the name of state key.
 newtype StateKey = StateKey {getStateKey :: Text}
-  deriving (Eq, Show, Generic, FromJSON, ToJSON)
+  deriving stock (Eq, Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
 
 -- | 'StateItem' represents state key, value, and additional options to save state.
 data StateItem a = StateItem
@@ -155,7 +160,8 @@ instance ToJSON TransactionOperation where
   toJSON = Data.Aeson.String . T.pack . show
 
 newtype ConfigurationKey = ConfigurationKey {getConfigurationKey :: Text}
-  deriving (Eq, Ord, Show, Generic, ToJSON, FromJSON, FromJSONKey)
+  deriving stock (Eq, Ord, Show, Generic)
+  deriving anyclass (ToJSON, FromJSON, FromJSONKey)
 
 -- | 'ConfigurationItem' represents all the configuration with its name(key).
 data ConfigurationItem = ConfigurationItem
@@ -175,4 +181,80 @@ instance FromJSON ConfigurationItem where
   parseJSON = customParseJSON 17
 
 newtype SubscriptionId = SubscriptionId {getSubscriptionId :: Text}
+  deriving stock (Eq, Show, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | 'StreamPayload' represents a chunk of data sent in a streaming request or response
+data StreamPayload = StreamPayload
+  { -- | Data sent in the chunk (base64 encoded when serialized)
+    streamPayloadData :: Text,
+    -- | Sequence number (counter that starts from 0 and increments by 1 on each chunk)
+    streamPayloadSeq :: Word64
+  }
+  deriving (Eq, Show, Generic)
+
+instance ToJSON StreamPayload where
+  toJSON = customToJSON 13
+
+instance FromJSON StreamPayload where
+  parseJSON = customParseJSON 13
+
+-- | 'HTTPVerb' represents HTTP methods
+data HTTPVerb
+  = HTTPVerbNone
+  | HTTPVerbGET
+  | HTTPVerbHEAD
+  | HTTPVerbPOST
+  | HTTPVerbPUT
+  | HTTPVerbDELETE
+  | HTTPVerbCONNECT
+  | HTTPVerbOPTIONS
+  | HTTPVerbTRACE
+  | HTTPVerbPATCH
+  deriving (Eq, Show, Generic, ToJSON, FromJSON)
+
+-- | 'HTTPExtension' includes HTTP verb and querystring when Dapr runtime delivers HTTP content
+data HTTPExtension = HTTPExtension
+  { -- | HTTP verb
+    httpExtensionVerb :: HTTPVerb,
+    -- | Querystring represents an encoded HTTP url query string
+    httpExtensionQuerystring :: Maybe Text
+  }
+  deriving (Eq, Show, Generic)
+
+instance ToJSON HTTPExtension where
+  toJSON = customToJSON 13
+
+instance FromJSON HTTPExtension where
+  parseJSON = customParseJSON 13
+
+-- | 'InvokeRequest' is the message to invoke a method with data
+data InvokeRequest a = InvokeRequest
+  { -- | Method name which will be invoked by caller
+    invokeRequestMethod :: Text,
+    -- | Bytes value or data which caller sent
+    invokeRequestData :: a,
+    -- | The type of data content
+    invokeRequestContentType :: Maybe Text,
+    -- | HTTP specific fields if request conveys http-compatible request
+    invokeRequestHttpExtension :: Maybe HTTPExtension
+  }
+  deriving (Eq, Show, Generic)
+
+instance ToJSON a => ToJSON (InvokeRequest a) where
+  toJSON = customToJSON 13
+
+instance FromJSON a => FromJSON (InvokeRequest a) where
+  parseJSON = customParseJSON 13
+
+-- | 'ShutdownRequest' is the request for shutting down the sidecar
+data ShutdownRequest = ShutdownRequest
+  deriving (Eq, Show, Generic, ToJSON, FromJSON)
+
+-- | 'PubsubSubscriptionType' indicates the type of subscription
+data PubsubSubscriptionType
+  = PubsubSubscriptionUnknown      -- ^ UNKNOWN is the default value
+  | PubsubSubscriptionDeclarative  -- ^ Declarative subscription (k8s CRD)
+  | PubsubSubscriptionProgrammatic -- ^ Programmatically created subscription
+  | PubsubSubscriptionStreaming    -- ^ Bidirectional Streaming subscription
   deriving (Eq, Show, Generic, ToJSON, FromJSON)
